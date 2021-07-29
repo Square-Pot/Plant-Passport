@@ -1,19 +1,23 @@
-# A Python Django template on Gitpod
+# PlantPassport
 
-This is a [Python Django](https://www.djangoproject.com) template configured for ephemeral development environments on [Gitpod](https://www.gitpod.io/).
+This is PlantPassport project under development on Gitpod infrastrucutre with a Python Django template.
 
-## Next Steps
+## Main goals:
+- keep all parameters of the plant
+- track dynamic of events and changes
+- create photo albome for plant in chronological order
+- generate UID for each plant for identification 
+- generate QR-code for each plant for labels 
 
-Click the button below to start a new development environment:
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/gitpod-io/template-python-django)
+## First Step
+1. The main concept is blank model of item (plant) wich is enriches with different attributes, not predetermined. 
+2. Event sourcing architecture
 
-## Get Started With Your Own Project
+## Step Two 
+1. Not just attributes, but also actions. 
+2. Photos and gallery on timeline
 
-### A new project
-
-Click the above "Open in Gitpod" button to start a new workspace. Once you're ready to push your first code changes, Gitpod will guide you to fork this project so you own it.
-
-### An existing project
-
-To get started with Python Django on Gitpod, add a [`.gitpod.yml`](./.gitpod.yml) file which contains the configuration to improve the developer experience on Gitpod. To learn more, please see the [Getting Started](https://www.gitpod.io/docs/getting-started) documentation.
+## Step Three
+1. QR-code generator
+2. QR-code detector
