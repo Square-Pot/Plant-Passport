@@ -20,6 +20,8 @@ class Attribute(models.Model):
     
     value_type = models.IntegerField(choices=AttributeTypeChoices.choices)
 
+    #weight = models.IntegerField(blank=True, null=True)
+
 
 
 class Action(models.Model):

@@ -3,3 +3,15 @@
         <li>{{ attribute.name }}</li>
     {% endfor %}
     </ul>
+
+
+    <h3>Новое растение</h3>
+    <form action="plant" method="post">
+        <ul>
+        {% csrf_token %}
+        {% for field in form %}
+            <li>{{ field.label }}{{ field }}</li>
+        {% endfor %}
+        </ul>
+        <input type="submit" value="Submit">
+    </form>
