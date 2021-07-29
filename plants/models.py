@@ -14,18 +14,18 @@ class Attribute(models.Model):
         STRING = 1
         NUMBER = 2
 
-    name = models.CharField(max_length=100, blank=False)
+    name = models.CharField(max_length=100, blank=False, unique=True)
     
-    key = models.CharField(max_length=100, blank=False)
+    key = models.CharField(max_length=100, blank=False, unique=True)
     
     value_type = models.IntegerField(choices=AttributeTypeChoices.choices)
 
 
 
 class Action(models.Model):
-    name = models.CharField(max_length=100, blank=False)
+    name = models.CharField(max_length=100, blank=False, unique=True)
     
-    key = models.CharField(max_length=100, blank=False)
+    key = models.CharField(max_length=100, blank=False, unique=True)
     
-    attributes = models.JSONField()
+    attributes = models.JSONField(blank=True)
     
