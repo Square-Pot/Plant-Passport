@@ -3,9 +3,7 @@ from .models import Attribute
 
 
 class PlantForm(forms.Form):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super(PlantForm, self).__init__(*args, **kwargs)
         for attribute in Attribute.objects.all():
-            # generate extra fields in the number specified via extra_fields
-            self.fields[attribute.key] = \
-                forms.CharField(label=attribute.name)    
+            self.fields[attribute.key] = forms.CharField(label=attribute.name, max_length=100, required=False)    
