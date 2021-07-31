@@ -24,7 +24,7 @@ def plant_create(request):
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
-            return HttpResponse(form.cleaned_data['genus'])
+            return HttpResponse(type(form.cleaned_data))
             #return HttpResponseRedirect('/view/')
 
     else:
