@@ -3,6 +3,9 @@ from .models import Attribute
 
 
 class PlantForm(forms.Form):
+    """
+    Generate form fields for all plant attributes
+    """
     def __init__(self, *args, **kwargs):
         super(PlantForm, self).__init__(*args, **kwargs)
         for attribute in Attribute.objects.all():
