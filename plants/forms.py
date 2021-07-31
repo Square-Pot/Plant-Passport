@@ -8,6 +8,7 @@ class PlantForm(forms.Form):
         """
         Generate form fields for all plant attributes
         """
+        # test
         super(PlantForm, self).__init__(*args, **kwargs)
         for attribute in Attribute.objects.all():
             self.fields[attribute.key] = forms.CharField(label=attribute.name, max_length=100, required=False)    
