@@ -26,6 +26,7 @@ def plant_create(request):
             # redirect to a new URL:
             return HttpResponse(type(form.cleaned_data))
             #return HttpResponseRedirect('/view/')
+            #return HttpResponseRedirect('/view/')
 
     else:
         form = PlantForm()
