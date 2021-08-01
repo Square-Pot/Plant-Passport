@@ -1,9 +1,14 @@
+import random
+import string
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template import loader
 from .models import Plant, Attribute, Action
 from .forms import PlantForm
+from logger.models import Log
+
+
 
 def index(request):
     return HttpResponse("Plants here will be")
@@ -21,12 +26,30 @@ def plant_create(request):
         print(request.POST)
         form = PlantForm(request.POST)
         if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
-            return HttpResponse(type(form.cleaned_data))
-            #return HttpResponseRedirect('/view/')
-            #return HttpResponseRedirect('/view/')
+
+            # CREATE NEW PLANT
+            
+            # Create UID
+            # TODO: UID generation algorithm may be improved
+            while True:
+                # Example: '798670'
+                random_string = ''.join(random.choices(string.digits, k=6))
+                # Check uniqueness
+                if Plant.objects.filter(uid=random_string).count() == 0:
+                    uid = random_string
+                    break
+
+            new_plant = Plant(uid=uid, creator=request.user)
+            new_plant.save()
+            
+            # CREATE LOGS FOR ATTRIBUTES
+            #for post_key in form.cleaned_data:
+            #    new_log = Log
+
+                # log attrs 
+            #    print(post_key, form.cleaned_data[post_key])
+            
+            return HttpResponse('Saved ok')
             #return HttpResponseRedirect('/view/')
 
     else:

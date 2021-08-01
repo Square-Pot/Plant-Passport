@@ -1,18 +1,18 @@
 from django.db import models
+#from django.contrib.auth.models import User
+from django.conf import settings
 
 class Plant(models.Model):
-    #"{:06d}".format(242323232)
     uid = models.CharField(max_length=10)
-    
-    creation_date = models.DateTimeField('date created')
-    
-    #creator = models.ForeignKey()
+    creation_date = models.DateTimeField(auto_now_add=True, blank=True)
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    is_deleted = models.BooleanField(default=False)
 
 
 class Attribute(models.Model):
     class AttributeTypeChoices(models.IntegerChoices):
         STRING = 1
-        NUMBER = 2
+        NUMBER = 21
 
     name = models.CharField(max_length=100, blank=False, unique=True)
     
