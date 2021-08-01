@@ -44,22 +44,22 @@ def plant_create(request):
             new_plant.save()
             
             # CREATING LOGS 
-            
+           
+            data = {}
+            # owner of plant
+            data['owner'] = current_user.id
+            # attributes
+            for post_key in form.cleaned_data:
+                data[post_key] = form.cleaned_data[post_key]
+
             new_log = Log(
-                action_type=1,
-                user=current_user, 
-                plant=new_plant, 
-                data = {'owner': current_user.id},
+                action_type = 1,
+                user = current_user, 
+                plant = new_plant, 
+                data = data,
             )
             new_log.save()
 
-
-            # for post_key in form.cleaned_data:
-            #     new_log = Log()
-
-            #     log attrs 
-            #   print(post_key, form.cleaned_data[post_key])
-            
             return HttpResponse('Saved ok')
             #return HttpResponseRedirect('/view/')
 
