@@ -31,7 +31,14 @@ class Attribute(models.Model):
         max_length=100, 
         blank=False, 
         unique=True
-    )
+    ) 
+
+    short_name = models.CharField(
+        max_length=10,
+        blank=False, 
+        unique=True,
+        default='replace it',
+    ) 
     
     key = models.CharField(
         max_length=100, 
@@ -47,6 +54,9 @@ class Attribute(models.Model):
         blank=True, 
         null=True
     )
+
+    def __str__(self):
+        return f"{self.name} ({self.key})"
 
 
 

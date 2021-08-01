@@ -8,6 +8,12 @@ from plants.models import Plant
 
 class Log(models.Model):
 
+    CHOICES = {
+        1: 'added',
+        2: 'changed',
+        3: 'deleted',
+    }
+
     class ActionChoices(models.IntegerChoices):
         ADDITION = 1
         CHANGE = 2
@@ -38,3 +44,6 @@ class Log(models.Model):
     data = models.JSONField(
         null=False,
     )
+
+    def __str__(self):
+        return f"{self.user} {self.CHOICES[self.action_type]} for plant {self.plant.uid}: {str(self.data)}"
