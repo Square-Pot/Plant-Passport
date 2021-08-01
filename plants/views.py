@@ -27,7 +27,7 @@ def plant_create(request):
         form = PlantForm(request.POST)
         if form.is_valid():
 
-            # CREATE NEW PLANT
+            # CREATING NEW PLANT
             
             # Create UID
             # TODO: UID generation algorithm may be improved
@@ -38,16 +38,27 @@ def plant_create(request):
                 if Plant.objects.filter(uid=random_string).count() == 0:
                     uid = random_string
                     break
-
-            new_plant = Plant(uid=uid, creator=request.user)
+            
+            current_user = request.user
+            new_plant = Plant(uid=uid, creator=current_user)
             new_plant.save()
             
-            # CREATE LOGS FOR ATTRIBUTES
-            #for post_key in form.cleaned_data:
-            #    new_log = Log
+            # CREATING LOGS 
+            
+            new_log = Log(
+                action_type=1,
+                user=current_user, 
+                plant=new_plant, 
+                data = {'owner': current_user.id},
+            )
+            new_log.save()
 
-                # log attrs 
-            #    print(post_key, form.cleaned_data[post_key])
+
+            # for post_key in form.cleaned_data:
+            #     new_log = Log()
+
+            #     log attrs 
+            #   print(post_key, form.cleaned_data[post_key])
             
             return HttpResponse('Saved ok')
             #return HttpResponseRedirect('/view/')

@@ -3,6 +3,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 from django.utils import timezone
 from django.conf import settings
 from django.db import models
+from plants.models import Plant
 
 
 class Log(models.Model):
@@ -24,8 +25,16 @@ class Log(models.Model):
         verbose_name=_('user'),
     )
 
-    #item = models.ForeignKey()
+    plant = models.ForeignKey(
+        Plant,
+        on_delete=models.CASCADE,
+        null=True,
+    )
 
-    action_type = models.IntegerField(choices=ActionChoices.choices)
+    action_type = models.IntegerField(
+        choices=ActionChoices.choices,
+    )
 
-    content = models.JSONField(null=False)
+    data = models.JSONField(
+        null=False,
+    )
