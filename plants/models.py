@@ -15,19 +15,14 @@ class Attribute(models.Model):
         NUMBER = 21
 
     name = models.CharField(max_length=100, blank=False, unique=True)
-    
     key = models.CharField(max_length=100, blank=False, unique=True)
-    
     value_type = models.IntegerField(choices=AttributeTypeChoices.choices)
-
-    #weight = models.IntegerField(blank=True, null=True)
-
+    weight = models.IntegerField(blank=True, null=True)
 
 
 class Action(models.Model):
     name = models.CharField(max_length=100, blank=False, unique=True)
-    
     key = models.CharField(max_length=100, blank=False, unique=True)
-    
     attributes = models.JSONField(blank=True)
+    #weight = models.IntegerField(blank=True, null=True)
     
