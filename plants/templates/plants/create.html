@@ -1,11 +1,4 @@
-    <ul>
-    {% for attribute in attributes %}
-        <li>{{ attribute.name }}</li>
-    {% endfor %}
-    </ul>
-
-
-    <h3>Новое растение</h3>
+    <h3>Создать новое растение</h3>
     <form action="create" method="post" enctype="multipart/form-data">
         <ul>
         {% csrf_token %}

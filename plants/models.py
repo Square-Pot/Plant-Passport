@@ -22,6 +22,7 @@ class Plant(models.Model):
     )
 
 
+
 class Attribute(models.Model):
     class AttributeTypeChoices(models.IntegerChoices):
         STRING = 1

@@ -1,0 +1,16 @@
+<table border="1" style="width:100%">
+    <tr>
+        {% for attr in attrs_summary %} 
+        <th>{{attr}}</th>
+        {% endfor %}
+    </tr>
+
+    {% for plant in rich_plants %}
+    <tr>
+        <td>{{ plant.owner }}</td>
+        {% for value in plant.get_attrs_values %}
+        <td>{{ value }}</td>
+        {% endfor %}    
+    </tr>
+    {% endfor %}
+</table>
