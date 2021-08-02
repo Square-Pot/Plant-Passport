@@ -1,4 +1,6 @@
-    <h3>Создать новое растение</h3>
+{% extends "main.html" %}
+
+    {% block content %}
     <form action="create" method="post" enctype="multipart/form-data">
         <ul>
         {% csrf_token %}
@@ -8,3 +10,4 @@
         </ul>
         <input type="submit" value="Submit">
     </form>
+    {% endblock %}

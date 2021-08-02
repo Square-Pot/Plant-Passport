@@ -147,7 +147,10 @@ def plant_create(request):
         form = PlantForm()
 
     template = loader.get_template('plants/create.html')
-    context = {'form': form,}
+    context = {
+        'form': form,
+        'title': 'Добавить растение',
+    }
    
     return HttpResponse(template.render(context, request))
 
