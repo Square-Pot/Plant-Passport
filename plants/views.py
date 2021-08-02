@@ -72,7 +72,7 @@ def index(request):
     attrs_summary = []
     for plant, attrs in plants_attrs:
         for key in attrs: 
-            if key not in attrs_summary:
+            if key != 'owner' and key not in attrs_summary:
                 attrs_summary.append(key)
 
     # Enrichments plants
@@ -85,7 +85,11 @@ def index(request):
 
 
     template = loader.get_template('plants/index.html')
-    context = {'rich_plants': rich_plants, 'attrs_summary': attrs_summary}
+    context = {
+        'rich_plants': rich_plants, 
+        'attrs_summary': attrs_summary,
+        'title': 'Мои растения',
+    }
     return HttpResponse(template.render(context, request))
 
 
