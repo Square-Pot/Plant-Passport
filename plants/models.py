@@ -1,26 +1,34 @@
 from django.db import models
 from django.conf import settings
+from django.utils.translation import gettext, gettext_lazy as _
+from django.utils import timezone
+from django.conf import settings
+
 
 class Plant(models.Model):
     uid = models.CharField(
-        max_length=10
+        max_length=10,
     )
     
     creation_date = models.DateTimeField(
         auto_now_add=True, 
-        blank=True
+        blank=True,
     )
     
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE, 
-        null=True
+        null=True,
     )
     
     is_deleted = models.BooleanField(
-        default=False
+        default=False,
     )
 
+    
+class AttributeManager(models.Manager):
+    def get_all_keys(self):
+        return self.values_list('key', flat=True)
 
 
 class Attribute(models.Model):
@@ -56,9 +64,102 @@ class Attribute(models.Model):
         null=True
     )
 
+    keys = AttributeManager()
+
     def __str__(self):
         return f"{self.name} ({self.key})"
 
+
+class Log(models.Model):
+
+    CHOICES = {
+        1: 'added',
+        2: 'changed',
+        3: 'deleted',
+    }
+
+    class ActionChoices(models.IntegerChoices):
+        ADDITION = 1
+        CHANGE = 2
+        DELETION = 3
+
+    action_time = models.DateTimeField(
+        _('action time'),
+        default=timezone.now,
+        editable=False,
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        models.CASCADE,
+        verbose_name=_('user'),
+    )
+
+    plant = models.ForeignKey(
+        Plant,
+        on_delete=models.CASCADE,
+        null=True,
+    )
+
+    action_type = models.IntegerField(
+        choices=ActionChoices.choices,
+    )
+
+    data = models.JSONField(
+        null=False,
+    )
+
+    def __str__(self):
+        return f"{self.user} {self.CHOICES[self.action_type]} for plant {self.plant.uid}: {str(self.data)}"
+
+
+class RichPlantAttrs():
+    
+    def __init__(self, plant_id):
+        self.plant_id = plant_id
+
+    def logs(self):
+        return Log.objects.filter(plant=self.plant_id)
+
+    def owner_id(self) -> int:
+        log = Log.objects.filter(plant=self.plant_id, data__has_key='owner').order_by('-id')[0]
+        return log.data['owner']
+
+    def actual_attrs(self) -> dict:
+        # generate blank dic with all keys and placeholders
+        attrs_all_keys = Attribute.keys.get_all_keys()
+        actual_attrs = {}
+        for key in attrs_all_keys:
+            actual_attrs[key] = '-'
+
+        # fill values with logs (playback)
+        logs = Log.objects.filter(plant=self.plant_id)
+        for log in logs: 
+            for key in log.data:
+                if key in actual_attrs:
+                    actual_attrs[key] = log.data[key]
+        return actual_attrs
+
+    def actual_attrs_values(self) -> list:
+        return list(self.actual_attrs().values())
+     
+
+class RichPlant(Plant):
+    # classmethod for creation RichPlant from Plant
+    @classmethod
+    def new_from(cls, obj):
+        if issubclass(obj.__class__, Plant):
+            _new = cls(obj.id, obj.uid, obj.creation_date, obj.creator, obj.is_deleted)
+            return _new
+        else:
+            raise TypeError('Expectsubclass of <class Plant>, got {}.'.format(type(obj)))
+            
+    def get(self):
+        attrs = RichPlantAttrs(self.id)
+        return attrs
+
+    # class Meta:
+    #     abstract = True
 
 
 class Action(models.Model):

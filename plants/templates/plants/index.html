@@ -8,9 +8,9 @@
             {% endfor %}
         </tr>
     
-        {% for plant in rich_plants %}
+        {% for rp_attr in rp_attrs %}
         <tr>
-            {% for value in plant.get_attrs_values %}
+            {% for value in rp_attr %}
             <td>{{ value }}</td>
             {% endfor %}    
         </tr>
