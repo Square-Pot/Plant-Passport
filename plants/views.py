@@ -21,17 +21,33 @@ def index(request):
         rich_plants_attrs.append(values)
     attrs_summary = Attribute.keys.get_all_keys()
 
-    template = loader.get_template('plants/index.html')
     context = {
         'rp_attrs': rich_plants_attrs, 
         'attrs_summary': attrs_summary,
         'title': 'Мои растения',
     }
+    template = loader.get_template('plants/index.html')
     return HttpResponse(template.render(context, request))
 
 
 def plant_view(request, plant_id):
-    return HttpResponse("Plants here will be")
+    #current_user = request.user
+
+    plant = Plant.objects.filter(id=plant_id)[0]
+    rich_plant = RichPlant.new_from(plant)
+    rp_values_dic = rich_plant.get().actual_attrs()
+    attr_names = Attribute.keys.get_all_keys()
+
+    #TODO добавить историю 
+
+    context = {
+        'plant': rich_plant,
+        'rp_values': rp_values_dic,
+        'attr_names': attr_names,
+        'title': 'Профиль растения',
+    }
+    template = loader.get_template('plants/view.html')
+    return HttpResponse(template.render(context, request))
 
 
 def plant_create(request):
