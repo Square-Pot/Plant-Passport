@@ -64,6 +64,7 @@ class Attribute(models.Model):
         null=True
     )
 
+    objects = models.Manager()
     keys = AttributeManager()
 
     def __str__(self):

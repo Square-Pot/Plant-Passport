@@ -15,7 +15,10 @@ def index(request):
     for plant_id in owning_plants:
         plant = Plant.objects.filter(id=plant_id)[0]
         rich_plant = RichPlant.new_from(plant)
-        rich_plants_attrs.append(rich_plant.get().actual_attrs_values())
+        values = rich_plant.get().actual_attrs_values()
+        # add uid to first place
+        values.insert(0, rich_plant.uid)
+        rich_plants_attrs.append(values)
     attrs_summary = Attribute.keys.get_all_keys()
 
     template = loader.get_template('plants/index.html')
@@ -32,7 +35,7 @@ def plant_view(request, plant_id):
 
 
 def plant_create(request):
-    attributes = Attribute.objects.all()
+    #attributes = Attribute.objects.all()
 
     if request.method == 'POST':
         print(request.POST)
