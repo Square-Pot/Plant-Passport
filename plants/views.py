@@ -50,9 +50,12 @@ def plant_view(request, plant_id):
     return HttpResponse(template.render(context, request))
 
 
-def plant_create(request):
-    #attributes = Attribute.objects.all()
+def plant_edit(request, plant_id):
+    #current_user = request.user
+    return plant_id
 
+
+def plant_create(request):
     if request.method == 'POST':
         print(request.POST)
         form = PlantForm(request.POST)
@@ -93,8 +96,7 @@ def plant_create(request):
             )
             new_log.save()
 
-            return HttpResponse('Saved ok')
-            #return HttpResponseRedirect('/view/')
+            return HttpResponseRedirect(f'/plants/view/{ new_plant.id }')
 
     else:
         form = PlantForm()
