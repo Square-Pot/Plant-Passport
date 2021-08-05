@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.template import loader
 from .models import Plant, RichPlant, Log, Attribute, Action
 from .forms import PlantForm
+from django.utils.translation import gettext as _
 
 
 def index(request):
@@ -24,7 +25,7 @@ def index(request):
     context = {
         'rp_attrs': rich_plants_attrs, 
         'attrs_summary': attrs_summary,
-        'title': 'Мои растения',
+        'title': _('Мои растения'),
     }
     template = loader.get_template('plants/index.html')
     return HttpResponse(template.render(context, request))
@@ -44,7 +45,7 @@ def plant_view(request, plant_id):
         'plant': rich_plant,
         'rp_values': rp_values_dic,
         'attr_names': attr_names,
-        'title': 'Профиль растения',
+        'title': _('Профиль растения'),
     }
     template = loader.get_template('plants/view.html')
     return HttpResponse(template.render(context, request))
