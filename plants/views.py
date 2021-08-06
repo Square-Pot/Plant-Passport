@@ -7,9 +7,14 @@ from django.template import loader
 from .models import Plant, RichPlant, Log, Attribute, Action
 from .forms import PlantForm
 from django.utils.translation import gettext as _
+from django.utils.translation import activate
+from django.utils import translation
 
 
 def index(request):
+    cur_language = translation.get_language()
+    activate(cur_language)
+
     current_user = request.user
     owning_plants = Log.objects.filter(data__owner=current_user.id).values_list('plant', flat=True)
     rich_plants_attrs = []

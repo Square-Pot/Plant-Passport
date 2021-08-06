@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from django.utils.translation import ugettext_lazy as _
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -108,15 +110,26 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
+LANGUAGE_CODE = 'de'
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
+
+LANGUAGES = (
+    ('en', _('English')),
+    ('de', _('German')),
+)
+
+LANGUAGE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'), 
+    os.path.join(BASE_DIR, 'plants/locale')  
+]
+
+
+
+
+
 
 
 # Static files (CSS, JavaScript, Images)
@@ -134,20 +147,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-# i18n
-LANGUAGE_CODE = 'en-us'
-#TIME_ZONE = 'UTC'
-
-
-LANGUAGE_CODE = 'en'
-
-LANGUAGES = (
-    ('en', _('English')),
-    ('de', _('German')),
-)
-
-
-
-USE_I18N = True
-#USE_L10N = True
-#USE_TZ = True
