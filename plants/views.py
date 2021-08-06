@@ -25,7 +25,7 @@ def index(request):
     context = {
         'rp_attrs': rich_plants_attrs, 
         'attrs_summary': attrs_summary,
-        'title': _('Мои растения'),
+        'title': _('MyPlants'),
     }
     template = loader.get_template('plants/index.html')
     return HttpResponse(template.render(context, request))
@@ -45,7 +45,7 @@ def plant_view(request, plant_id):
         'plant': rich_plant,
         'rp_values': rp_values_dic,
         'attr_names': attr_names,
-        'title': _('Профиль растения'),
+        'title': _('PlantProfile'),
     }
     template = loader.get_template('plants/view.html')
     return HttpResponse(template.render(context, request))
