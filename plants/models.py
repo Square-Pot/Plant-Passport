@@ -166,6 +166,10 @@ class RichPlant(Plant):
     def get_attrs_dics(self):
         self.attrs_dics = RichPlantAttrs(self.id).actual_attrs()
 
+    def get_owner(self):
+        self.owner = RichPlantAttrs(self.id).owner_id()
+        return self.owner
+
 
 class Action(models.Model):
     name = models.CharField(max_length=100, blank=False, unique=True)

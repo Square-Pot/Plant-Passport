@@ -1,8 +1,7 @@
 import random
 import string
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, redirect, reverse
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.template import loader
 from .models import Plant, RichPlant, Log, Attribute, Action
 from .forms import PlantForm
@@ -44,6 +43,9 @@ def index(request):
 
 
 def plant_view(request, plant_id):
+    cur_language = translation.get_language()
+    activate(cur_language)
+
     #current_user = request.user
 
     plant = Plant.objects.filter(id=plant_id)[0]
@@ -70,15 +72,28 @@ def plant_view(request, plant_id):
     return HttpResponse(template.render(context, request))
 
 
-def plant_edit(request, plant_id):
+#def plant_edit(request, plant_id):
     #current_user = request.user
-    return plant_id
+#    return plant_id
 
+#@login_required
+def plant_create(request, plant_id=None):
+    cur_language = translation.get_language()
+    activate(cur_language)
+    print('AAAA', plant_id)
+    if plant_id:
+        plant = get_object_or_404(Plant, id=plant_id)
+        #plant = Plant.objects.filter(id=plant_id)[0]
+        rich_plant = RichPlant.new_from(plant)
+        # if rich_plant.get_owner() != request.user:
+        #     return HttpResponseForbidden()
+        rich_plant.get_attrs_dics()
+        attrs = rich_plant.attrs_dics
+    else: 
+        attrs = {}
 
-def plant_create(request):
     if request.method == 'POST':
-        print(request.POST)
-        form = PlantForm(request.POST)
+        form = PlantForm(attrs, request.POST)
         if form.is_valid():
 
             ### CREATING NEW PLANT
@@ -119,12 +134,12 @@ def plant_create(request):
             return HttpResponseRedirect(f'/plants/view/{ new_plant.id }')
 
     else:
-        form = PlantForm()
+        form = PlantForm(attrs)
 
     template = loader.get_template('plants/create.html')
     context = {
         'form': form,
-        'title': 'Добавить растение',
+        'title': _('AddPlant'),
     }
    
     return HttpResponse(template.render(context, request))

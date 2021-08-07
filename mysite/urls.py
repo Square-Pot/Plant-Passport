@@ -26,3 +26,8 @@ urlpatterns = [
 urlpatterns += i18n_patterns(
     path('plants/', include('plants.urls')),
 )
+
+
+# urlpatterns += i18n_patterns(
+#     path('plants/', include(('plants.urls', 'plants'), namespace='plants')),
+# )
