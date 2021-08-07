@@ -22,7 +22,7 @@ def index(request):
     for plant_id in owning_plants:
         plant = Plant.objects.filter(id=plant_id)[0]
         rich_plant = RichPlant.new_from(plant)
-        rich_plant.get_attrs()
+        rich_plant.get_attrs_values()
         rich_plants.append(rich_plant)
         #values = rich_plant.get().actual_attrs_values()
         # add uid to first place
@@ -48,14 +48,15 @@ def plant_view(request, plant_id):
 
     plant = Plant.objects.filter(id=plant_id)[0]
     rich_plant = RichPlant.new_from(plant)
-    rp_values_dic = rich_plant.get().actual_attrs()
-    attr_names = Attribute.keys.get_all_keys()
+    rich_plant.get_attrs_dics()
+    #rp_values_dic = rich_plant.attrs_dics()
+    attr_names = Attribute.keys.get_all_names()
 
     #TODO добавить историю 
 
     context = {
         'plant': rich_plant,
-        'rp_values': rp_values_dic,
+        #'rp_values': rp_values_dic,
         'attr_names': attr_names,
         'title': _('PlantProfile'),
     }

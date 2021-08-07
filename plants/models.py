@@ -159,12 +159,11 @@ class RichPlant(Plant):
         else:
             raise TypeError('Expected subclass of <class Plant>, got {}.'.format(type(obj)))
             
-    def get_attrs(self):
-        self.attrs = RichPlantAttrs(self.id).actual_attrs_values()
-        #return attrs
+    def get_attrs_values(self):
+        self.attrs_values = RichPlantAttrs(self.id).actual_attrs_values()
 
-    # class Meta:
-    #     abstract = True
+    def get_attrs_dics(self):
+        self.attrs_dics = RichPlantAttrs(self.id).actual_attrs()
 
 
 class Action(models.Model):

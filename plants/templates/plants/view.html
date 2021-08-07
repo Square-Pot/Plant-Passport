@@ -6,7 +6,7 @@
             <th>UID</th>
             <td>{{ plant.uid }}</td>
         </tr>
-        {% for key, value in rp_values.items  %}
+        {% for key, value in plant.attrs_dics.items  %}
         <tr>
             <th>{{ key }}</th>
             <td>{{ value }}</td>
