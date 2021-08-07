@@ -28,8 +28,10 @@ class Plant(models.Model):
     
 class AttributeManager(models.Manager):
     def get_all_keys(self):
-        return self.values_list('key', flat=True)
+        return self.order_by('weight').values_list('key', flat=True)
 
+    def get_all_names(self):
+        return self.order_by('weight').values_list('name', flat=True)
 
 class Attribute(models.Model):
     class AttributeTypeChoices(models.IntegerChoices):
@@ -65,10 +67,11 @@ class Attribute(models.Model):
     )
 
     objects = models.Manager()
+
     keys = AttributeManager()
 
     def __str__(self):
-        return f"{self.name} ({self.key})"
+        return f"{self.weight} - {self.name} ({self.key})"
 
 
 class Log(models.Model):
@@ -128,7 +131,7 @@ class RichPlantAttrs():
 
     def actual_attrs(self) -> dict:
         # generate blank dic with all keys and placeholders
-        attrs_all_keys = Attribute.keys.get_all_keys()
+        attrs_all_keys = Attribute.keys.get_all_keys().order_by('weight')
         actual_attrs = {}
         for key in attrs_all_keys:
             actual_attrs[key] = '-'

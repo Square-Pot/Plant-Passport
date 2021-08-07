@@ -25,7 +25,8 @@ def index(request):
         # add uid to first place
         values.insert(0, rich_plant.uid)
         rich_plants_attrs.append(values)
-    attrs_summary = Attribute.keys.get_all_keys()
+    #attrs_summary = Attribute.keys.get_all_keys()
+    attrs_summary = Attribute.keys.get_all_names()
 
     context = {
         'rp_attrs': rich_plants_attrs, 
