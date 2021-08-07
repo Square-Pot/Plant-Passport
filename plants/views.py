@@ -18,18 +18,24 @@ def index(request):
     current_user = request.user
     owning_plants = Log.objects.filter(data__owner=current_user.id).values_list('plant', flat=True)
     rich_plants_attrs = []
+    rich_plants = []
     for plant_id in owning_plants:
         plant = Plant.objects.filter(id=plant_id)[0]
         rich_plant = RichPlant.new_from(plant)
-        values = rich_plant.get().actual_attrs_values()
+        rich_plant.get_attrs()
+        rich_plants.append(rich_plant)
+        #values = rich_plant.get().actual_attrs_values()
         # add uid to first place
-        values.insert(0, rich_plant.uid)
-        rich_plants_attrs.append(values)
+        #values.insert(0, rich_plant.uid)
+        #rich_plants_attrs.append(values)
     #attrs_summary = Attribute.keys.get_all_keys()
     attrs_summary = Attribute.keys.get_all_names()
 
+    #TODO: filter by genus, sp.
+
     context = {
-        'rp_attrs': rich_plants_attrs, 
+        #'rp_attrs': rich_plants_attrs, 
+        'rich_plants': rich_plants, 
         'attrs_summary': attrs_summary,
         'title': _('MyPlants'),
     }

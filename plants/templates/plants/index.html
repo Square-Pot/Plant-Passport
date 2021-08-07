@@ -9,9 +9,12 @@
             {% endfor %}
         </tr>
     
-        {% for rp_attr in rp_attrs %}
+        {% for rp in rich_plants %}
         <tr>
-            {% for value in rp_attr %}
+            <td>
+                <a href='view/{{ rp.id }}'>{{ rp.uid }}</a>
+            </td>   
+            {% for value in rp.attrs %}
             <td>{{ value }}</td>
             {% endfor %}    
         </tr>

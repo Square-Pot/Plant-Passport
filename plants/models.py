@@ -149,6 +149,7 @@ class RichPlantAttrs():
      
 
 class RichPlant(Plant):
+
     # classmethod for creation RichPlant from Plant
     @classmethod
     def new_from(cls, obj):
@@ -156,11 +157,11 @@ class RichPlant(Plant):
             _new = cls(obj.id, obj.uid, obj.creation_date, obj.creator, obj.is_deleted)
             return _new
         else:
-            raise TypeError('Expectsubclass of <class Plant>, got {}.'.format(type(obj)))
+            raise TypeError('Expected subclass of <class Plant>, got {}.'.format(type(obj)))
             
-    def get(self):
-        attrs = RichPlantAttrs(self.id)
-        return attrs
+    def get_attrs(self):
+        self.attrs = RichPlantAttrs(self.id).actual_attrs_values()
+        #return attrs
 
     # class Meta:
     #     abstract = True
