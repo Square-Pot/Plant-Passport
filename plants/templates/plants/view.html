@@ -1,4 +1,5 @@
 {% extends "main.html" %}
+{% load i18n %}
 
     {% block content %}
     <table border="1" style="width:100%">
@@ -13,6 +14,23 @@
         </tr>
         {% endfor %}
     </table>
+
+    <h2>{% trans 'Change history' %}</h2>
+    <table border="1" style="width:100%">
+        <tr>
+            <td>{% trans 'Datetime' %}</td>
+            <td>{% trans 'Action' %}</td>
+            <td>{% trans 'Parameters' %}</td>
+        </tr>
+        {% for log in plant.logs  %}
+        <tr>
+            <td>{{ log.action_time }}</td>
+            <td>{{ log.action_type }}</td>
+            <td>{{ log.data }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
     {% endblock %}
 
 

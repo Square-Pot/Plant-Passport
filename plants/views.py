@@ -52,7 +52,13 @@ def plant_view(request, plant_id):
     #rp_values_dic = rich_plant.attrs_dics()
     attr_names = Attribute.keys.get_all_names()
 
-    #TODO добавить историю 
+    #TODO add plant history
+
+    #history = []
+    #for log in rich_plant.logs():
+
+
+
 
     context = {
         'plant': rich_plant,

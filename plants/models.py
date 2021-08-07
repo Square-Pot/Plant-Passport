@@ -33,6 +33,7 @@ class AttributeManager(models.Manager):
     def get_all_names(self):
         return self.order_by('weight').values_list('name', flat=True)
 
+
 class Attribute(models.Model):
     class AttributeTypeChoices(models.IntegerChoices):
         STRING = 1
