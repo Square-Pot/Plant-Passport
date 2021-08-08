@@ -1,0 +1,12 @@
+{% extends "main.html" %}
+{% load i18n %}
+
+    {% block content %}
+    <form action="{% url 'plant_edit_attr' plant_id attr_key %}" method="post" enctype="multipart/form-data">
+        <ul>
+        {% csrf_token %}
+            <li>{{ field.label }}{{ form }}</li>
+        </ul>
+        <input type="submit" value="Submit">
+    </form>
+    {% endblock %}

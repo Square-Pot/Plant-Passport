@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.template import loader
 from .models import Plant, RichPlant, Log, Attribute, Action
-from .forms import PlantForm
+from .forms import PlantForm, AttributeForm 
 from django.utils.translation import gettext as _
 from django.utils.translation import activate
 from django.utils import translation
@@ -72,21 +72,15 @@ def plant_view(request, plant_id):
     return HttpResponse(template.render(context, request))
 
 
-#def plant_edit(request, plant_id):
-    #current_user = request.user
-#    return plant_id
-
 #@login_required
 def plant_create(request, plant_id=None):
     cur_language = translation.get_language()
     activate(cur_language)
-    print('AAAA', plant_id)
     if plant_id:
         plant = get_object_or_404(Plant, id=plant_id)
-        #plant = Plant.objects.filter(id=plant_id)[0]
         rich_plant = RichPlant.new_from(plant)
-        # if rich_plant.get_owner() != request.user:
-        #     return HttpResponseForbidden()
+        if rich_plant.get_owner() != request.user: # works?
+            return HttpResponseForbidden()
         rich_plant.get_attrs_dics()
         attrs = rich_plant.attrs_dics
     else: 
@@ -145,6 +139,59 @@ def plant_create(request, plant_id=None):
     return HttpResponse(template.render(context, request))
 
 
-def plant_update(request, plant_id):
-    return HttpResponse("Plants here will be")
+def edit_plant_attr(request, plant_id=None, attr_key=None):
+    cur_language = translation.get_language()
+    activate(cur_language)
+    current_user = request.user
+
+    if plant_id and attr_key:
+        plant = get_object_or_404(Plant, id=plant_id)
+        rich_plant = RichPlant.new_from(plant)
+        if rich_plant.get_owner() != request.user.id:
+            return HttpResponseForbidden()
+        rich_plant.get_attrs_dics()
+    else: 
+        pass #TODO 404
+    
+    
+    if request.method == 'POST':
+        form = AttributeForm()
+        print(request.POST)
+
+        # Check:
+        # if current user is owner
+        # if attr key in attrs
+        # is changes actually was made (was value changed?)
+        if True:
+            new_value = request.POST[attr_key]
+            new_log = Log(
+                action_type = 2,  # changed
+                user = current_user, 
+                plant = Plant.objects.filter(id=plant_id)[0], 
+                data = {attr_key: new_value},
+            )
+            new_log.save()
+
+        return HttpResponseRedirect(f'/plants/view/{ plant_id }')
+
+    else:
+        value = rich_plant.attrs_dics[attr_key]
+        label = Attribute.objects.filter(key=attr_key)[0].name
+        form = AttributeForm(label, attr_key, value)
+
+        
+
+
+    template = loader.get_template('plants/edit_attr.html')
+    context = {
+        'attr_key': attr_key,
+        'plant_id': plant_id,
+        'form': form,
+        'title': _('EditAttr'),
+
+    }
+   
+    return HttpResponse(template.render(context, request))
+
+
 

@@ -6,11 +6,13 @@
         <tr>
             <th>UID</th>
             <td>{{ plant.uid }}</td>
+            <td></td>   
         </tr>
         {% for key, value in plant.attrs_dics.items  %}
         <tr>
             <th>{{ key }}</th>
             <td>{{ value }}</td>
+            <td><a href="{% url 'plant_edit_attr' plant.id key %}">{% trans 'Edit' %}</a></td>
         </tr>
         {% endfor %}
     </table>
