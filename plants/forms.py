@@ -20,7 +20,7 @@ class PlantForm(forms.Form):
 class AttributeForm(forms.Form):
     def __init__(self, label=None, key=None, value=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if value:
+        if key:
             self.fields[key] = forms.CharField(label=label, initial=value, max_length=100, required=False)
         else:
             # why is this case possible?

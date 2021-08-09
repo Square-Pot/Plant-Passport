@@ -25,6 +25,9 @@ class Plant(models.Model):
         default=False,
     )
 
+    def __str__(self):
+        return f"{self.uid}  by  {self.creator} "
+
     
 class AttributeManager(models.Manager):
     def get_all_keys(self):
