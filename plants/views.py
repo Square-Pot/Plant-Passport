@@ -51,21 +51,14 @@ def plant_view(request, plant_id):
     plant = Plant.objects.filter(id=plant_id)[0]
     rich_plant = RichPlant.new_from(plant)
     rich_plant.get_attrs_dics()
-    #rp_values_dic = rich_plant.attrs_dics()
-    attr_names = Attribute.keys.get_all_names()
+    rich_plant.get_logs()
 
     #TODO add plant history
-
-    #history = []
-    #for log in rich_plant.logs():
-
-
-
+    # history = []
+    # for log in rich_plant.logs():
 
     context = {
         'plant': rich_plant,
-        #'rp_values': rp_values_dic,
-        'attr_names': attr_names,
         'title': _('PlantProfile'),
     }
     template = loader.get_template('plants/view.html')

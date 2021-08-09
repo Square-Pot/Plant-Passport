@@ -150,6 +150,10 @@ class RichPlantAttrs():
 
     def actual_attrs_values(self) -> list:
         return list(self.actual_attrs().values())
+
+    def get_logs(self): 
+        return Log.objects.filter(plant=self.plant_id).order_by('-action_time')
+
      
 
 class RichPlant(Plant):
@@ -172,6 +176,10 @@ class RichPlant(Plant):
     def get_owner(self):
         self.owner = RichPlantAttrs(self.id).owner_id()
         return self.owner
+
+    def get_logs(self):
+        self.logs = RichPlantAttrs(self.id).get_logs()
+        return self.logs
 
 
 class Action(models.Model):
