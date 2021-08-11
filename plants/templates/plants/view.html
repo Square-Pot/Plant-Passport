@@ -16,6 +16,7 @@
         </tr>
         {% endfor %}
     </table>
+    <a href="{% url 'upload_photo' plant.id %}">{% trans 'AddNewPhoto' %}</a>
 
     <h2>{% trans 'ChangeHistory' %}</h2>
     <table border="1" style="width:100%">

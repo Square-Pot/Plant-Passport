@@ -1,5 +1,5 @@
 from django import forms
-from .models import Attribute, Plant, RichPlant
+from .models import Attribute, Plant, RichPlant, Photo
 
 
 class PlantForm(forms.Form):
@@ -26,3 +26,9 @@ class AttributeForm(forms.Form):
             # why is this case possible?
             # should be 404 or something
             self.fields['attribute'] = forms.CharField(label='No label', max_length=100, required=False)
+
+
+class PhotoForm(forms.ModelForm):
+    class Meta:
+        model = Photo
+        fields = ('description', 'photo', 'user')

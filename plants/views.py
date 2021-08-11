@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.template import loader
 from .models import Plant, RichPlant, Log, Attribute, Action
-from .forms import PlantForm, AttributeForm 
+from .forms import PlantForm, AttributeForm, PhotoForm
 from django.utils.translation import gettext as _
 from django.utils.translation import activate
 from django.utils import translation
@@ -118,6 +118,7 @@ def plant_create(request, plant_id=None):
             )
             new_log.save()
 
+            # TODO: fix redirect path
             return HttpResponseRedirect(f'/plants/view/{ new_plant.id }')
 
     else:
@@ -165,6 +166,7 @@ def edit_plant_attr(request, plant_id=None, attr_key=None):
             )
             new_log.save()
 
+        # TODO: fix path
         return HttpResponseRedirect(f'/plants/view/{ plant_id }')
 
     else:
@@ -186,5 +188,25 @@ def edit_plant_attr(request, plant_id=None, attr_key=None):
    
     return HttpResponse(template.render(context, request))
 
+def upload_photo(request, plant_id):
+    if request.method == 'POST':
+        form = PhotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            #return reverse('plant_view', kwargs={'plant_id': plant_id})
+            return HttpResponseRedirect(f'/plants/view/{ plant_id }')
+
+            # TODO saave log
+    else:
+        form = PhotoForm()
+
+    template = loader.get_template('plants/upload_photo.html')
+    context = {
+        'form': form,
+        'plant_id': plant_id,
+        'title': _('UploadPhoto'),
+    }
+
+    return HttpResponse(template.render(context, request))
 
 
