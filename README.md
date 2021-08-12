@@ -22,7 +22,7 @@ This is PlantPassport project under development on Gitpod infrastrucutre with a 
     - events:
         - watering
         - fertilizing
-        - replanting
+        - repotting
     - plant view page: add link for setting up of main plant picture (for profile and thumbnai in plant list)
     - groups: on plant list page add ability to add plants to exitsting groupps
     - fancy timeline with changes and events
