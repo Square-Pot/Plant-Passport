@@ -18,6 +18,15 @@ This is PlantPassport project under development on Gitpod infrastrucutre with a 
 1. Not just attributes, but also actions. 
 2. Photos and gallery on timeline
 
+### Detailed tasks for this step:
+    - events:
+        - watering
+        - fertilizing
+        - replanting
+    - plant view page: add link for setting up of main plant picture (for profile and thumbnai in plant list)
+    - groups: on plant list page add ability to add plants to exitsting groupps
+    - fancy timeline with changes and events
+
 ## Step Three
 1. QR-code generator
 2. QR-code detector
