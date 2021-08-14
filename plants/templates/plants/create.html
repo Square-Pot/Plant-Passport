@@ -1,7 +1,8 @@
 {% extends "main.html" %}
+{% load i18n %}
 
     {% block content %}
-    <form action="create" method="post" enctype="multipart/form-data">
+    <form action="{% url 'plant_create_edit' %}" method="post" enctype="multipart/form-data">
         <ul>
         {% csrf_token %}
         {% for field in form %}

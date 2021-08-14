@@ -14,9 +14,27 @@ This is PlantPassport project under development on Gitpod infrastrucutre with a 
 1. The main concept is blank model of item (plant) wich is enriches with different attributes, not predetermined. 
 2. Event sourcing architecture
 
+### Detailed tasks for step One:
+    - list view: filter by attribute
+    - services: create service for returing required data
+    - I18N: save user setting for current language
+
 ## Step Two 
 1. Not just attributes, but also actions. 
 2. Photos and gallery on timeline
+
+### Detailed tasks for step Two:
+    - add events:
+        - watering
+        - fertilizing
+        - repotting
+    - plant view page: add link for setting up of main plant picture (for profile and thumbnai in plant list)
+    - groups: on plant list page add ability to add plants to exitsting groupps
+    - fancy timeline with changes and events
+    - friends and  viewing status of plants profiles:
+        - public: for all
+        - friends: for friend
+        - privat: for me 
 
 ## Step Three
 1. QR-code generator

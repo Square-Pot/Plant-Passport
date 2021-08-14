@@ -37,6 +37,9 @@ class Plant(models.Model):
         default=False,
     )
 
+    def __str__(self):
+        return f"{self.uid}  by  {self.creator} "
+
     
 class AttributeManager(models.Manager):
     def get_all_keys(self):
@@ -159,7 +162,10 @@ class RichPlantAttrs():
 
     def actual_attrs_values(self) -> list:
         return list(self.actual_attrs().values())
-     
+
+    def get_logs(self): 
+        return Log.objects.filter(plant=self.plant_id).order_by('-action_time')
+
 
 class RichPlant(Plant):
 
@@ -178,10 +184,33 @@ class RichPlant(Plant):
     def get_attrs_dics(self):
         self.attrs_dics = RichPlantAttrs(self.id).actual_attrs()
 
+    def get_owner(self):
+        self.owner = RichPlantAttrs(self.id).owner_id()
+        return self.owner
+
+    def get_logs(self):
+        self.logs = RichPlantAttrs(self.id).get_logs()
+        return self.logs
+
 
 class Action(models.Model):
     name = models.CharField(max_length=100, blank=False, unique=True)
     key = models.CharField(max_length=100, blank=False, unique=True)
     attributes = models.JSONField(blank=True)
     #weight = models.IntegerField(blank=True, null=True)
-    
+
+
+def user_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'photos/user_{0}/{1}'.format(instance.user.id, filename)
+
+
+class Photo(models.Model):
+    description = models.CharField(max_length=255, blank=True)
+    photo = models.FileField(upload_to=user_directory_path)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        models.CASCADE,
+        verbose_name=_('user'),
+    )
