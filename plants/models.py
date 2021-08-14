@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils.translation import gettext, gettext_lazy as _
 from django.utils import timezone
 from django.conf import settings
-from django.contrib.auth.model import AbstractUser
+from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
