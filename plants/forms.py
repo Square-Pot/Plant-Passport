@@ -20,6 +20,7 @@ class PlantForm(forms.Form):
 
 
 class AttributeForm(forms.Form):
+
     def __init__(self, label=None, key=None, value=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if key:
@@ -31,6 +32,7 @@ class AttributeForm(forms.Form):
 
 
 class PhotoForm(forms.ModelForm):
+    
     class Meta:
         model = Photo
         fields = ('description', 'photo', 'user')
