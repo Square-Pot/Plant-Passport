@@ -1,5 +1,7 @@
 from django import forms
-from .models import Attribute, Plant, RichPlant, Photo
+from .models import Attribute, Plant, RichPlant, Photo, User
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.forms import ModelForm
 
 
 class PlantForm(forms.Form):
@@ -32,3 +34,11 @@ class PhotoForm(forms.ModelForm):
     class Meta:
         model = Photo
         fields = ('description', 'photo', 'user')
+
+
+class UserCreateForm(UserCreationForm):
+
+    class Meta(UserCreationForm):
+        model = User
+        fields = ('username', 'password1', 'password2', 'bio')
+        

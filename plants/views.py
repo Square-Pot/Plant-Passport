@@ -4,10 +4,14 @@ from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.template import loader
 from .models import Plant, RichPlant, Log, Attribute, Action
-from .forms import PlantForm, AttributeForm, PhotoForm
+from .forms import PlantForm, AttributeForm, PhotoForm, UserCreateForm
 from django.utils.translation import gettext as _
 from django.utils.translation import activate
 from django.utils import translation
+from django.contrib.auth import authenticate, login
+
+# https://docs.djangoproject.com/en/3.2/topics/auth/default/#the-login-required-decorator
+from django.contrib.auth.decorators import login_required
 
 
 def index(request):
@@ -23,6 +27,11 @@ def index(request):
     ## DETECT USER
     # TODO: login required friend | owner
     #       can see only my list or friend list anon
+    #if request.user.is_authenticated:
+
+    # if not request.user.is_authenticated:
+    #     return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
     current_user = request.user
 
     ## GET USER'S RICH PLANTS (WITH FILTERS)
@@ -53,7 +62,6 @@ def index(request):
     }
     template = loader.get_template('plants/index.html')
     return HttpResponse(template.render(context, request))
-
 
 def plant_view(request, plant_id):
     """Plant Profile with History Timeline"""
@@ -89,7 +97,6 @@ def plant_view(request, plant_id):
     }
     template = loader.get_template('plants/view.html')
     return HttpResponse(template.render(context, request))
-
 
 def plant_create(request, plant_id=None):
     """Plant Creation"""
@@ -174,7 +181,6 @@ def plant_create(request, plant_id=None):
         'title': _('AddPlant'),
     }
     return HttpResponse(template.render(context, request))
-
 
 def edit_plant_attr(request, plant_id=None, attr_key=None):
     """Plant Attribute Editing"""
@@ -277,5 +283,39 @@ def upload_photo(request, plant_id):
         'title': _('UploadPhoto'),
     }
     return HttpResponse(template.render(context, request))
+
+def signup(request):
+    """Sign up view"""
+    if request.method == "POST":
+        form = UserCreateForm(request.Post)
+        if form.is_valid():
+            new_user = form.save()
+            new_user = authenticate(
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password'],
+            )
+            login(request, new_user)
+        else:
+            pritn(request.POST, form.errors)
+            return render(request, 'signup.html', {'form': form, 'error': form.errors})
+    else:
+        form = UserCreateForm()
+        return render(request, 'plants/signup.html', {'form': form})
+
+def login(request):
+    """Login view"""
+    if request.method == "POST":
+        user = authenticate(
+            request,
+            username=request.POST['username'],
+            password=request.POST['password'],
+        )
+        if user is not None:
+            login(request, user)
+            return HttpResponse('Logged in')
+        else:
+            return HttpResponse('Login Unsuccessfull')
+    else: 
+        return render(request, 'plants/login.html')
 
 

@@ -10,6 +10,7 @@ urlpatterns = [
     #path('edit/<int:plant_id>', views.plant_create),
     path('edit/<int:plant_id>/attr/<str:attr_key>', views.edit_plant_attr, name='plant_edit_attr'),
     path('upload_photo/<int:plant_id>', views.upload_photo, name='upload_photo'),
+    
 ] 
 
 
