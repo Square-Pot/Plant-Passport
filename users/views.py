@@ -1,14 +1,19 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import User, Friend_Request
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
+from django.template import loader
+from django.utils.translation import gettext as _
+from .models import User, Friend_Request
 from .forms import UserCreateForm
 
 def signup(request):
     """Sign up view"""
+    print(request.method)
     if request.method == "POST":
         form = UserCreateForm(request.Post)
         if form.is_valid():
+            print('Valid')
             new_user = form.save()
             new_user = authenticate(
                 username=form.cleaned_data['username'],
@@ -16,13 +21,16 @@ def signup(request):
             )
             login(request, new_user)
         else:
-            pritn(request.POST, form.errors)
-            return render(request, 'signup.html', {'form': form, 'error': form.errors})
+            print('not valid')
+            print(request.POST, form.errors)
+            return render(request, 'users/signup.html', {'form': form, 'error': form.errors})
     else:
         form = UserCreateForm()
+        print('opa opa')
         return render(request, 'users/signup.html', {'form': form})
+        
 
-def login(request):
+def loginview(request):
     """Login view"""
     if request.method == "POST":
         user = authenticate(
@@ -58,4 +66,12 @@ def accept_friend_request(request, requestID):
         return HttpResponse('Friend request accepted')
     else:
         return HttpResponse('Friend request not accepted')
+
+def user_home(request):
+    context = {
+        'title': _('UserHome'),
+        'user': request.user
+    }
+    template = loader.get_template('users/homepage.html')
+    return HttpResponse(template.render(context, request))
 

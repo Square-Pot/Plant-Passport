@@ -1,0 +1,21 @@
+{% extends "main.html" %}
+{% load i18n %}
+
+    {% block content %}
+    <ul class="all_users">
+        {% for user in allusers %}
+            {% if not user.is)superuser %}
+                {% if user not in request.user.friends.all and user != request.user %}
+                <h1>{{ user }} <a href="/send_friend_request/{{ user.id }}">Send friend request</a></h1>>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+    {% endblock %}
+
+
+    {% for friend_request in all_friend_requests %}
+        <h1>{{ friend_request.from_user }}
+            <a href="/accept_friend_request/{{ friend_request.id }}">Accept friend request</a>
+        </h1>
+    {% endfor %}
