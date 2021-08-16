@@ -2,7 +2,8 @@
 {% load i18n %}
 
     {% block content %}
-    <form class="login-form", method="POST", action="/login/">
+    <form action="{% url 'login' %}" method="post" class="login-form">
+        {% csrf_token %}
         <div>
             <label for="username">Username: </label>
             <input type="text" name="username" />
@@ -12,7 +13,7 @@
             <input type="password" name="password" />
         </div>
         <div>
-            <bbutton type="submit">Login</button>
+            <button type="submit">Login</button>
         </div>
     </form>
     {% endblock %}

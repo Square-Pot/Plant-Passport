@@ -32,6 +32,7 @@ def signup(request):
 
 def loginview(request):
     """Login view"""
+    print(request.method)
     if request.method == "POST":
         user = authenticate(
             request,
@@ -44,7 +45,9 @@ def loginview(request):
         else:
             return HttpResponse('Login Unsuccessfull')
     else: 
-        return render(request, 'users/login.html')
+        # return render(request, 'users/login.html')
+        template = loader.get_template('users/login.html')
+        return HttpResponse(template.render({}, request))
 
 @login_required
 def send_friend_request(request, userID):
