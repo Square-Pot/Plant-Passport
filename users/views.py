@@ -27,7 +27,8 @@ def signup(request):
             return render(request, 'users/signup.html', {'form': form, 'error': form.errors})
     else:
         form = UserCreateForm()
-        return render(request, 'users/signup.html', {'form': form})
+        return render(request, 'users/signup.html', {'title': _('SignUp'), 'form': form})
+        
         
 
 def login_view(request):
@@ -47,7 +48,7 @@ def login_view(request):
     else: 
         # return render(request, 'users/login.html')
         template = loader.get_template('users/login.html')
-        return HttpResponse(template.render({}, request))
+        return HttpResponse(template.render({'title': _('Login')}, request))
 
 @login_required
 def logout_view(request):
