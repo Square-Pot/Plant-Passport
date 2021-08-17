@@ -20,7 +20,7 @@ from django.urls import include, path
 from users.views import signup, loginview, send_friend_request, accept_friend_request, user_home
 
 urlpatterns = [
-    path('', user_home), 
+    path('', user_home, name='user home'), 
     path('admin/', admin.site.urls), 
 ]
 
