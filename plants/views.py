@@ -10,12 +10,13 @@ from django.utils.translation import activate
 from django.utils import translation
 from django.contrib.auth import authenticate, login
 from users.forms import UserCreateForm
+from users.models import User
 
 # https://docs.djangoproject.com/en/3.2/topics/auth/default/#the-login-required-decorator
 from django.contrib.auth.decorators import login_required
 
 
-def index(request):
+def index(request, user_id=None):
     """List of User Plants"""
 
     # TODO: add ability to view not only my plants, but other users (friends for ex.)
@@ -33,16 +34,26 @@ def index(request):
     # if not request.user.is_authenticated:
     #     return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
-    current_user = request.user
+    
+     
+    if not user_id: 
+        # current user
+        user = request.user
+        user_id = user.id
+        title = _('MyPlants')
+    else:
+        user = User.objects.filter(id=user_id)
+        title = _('PlantsOfUser')
+    
 
     ## GET USER'S RICH PLANTS (WITH FILTERS)
     # TODO: filter by genus, sp.
     #       replace folowing code with service
     #       Pavlick thinks REPOZOTORIY should be used
-    owning_plants = Log.objects.filter(data__owner=current_user.id).values_list('plant', flat=True)
+    user_plants = Log.objects.filter(data__owner=user_id).values_list('plant', flat=True)
     rich_plants_attrs = []
     rich_plants = []
-    for plant_id in owning_plants:
+    for plant_id in user_plants:
         plant = Plant.objects.filter(id=plant_id)[0]
         rich_plant = RichPlant.new_from(plant)
         rich_plant.get_attrs_values()
@@ -56,11 +67,13 @@ def index(request):
 
     ## DATA FOR TEMPLATE
     context = {
-        #'rp_attrs': rich_plants_attrs, 
         'rich_plants': rich_plants, 
         'attrs_summary': attrs_summary,
-        'title': _('MyPlants'),
+        'title': title,
     }
+
+    
+
     template = loader.get_template('plants/index.html')
     return HttpResponse(template.render(context, request))
 
