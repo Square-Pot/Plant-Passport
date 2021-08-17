@@ -17,17 +17,18 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
 from django.urls import include, path
-from users.views import signup, loginview, send_friend_request, accept_friend_request, user_home
+from users.views import signup, login_view, logout_view, send_friend_request, accept_friend_request, user_home
 
 urlpatterns = [
-    path('', user_home, name='user home'), 
+    path('', user_home, name='user_home'), 
     path('admin/', admin.site.urls), 
 ]
 
 urlpatterns += i18n_patterns(
     path('plants/', include('plants.urls')),
     path('signup/', signup, name='signup'),
-    path('login/', loginview, name='login'),
+    path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
     path('send_friend_request/<int:userID>/', send_friend_request, name='send friend request'),
     path('accept_friend_request/<int:requestID>/', accept_friend_request, name='accept friend request'),
 )

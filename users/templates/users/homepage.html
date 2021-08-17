@@ -1,9 +1,15 @@
-<h1>Hello!</h1>   
+{% extends "main.html" %}
+{% load i18n %}
 
-{% if user.is_authenticated %}
-<h2>Lodded in as {{ user }}</h2>
+    {% block content %}
 
-{% else %}
-Please <a href="{% url 'login' %}">login<a> or <a href="{% url 'signup' %}">sign up</a>.
-{% endif %}
+    {% if user.is_authenticated %}
+    <p>Logged in as <b>{{ user }}</b></p>
+    <a href="{% url 'logout' %}">Logout<a></a>
+
+    {% else %}
+    Please <a href="{% url 'login' %}">login<a> or <a href="{% url 'signup' %}">sign up</a>.
+    {% endif %}
+
+    {% endblock %}
 

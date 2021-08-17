@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.template import loader
 from django.utils.translation import gettext as _
 from .models import User, Friend_Request
@@ -20,19 +20,18 @@ def signup(request):
                 password=form.cleaned_data['password1'],
             )
             login(request, new_user)
+            return redirect('user_home')
         else:
             print('not valid')
             print(request.POST, form.errors)
             return render(request, 'users/signup.html', {'form': form, 'error': form.errors})
     else:
         form = UserCreateForm()
-        print('opa opa')
         return render(request, 'users/signup.html', {'form': form})
         
 
-def loginview(request):
+def login_view(request):
     """Login view"""
-    print(request.method)
     if request.method == "POST":
         user = authenticate(
             request,
@@ -41,13 +40,21 @@ def loginview(request):
         )
         if user is not None:
             login(request, user)
-            return HttpResponse('Logged in')
+            #return HttpResponse('Logged in')
+            return redirect('user_home')
         else:
             return HttpResponse('Login Unsuccessfull')
     else: 
         # return render(request, 'users/login.html')
         template = loader.get_template('users/login.html')
         return HttpResponse(template.render({}, request))
+
+@login_required
+def logout_view(request):
+    """Logout veiw"""
+    logout(request)
+    return redirect('user_home')
+
 
 @login_required
 def send_friend_request(request, userID):
