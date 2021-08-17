@@ -6,6 +6,12 @@ from django.conf import settings
 
 
 class Plant(models.Model):
+
+    class AccessTypeChoices(models.IntegerChoices):
+        PUBLIC = 0
+        FRIENDS = 1
+        PRIVATE = 2
+
     uid = models.CharField(
         max_length=10,
     )
@@ -23,6 +29,11 @@ class Plant(models.Model):
     
     is_deleted = models.BooleanField(
         default=False,
+    )
+
+    access_type = models.IntegerField(
+        choices=AccessTypeChoices.choices,
+        default=0,
     )
 
     def __str__(self):
