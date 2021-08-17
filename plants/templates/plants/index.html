@@ -1,6 +1,7 @@
 {% extends "main.html" %}
 
     {% block content %}
+    <h2>{{ section_name }}{% if not is_owner %} <b>{{ user_name }}</b>{% endif %}</h2>
     <table border="1" style="width:100%">
         <tr>
             <th>UID</th>

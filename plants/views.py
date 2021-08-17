@@ -3,14 +3,14 @@ import string
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.template import loader
-from .models import Plant, RichPlant, Log, Attribute, Action
-from .forms import PlantForm, AttributeForm, PhotoForm
 from django.utils.translation import gettext as _
 from django.utils.translation import activate
 from django.utils import translation
 from django.contrib.auth import authenticate, login
 from users.forms import UserCreateForm
 from users.models import User
+from .models import Plant, RichPlant, Log, Attribute, Action
+from .forms import PlantForm, AttributeForm, PhotoForm
 
 # https://docs.djangoproject.com/en/3.2/topics/auth/default/#the-login-required-decorator
 from django.contrib.auth.decorators import login_required
@@ -35,15 +35,22 @@ def index(request, user_id=None):
     #     return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
     
-     
+    
     if not user_id: 
         # current user
-        user = request.user
-        user_id = user.id
-        title = _('MyPlants')
+        if request.user.is_authenticated:
+            user = request.user
+            user_id = user.id
+            is_owner = True
+            section_name = _('MyPlants')
+        # anonymous
+        else:
+            return redirect('login')
     else:
-        user = User.objects.filter(id=user_id)
-        title = _('PlantsOfUser')
+        # TODO: check if use exist?
+        user = get_object_or_404(User, id=user_id)
+        is_owner = False
+        section_name = _('PlantsOfUser') 
     
 
     ## GET USER'S RICH PLANTS (WITH FILTERS)
@@ -69,7 +76,10 @@ def index(request, user_id=None):
     context = {
         'rich_plants': rich_plants, 
         'attrs_summary': attrs_summary,
-        'title': title,
+        'title': _('ListOfPlants'),
+        'section_name': section_name,
+        'is_owner': is_owner,
+        'user_name': user.username,
     }
 
     
