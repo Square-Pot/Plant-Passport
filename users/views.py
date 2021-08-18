@@ -80,7 +80,7 @@ def accept_friend_request(request, requestID):
 
 def user_home(request):
     context = {
-        'title': _('UserHome'),
+        'title': _('UserProfile'),
         'user': request.user
     }
     template = loader.get_template('users/homepage.html')

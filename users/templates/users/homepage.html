@@ -3,13 +3,34 @@
 
     {% block content %}
 
-    {% if user.is_authenticated %}
-    <p>Logged in as <b>{{ user }}</b></p>
-    <a href="{% url 'logout' %}">Logout<a></a>
+        {% if user.is_authenticated %}
+        <p>Logged in as <b>{{ user }}</b></p>
+        <a href="{% url 'logout' %}">Logout<a></a>
+        {% else %}
+        <p>Please <a href="{% url 'login' %}">login</a> or <a href="{% url 'signup' %}">sign up</a>.</p>
+        {% endif %}
 
-    {% else %}
-    Please <a href="{% url 'login' %}">login<a> or <a href="{% url 'signup' %}">sign up</a>.
-    {% endif %}
+    {% endblock %}
+
+
+    {% block sidebar %}
+
+        {% if user.is_authenticated %}
+        <p>{% trans 'Signed in as' %} <b>{{ user }}</b></p>
+        <a href="{% url 'logout' %}">{% trans 'Sign out' %}</a>
+        <ul>
+            <li><a href="{% url 'plants' %}">{% trans 'Plants' %}</a></li>
+            <li><a href="{% url 'plant_create_edit' %}">{% trans 'Add new plant' %}</a></li>
+            <li><a href="{% trans 'Friends' %}">{% trans 'Friends' %}</a></li>
+        </ul>
+        {% else %}
+        <p>{% trans 'Login or sign up for access to all functionality' %}</b></p>
+        <ul>
+            <li><a href="{% url 'login' %}">{% trans 'Sign in' %}</a></li>
+            <li><a href="{% url 'signup' %}">{% trans 'Sing up' %}</a></li>
+            <li><a href="">{% trans 'View Random Plant' %}</a></li>
+        </ul>
+        {% endif %}
 
     {% endblock %}
 
