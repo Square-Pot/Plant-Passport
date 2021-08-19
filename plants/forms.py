@@ -6,7 +6,7 @@ from django.forms import ModelForm
 
 class PlantForm(forms.Form):
     
-    def __init__(self, attributes_dic, *args, **kwargs):
+    def __init__(self, attributes_dic={}, *args, **kwargs):
         """
         Generate form fields for all plant attributes
         """

@@ -122,6 +122,8 @@ def plant_view(request, plant_id):
     template = loader.get_template('plants/view.html')
     return HttpResponse(template.render(context, request))
 
+
+@login_required
 def plant_create(request, plant_id=None):
     """Plant Creation"""
 
@@ -196,7 +198,7 @@ def plant_create(request, plant_id=None):
             return HttpResponseRedirect(f'/plants/view/{ new_plant.id }')
 
     else:
-        form = PlantForm(attrs)
+        form = PlantForm()
 
     ## DATA FOR TEMPLATE
     template = loader.get_template('plants/create.html')
