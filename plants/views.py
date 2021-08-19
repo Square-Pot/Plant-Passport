@@ -63,7 +63,8 @@ def index(request, user_id=None):
     for plant_id in user_plants:
         plant = Plant.objects.filter(id=plant_id)[0]
         rich_plant = RichPlant.new_from(plant)
-        rich_plant.get_attrs_values()
+        #rich_plant.get_attrs_values()
+        rich_plant.get_attrs_dics()
         rich_plants.append(rich_plant)
         #values = rich_plant.get().actual_attrs_values()
         # add uid to first place

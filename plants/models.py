@@ -81,6 +81,10 @@ class Attribute(models.Model):
         null=True
     )
 
+    show_in_list = models.BooleanField(
+        default=True,
+    )
+    
     objects = models.Manager()
 
     keys = AttributeManager()

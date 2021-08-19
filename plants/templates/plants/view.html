@@ -16,9 +16,42 @@
         </tr>
         {% endfor %}
     </table>
-    <a href="{% url 'upload_photo' plant.id %}">{% trans 'AddNewPhoto' %}</a>
+    
+    <!-- Watering and Feritlizing-->
+    <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {% trans 'Watering...' %}
+    </button>
+    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+    <a class="dropdown-item" href="#">{% trans 'Regular' %}</a>
+    <a class="dropdown-item" href="#">{% trans 'Fertilizer' %}</a>
+    </div>
 
-    <h2>{% trans 'ChangeHistory' %}</h2>
+    <!-- Pots and Substrate -->
+    <button id="btnGroupDrop2" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {% trans 'Potting...' %}
+    </button>
+    <div class="dropdown-menu" aria-labelledby="btnGroupDrop2">
+    <a class="dropdown-item" href="#">{% trans 'Repotting' %}</a>
+    <a class="dropdown-item" href="#">{% trans 'Substrate' %}</a>
+    </div>
+
+    <!-- Pests and Fungus -->
+    <button id="btnGroupDrop3" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {% trans 'Curing...' %}
+    </button>
+    <div class="dropdown-menu" aria-labelledby="btnGroupDrop3">
+    <a class="dropdown-item" href="#">{% trans 'Desinsection' %}</a>
+    <a class="dropdown-item" href="#">{% trans 'Antifungal' %}</a>
+    </div>
+
+    <!-- Location and Relocation  -->
+    <button type="button" class="btn btn-secondary">{% trans 'Relocation' %}</button>
+    
+    <!-- Photos  -->
+    <button type="button" class="btn btn-secondary" formaction="{% url 'upload_photo' plant.id %}">{% trans 'Photo' %}</button>
+    
+    <hr>
+    <h4>{% trans 'ChangeHistory' %}</h4>
     <table border="1" style="width:100%">
         <tr>
             <td>{% trans 'Datetime' %}</td>
