@@ -1,3 +1,5 @@
+from django.urls import reverse
+from django.utils.translation import gettext as _
 from .models import Log, Attribute
 
 
@@ -57,3 +59,26 @@ class RichPlant:
             fields_names.append(attr_name)
         return fields_names
     
+
+
+class BrCr:
+    '''Breadcrumbs data generator class'''
+    def __init__(self):
+        self.data = []
+        self.home_init()
+
+
+    def add_level(self, active, url_name, title):
+        if active:
+            # reset active status in previous levels
+            for set in self.data:
+                set[0] = False
+
+        if url_name:
+            url = reverse(url_name)
+        else: 
+            url = '#'
+        self.data.append([active, url, title])
+
+    def home_init(self):
+        self.add_level(True, 'home', _('Home'))

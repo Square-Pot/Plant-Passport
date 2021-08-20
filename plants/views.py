@@ -13,6 +13,7 @@ from .models import Plant, Log, Attribute, Action, RichPlant
 from .forms import PlantForm, AttributeForm, PhotoForm
 from .services import get_user_richplants, get_attrs_titles_with_transl
 from users.services import is_friend
+from .entities import BrCr
 
 
 # https://docs.djangoproject.com/en/3.2/topics/auth/default/#the-login-required-decorator
@@ -32,7 +33,10 @@ def index(request, user_id=None):
     #       replace folowing code with service
     #       Pavlick thinks REPOZOTORIY should be used    
     
-    # show personal plants
+    # Breadcrumbs data
+    brcr = BrCr()
+
+    # Show personal plants
     if not user_id: 
         # authenticated
         current_user = request.user
@@ -42,10 +46,11 @@ def index(request, user_id=None):
             section_name = _('MyPlants')
             user_name = current_user.username
             is_owner = True
+            brcr.add_level(True, '', section_name)
         # anonymous
         else:
             return redirect('login')
-    # show someones plants
+    # Show someone's plants
     else:
         target_user = get_object_or_404(User, id=user_id)
         current_user = request.user
@@ -60,11 +65,15 @@ def index(request, user_id=None):
         section_name = _('PlantsOfUser') 
         user_name = target_user.username
         is_owner = False
+        brcr.add_level(True, '', f'{section_name} {user_name}')
+        
 
-    
+    # Attribute titles
     attrs_titles_with_transl = get_attrs_titles_with_transl()
 
-    ## DATA FOR TEMPLATE
+    
+
+    # Template data
     context = {
         'rich_plants': rich_plants, 
         'attrs_titles': attrs_titles_with_transl,
@@ -72,8 +81,8 @@ def index(request, user_id=None):
         'section_name': section_name,
         'user_name': user_name,
         'is_owner': is_owner,
+        'brcr_data': brcr.data,
     }
-
     template = loader.get_template('plants/index.html')
     return HttpResponse(template.render(context, request))
 
