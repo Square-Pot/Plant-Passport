@@ -11,7 +11,8 @@ from users.forms import UserCreateForm
 from users.models import User
 from .models import Plant, Log, Attribute, Action, RichPlant
 from .forms import PlantForm, AttributeForm, PhotoForm
-from .services import get_user_richplants
+from .services import get_user_richplants, get_attrs_titles_with_transl
+from users.services import is_friend
 
 
 # https://docs.djangoproject.com/en/3.2/topics/auth/default/#the-login-required-decorator
@@ -21,20 +22,10 @@ from django.contrib.auth.decorators import login_required
 def index(request, user_id=None):
     """List of User Plants"""
 
-    # TODO: add ability to view not only my plants, but other users (friends for ex.)
-
     ## I18N
     # TODO: choose, save and read user setting for current language
     cur_language = translation.get_language()
     activate(cur_language)
-
-    ## DETECT USER
-    # TODO: login required friend | owner
-    #       can see only my list or friend list anon
-    #if request.user.is_authenticated:
-
-    # if not request.user.is_authenticated:
-    #     return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
     ## GET USER'S RICH PLANTS (WITH FILTERS)
     # TODO: filter by genus, sp.
@@ -49,6 +40,8 @@ def index(request, user_id=None):
             user_id = current_user.id
             rich_plants = get_user_richplants(user_id)
             section_name = _('MyPlants')
+            user_name = current_user.username
+            is_owner = True
         # anonymous
         else:
             return redirect('login')
@@ -56,25 +49,29 @@ def index(request, user_id=None):
     else:
         target_user = get_object_or_404(User, id=user_id)
         current_user = request.user
-        if current_user.is_authenticated and current_user.is_friend(target_user):
+        # for friend
+        if current_user.is_authenticated and is_friend(current_user, target_user):
             access = [Plant.AccessTypeChoices.PUBLIC, Plant.AccessTypeChoices.FRIENDS]
             rich_plants = get_user_richplants(user_id, access)
+        # for anonymous
         else:
             access = [Plant.AccessTypeChoices.PUBLIC,]
             rich_plants = get_user_richplants(user_id, access)
         section_name = _('PlantsOfUser') 
+        user_name = target_user.username
+        is_owner = False
 
     
-    attrs_summary = Attribute.keys.get_all_names()
+    attrs_titles_with_transl = get_attrs_titles_with_transl()
 
     ## DATA FOR TEMPLATE
     context = {
         'rich_plants': rich_plants, 
-        'attrs_summary': attrs_summary,
+        'attrs_titles': attrs_titles_with_transl,
         'title': _('ListOfPlants'),
         'section_name': section_name,
+        'user_name': user_name,
         'is_owner': is_owner,
-        'user_name': user.username,
     }
 
     template = loader.get_template('plants/index.html')

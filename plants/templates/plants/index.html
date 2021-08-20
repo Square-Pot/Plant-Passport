@@ -6,15 +6,15 @@
     <table class="table table-hover table-sm">
         <tr>
             <th><abbr title="{% trans 'Unique Plant Identificator' %}" class="initialism">UPID</abbr></th>
-            {% for attr in attrs_summary %} 
-            <th><abbr title="{% trans 'Attribute translation' %}" class="initialism">{{ attr }}</abbr></th>
+            {% for attr, transl in attrs_titles.items %} 
+            <th><abbr title="{{ transl }}" class="initialism">{{ attr }}</abbr></th>
             {% endfor %}
         </tr>
     
         {% for rp in rich_plants %}
         <tr>
             <td>
-                <a href='view/{{ rp.id }}'>{{ rp.uid }}</a>
+                <a href="{% url 'plant_view' rp.id  %}">{{ rp.uid }}</a>
             </td>   
             {% for key,value in rp.attrs_as_dic.items %}
             <td class="{{ key }}">{{ value }}</td>
