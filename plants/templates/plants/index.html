@@ -16,7 +16,7 @@
             <td>
                 <a href='view/{{ rp.id }}'>{{ rp.uid }}</a>
             </td>   
-            {% for key,value in rp.attrs_dics.items %}
+            {% for key,value in rp.attrs_as_dic.items %}
             <td class="{{ key }}">{{ value }}</td>
             {% endfor %}    
         </tr>

@@ -1,5 +1,4 @@
 from .models import Log, Attribute
-from .services import get_model_fields
 
 
 class ExtraAttrs:
@@ -18,7 +17,7 @@ class RichPlant:
 
     def __include_plant_attrs(self):
         """Copy Plant model fields"""
-        plant_fields_names = get_model_fields(self.Plant)
+        plant_fields_names = self.__get_model_fields(self.Plant)
         for field_name in plant_fields_names:
             value = getattr(self.Plant, field_name)
             setattr(self, field_name, value)
@@ -48,4 +47,13 @@ class RichPlant:
         """Add extra attributes to ReachPlant from dict"""
         for key in self.attrs_as_dic:
             setattr(self.attrs, key, self.attrs_as_dic[key])
+
+    @staticmethod
+    def __get_model_fields(obj):
+        """Get model attributs names from object"""
+        fields_names = []
+        for line in obj._meta.fields:
+            attr_name = str(line).split('.')[-1]
+            fields_names.append(attr_name)
+        return fields_names
     

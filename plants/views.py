@@ -9,8 +9,9 @@ from django.utils import translation
 from django.contrib.auth import authenticate, login
 from users.forms import UserCreateForm
 from users.models import User
-from .models import Plant, RichPlant, Log, Attribute, Action
+from .models import Plant, Log, Attribute, Action, RichPlant
 from .forms import PlantForm, AttributeForm, PhotoForm
+from .services import get_user_richplants
 
 # https://docs.djangoproject.com/en/3.2/topics/auth/default/#the-login-required-decorator
 from django.contrib.auth.decorators import login_required
@@ -57,20 +58,23 @@ def index(request, user_id=None):
     # TODO: filter by genus, sp.
     #       replace folowing code with service
     #       Pavlick thinks REPOZOTORIY should be used
-    user_plants = Log.objects.filter(data__owner=user_id).values_list('plant', flat=True)
-    rich_plants_attrs = []
-    rich_plants = []
-    for plant_id in user_plants:
-        plant = Plant.objects.filter(id=plant_id)[0]
-        rich_plant = RichPlant.new_from(plant)
-        #rich_plant.get_attrs_values()
-        rich_plant.get_attrs_dics()
-        rich_plants.append(rich_plant)
+
+    # user_plants = Log.objects.filter(data__owner=user_id).values_list('plant', flat=True)
+    # rich_plants_attrs = []
+    # rich_plants = []
+    # for plant_id in user_plants:
+    #     plant = Plant.objects.filter(id=plant_id)[0]
+    #     rich_plant = RichPlant.new_from(plant)
+    #     #rich_plant.get_attrs_values()
+    #     rich_plant.get_attrs_dics()
+    #     rich_plants.append(rich_plant)
         #values = rich_plant.get().actual_attrs_values()
         # add uid to first place
         #values.insert(0, rich_plant.uid)
         #rich_plants_attrs.append(values)
     #attrs_summary = Attribute.keys.get_all_keys()
+
+    rich_plants = get_user_richplants(user_id)
     attrs_summary = Attribute.keys.get_all_names()
 
     ## DATA FOR TEMPLATE
@@ -83,10 +87,9 @@ def index(request, user_id=None):
         'user_name': user.username,
     }
 
-    
-
     template = loader.get_template('plants/index.html')
     return HttpResponse(template.render(context, request))
+
 
 def plant_view(request, plant_id):
     """Plant Profile with History Timeline"""
