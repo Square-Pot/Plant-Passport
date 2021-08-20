@@ -13,6 +13,7 @@ from .models import Plant, Log, Attribute, Action, RichPlant
 from .forms import PlantForm, AttributeForm, PhotoForm
 from .services import get_user_richplants
 
+
 # https://docs.djangoproject.com/en/3.2/topics/auth/default/#the-login-required-decorator
 from django.contrib.auth.decorators import login_required
 
@@ -35,46 +36,35 @@ def index(request, user_id=None):
     # if not request.user.is_authenticated:
     #     return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
+    ## GET USER'S RICH PLANTS (WITH FILTERS)
+    # TODO: filter by genus, sp.
+    #       replace folowing code with service
+    #       Pavlick thinks REPOZOTORIY should be used    
     
-    
+    # show personal plants
     if not user_id: 
-        # current user
-        if request.user.is_authenticated:
-            user = request.user
-            user_id = user.id
-            is_owner = True
+        # authenticated
+        current_user = request.user
+        if current_user.is_authenticated:
+            user_id = current_user.id
+            rich_plants = get_user_richplants(user_id)
             section_name = _('MyPlants')
         # anonymous
         else:
             return redirect('login')
+    # show someones plants
     else:
-        # TODO: check if use exist?
-        user = get_object_or_404(User, id=user_id)
-        is_owner = False
+        target_user = get_object_or_404(User, id=user_id)
+        current_user = request.user
+        if current_user.is_authenticated and current_user.is_friend(target_user):
+            access = [Plant.AccessTypeChoices.PUBLIC, Plant.AccessTypeChoices.FRIENDS]
+            rich_plants = get_user_richplants(user_id, access)
+        else:
+            access = [Plant.AccessTypeChoices.PUBLIC,]
+            rich_plants = get_user_richplants(user_id, access)
         section_name = _('PlantsOfUser') 
+
     
-
-    ## GET USER'S RICH PLANTS (WITH FILTERS)
-    # TODO: filter by genus, sp.
-    #       replace folowing code with service
-    #       Pavlick thinks REPOZOTORIY should be used
-
-    # user_plants = Log.objects.filter(data__owner=user_id).values_list('plant', flat=True)
-    # rich_plants_attrs = []
-    # rich_plants = []
-    # for plant_id in user_plants:
-    #     plant = Plant.objects.filter(id=plant_id)[0]
-    #     rich_plant = RichPlant.new_from(plant)
-    #     #rich_plant.get_attrs_values()
-    #     rich_plant.get_attrs_dics()
-    #     rich_plants.append(rich_plant)
-        #values = rich_plant.get().actual_attrs_values()
-        # add uid to first place
-        #values.insert(0, rich_plant.uid)
-        #rich_plants_attrs.append(values)
-    #attrs_summary = Attribute.keys.get_all_keys()
-
-    rich_plants = get_user_richplants(user_id)
     attrs_summary = Attribute.keys.get_all_names()
 
     ## DATA FOR TEMPLATE

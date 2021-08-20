@@ -20,11 +20,11 @@ from django.urls import include, path
 from users.views import signup, login_view, logout_view, send_friend_request, accept_friend_request, user_home
 
 urlpatterns = [
-    path('', user_home, name='user_home'), 
     path('admin/', admin.site.urls), 
 ]
 
 urlpatterns += i18n_patterns(
+    path('', user_home, name='user_home'), 
     path('plants/', include('plants.urls')),
     path('signup/', signup, name='signup'),
     path('login/', login_view, name='login'),
