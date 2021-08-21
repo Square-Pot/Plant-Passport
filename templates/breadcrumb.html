@@ -1,9 +1,12 @@
 
             <ol class="breadcrumb">
                 {% for active, url, title in brcr_data %}
-                <li class="breadcrumb-item{% if active %} active{% endif %}" {% if active %}aria-current="page"{% endif %}><a href="{{ url }}">{{ title }}</a></li>
+                <li class="breadcrumb-item{% if active %} active{% endif %}">
+                    {% if url %}
+                    <a href="{{ url }}">{{ title }}</a>
+                    {% else %}
+                    {{ title }}
+                    {% endif %}
+                </li>
                 {% endfor %}
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Library</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Data</li>
             </ol>

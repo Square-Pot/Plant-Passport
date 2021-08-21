@@ -77,7 +77,7 @@ class BrCr:
         if url_name:
             url = reverse(url_name)
         else: 
-            url = '#'
+            url = None
         self.data.append([active, url, title])
 
     def home_init(self):
