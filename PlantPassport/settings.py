@@ -131,6 +131,8 @@ LANGUAGE_PATHS = [
     os.path.join(BASE_DIR, 'plants/locale')  
 ]
 
+LANGUAGE_COOKIE_NAME = 'plant_passport_language'
+
 
 ## Photos
 

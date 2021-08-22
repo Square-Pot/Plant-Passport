@@ -43,6 +43,7 @@ def index(request, user_id=None):
         if current_user.is_authenticated:
             user_id = current_user.id
             rich_plants = get_user_richplants(user_id)
+            # Translators: Section name
             section_name = _('MyPlants')
             user_name = current_user.username
             is_owner = True

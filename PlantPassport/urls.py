@@ -21,6 +21,7 @@ from users.views import signup, login_view, logout_view, send_friend_request, ac
 
 urlpatterns = [
     path('admin/', admin.site.urls), 
+    path('i18n/', include('django.conf.urls.i18n')),
 ]
 
 urlpatterns += i18n_patterns(
