@@ -7,6 +7,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import activate
 from django.utils import translation
 from django.contrib.auth import authenticate, login
+from django.core.exceptions import PermissionDenied
 from users.forms import UserCreateForm
 from users.models import User
 from .models import Plant, Log, Attribute, Action, RichPlant
@@ -21,12 +22,9 @@ from django.contrib.auth.decorators import login_required
 
 
 def index(request, user_id=None):
-    """List of User Plants"""
+    """List of User/Someones Plants"""
 
-    ## GET USER'S RICH PLANTS (WITH FILTERS)
-    # TODO: filter by genus, sp.
-    #       replace folowing code with service
-    #       Pavlick thinks REPOZOTORIY should be used    
+    # TODO: filter manager by genus, sp., etc.
     
     # Breadcrumbs data
     brcr = BrCr()
@@ -46,6 +44,7 @@ def index(request, user_id=None):
         # anonymous
         else:
             return redirect('login')
+
     # Show someone's plants
     else:
         target_user = get_object_or_404(User, id=user_id)
@@ -83,10 +82,93 @@ def index(request, user_id=None):
 def plant_view(request, plant_id):
     """Plant Profile with History Timeline"""
 
-    ## I18N
-    # TODO: choose, save and read user setting for current language
-    cur_language = translation.get_language()
-    activate(cur_language)
+    # try to get plant by id
+    target_plant = get_object_or_404(User, id=plant_id)
+    if target_plant:
+        plant_access = target_plant.access_type
+
+        # plant is public
+        if plant_access == Plant.AccessTypeChoices.PUBLIC:
+            target_rich_plants = get_user_richplants(target_plant)
+
+        else:
+
+            # authenticated
+            current_user = request.user
+            if current_user.is_authenticated: 
+                user_is_friend = check_user_access_to_plant_friend(current_user, target_plant)
+                user_is_owner = check_user_access_to_plant_owner(current_user, target_plant)
+
+                # plant is friends only
+                if plant_access == Plant.AccessTypeChoices.FRIENDS and (user_is_friend or user_is_owner):
+                    target_rich_plants = get_user_richplants(target_plant)
+
+                # plant is privat
+                else:
+                    if user_is_owner:
+                        target_rich_plants = get_user_richplants(target_plant)
+                    else:
+                        # non owner can't view personal plants
+                        raise PermissionDenied
+            else:
+                # anon can't view non public plants
+                raise PermissionDenied
+            
+            # Translators: Section name
+            # section_name = _('MyPlants')
+            # user_name = current_user.username
+            # is_owner = True
+            # brcr.add_level(True, '', section_name)
+
+
+
+
+    # Show personal plants
+    if not user_id: 
+        # authenticated
+        current_user = request.user
+        if current_user.is_authenticated:
+            user_id = current_user.id
+            rich_plants = get_user_richplants(user_id)
+            # Translators: Section name
+            section_name = _('MyPlants')
+            user_name = current_user.username
+            is_owner = True
+            brcr.add_level(True, '', section_name)
+        # anonymous
+        else:
+            return redirect('login')
+    # Show someone's plants
+    else:
+        target_user = get_object_or_404(User, id=user_id)
+        current_user = request.user
+        # for friend
+        if current_user.is_authenticated and is_friend(current_user, target_user):
+            access = [Plant.AccessTypeChoices.PUBLIC, Plant.AccessTypeChoices.FRIENDS]
+            rich_plants = get_user_richplants(user_id, access)
+        # for anonymous
+        else:
+            access = [Plant.AccessTypeChoices.PUBLIC,]
+            rich_plants = get_user_richplants(user_id, access)
+        section_name = _('PlantsOfUser') 
+        user_name = target_user.username
+        is_owner = False
+        brcr.add_level(True, '', f'{section_name} {user_name}')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     ## DETECT USER
     # TODO: anonymous | autorized | fiend | owner

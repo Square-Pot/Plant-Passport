@@ -27,4 +27,16 @@ def get_attrs_titles_with_transl() -> dict:
         result[title] = _(title)
     return result
 
+def check_are_users_friends(user_1, user_2):
+    """Check if one user is friend of another"""
+    if user_1 in user_2.friends.all():
+        return True
+    else:
+        return False
+
+def check_user_access_to_plant_as_friend(current_user, target_rich_plant):
+    # target_user = 
+    pass
+
+
     

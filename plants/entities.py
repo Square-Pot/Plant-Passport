@@ -11,11 +11,13 @@ class ExtraAttrs:
 class RichPlant:
     def __init__(self, plant_object):
         self.Plant = plant_object
+        self.owner = None
         self.__include_plant_attrs()
         self.logs = self.__get_logs()
         self.attrs_as_dic = self.__get_atts_as_dic()
         self.attrs = ExtraAttrs()
-        self.__include_extra_attrs()  
+        self.__include_extra_attrs() 
+        
 
     def __include_plant_attrs(self):
         """Copy Plant model fields"""
@@ -31,7 +33,7 @@ class RichPlant:
     def __get_atts_as_dic(self):
         """Get extra attributes and values from logs as dic"""
         # get ordered list of attibute keys
-        all_attrs_keys = Attribute.keys.get_all_keys().order_by('weight')
+        all_attrs_keys = list(Attribute.keys.get_all_keys().order_by('weight'))
         
         # blank dic init
         extra_attrs = {}
@@ -43,6 +45,10 @@ class RichPlant:
             for key in log.data:
                 if key in extra_attrs:
                     extra_attrs[key] = log.data[key]
+
+                # detect owner
+                if key == 'owner':
+                    self.owner = log.data[key]
         return extra_attrs
 
     def __include_extra_attrs(self):
