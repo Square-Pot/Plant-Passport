@@ -23,11 +23,6 @@ from django.contrib.auth.decorators import login_required
 def index(request, user_id=None):
     """List of User Plants"""
 
-    ## I18N
-    # TODO: choose, save and read user setting for current language
-    cur_language = translation.get_language()
-    activate(cur_language)
-
     ## GET USER'S RICH PLANTS (WITH FILTERS)
     # TODO: filter by genus, sp.
     #       replace folowing code with service
@@ -68,11 +63,8 @@ def index(request, user_id=None):
         is_owner = False
         brcr.add_level(True, '', f'{section_name} {user_name}')
         
-
     # Attribute titles
     attrs_titles_with_transl = get_attrs_titles_with_transl()
-
-    
 
     # Template data
     context = {
