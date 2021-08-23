@@ -1,6 +1,7 @@
 from django.utils.translation import gettext as _
 from plants.models import Log, Plant, Attribute
 from plants.entities import RichPlant
+from users.models import User
 
 
 def get_user_plants(user_id, access=[]):
@@ -34,9 +35,20 @@ def check_are_users_friends(user_1, user_2):
     else:
         return False
 
-def check_user_access_to_plant_as_friend(current_user, target_rich_plant):
-    # target_user = 
-    pass
+def check_is_user_friend_of_plant_owner(user, target_rich_plant):
+    """Check if user is friend of Rich plant owner """
+    target_user = User.objects.get(id=target_rich_plant.owner)
+    if user in target_user.friends.all():
+        return True
+    else:
+        return False
+
+def check_is_user_owner_of_plant(user, target_rich_plant):
+    """Check if user is owner of Rich plant"""
+    if user.id == target_rich_plant.owner:
+        return True
+    else:
+        return False
 
 
     

@@ -12,7 +12,8 @@ from users.forms import UserCreateForm
 from users.models import User
 from .models import Plant, Log, Attribute, Action, RichPlant
 from .forms import PlantForm, AttributeForm, PhotoForm
-from .services import get_user_richplants, get_attrs_titles_with_transl
+from .services import get_user_richplants, get_attrs_titles_with_transl,\
+    check_is_user_friend_of_plant_owner, check_is_user_owner_of_plant
 from users.services import is_friend
 from .entities import BrCr
 
@@ -83,119 +84,76 @@ def plant_view(request, plant_id):
     """Plant Profile with History Timeline"""
 
     # try to get plant by id
-    target_plant = get_object_or_404(User, id=plant_id)
+    target_plant = get_object_or_404(Plant, id=plant_id)
     if target_plant:
         plant_access = target_plant.access_type
+        target_rich_plant = get_user_richplants(target_plant)
 
-        # plant is public
-        if plant_access == Plant.AccessTypeChoices.PUBLIC:
-            target_rich_plants = get_user_richplants(target_plant)
-
-        else:
-
-            # authenticated
-            current_user = request.user
-            if current_user.is_authenticated: 
-                user_is_friend = check_user_access_to_plant_friend(current_user, target_plant)
-                user_is_owner = check_user_access_to_plant_owner(current_user, target_plant)
-
-                # plant is friends only
-                if plant_access == Plant.AccessTypeChoices.FRIENDS and (user_is_friend or user_is_owner):
-                    target_rich_plants = get_user_richplants(target_plant)
-
-                # plant is privat
-                else:
-                    if user_is_owner:
-                        target_rich_plants = get_user_richplants(target_plant)
-                    else:
-                        # non owner can't view personal plants
-                        raise PermissionDenied
-            else:
-                # anon can't view non public plants
-                raise PermissionDenied
-            
-            # Translators: Section name
-            # section_name = _('MyPlants')
-            # user_name = current_user.username
-            # is_owner = True
-            # brcr.add_level(True, '', section_name)
-
-
-
-
-    # Show personal plants
-    if not user_id: 
         # authenticated
         current_user = request.user
-        if current_user.is_authenticated:
-            user_id = current_user.id
-            rich_plants = get_user_richplants(user_id)
-            # Translators: Section name
-            section_name = _('MyPlants')
-            user_name = current_user.username
-            is_owner = True
-            brcr.add_level(True, '', section_name)
+        if current_user.is_authenticated: 
+            user_is_owner = check_is_user_owner_of_plant(current_user, target_rich_plant)
+            user_is_friend = check_is_user_friend_of_plant_owner(current_user, target_rich_plant)
+            is_owner = user_is_owner
+
+            # plant is public
+            if plant_access == Plant.AccessTypeChoices.PUBLIC:
+                rich_plant = target_rich_plant
+
+            # plant is friends only
+            elif plant_access == Plant.AccessTypeChoices.FRIENDS and (user_is_friend or user_is_owner):
+                rich_plant = target_rich_plant
+
+            # plant is privat
+            elif plant_access == Plant.AccessTypeChoices.PRIVATE and user_is_owner:
+                rich_plant = target_rich_plant
+                
+            else:
+                raise PermissionDenied
+        
         # anonymous
         else:
-            return redirect('login')
-    # Show someone's plants
-    else:
-        target_user = get_object_or_404(User, id=user_id)
-        current_user = request.user
-        # for friend
-        if current_user.is_authenticated and is_friend(current_user, target_user):
-            access = [Plant.AccessTypeChoices.PUBLIC, Plant.AccessTypeChoices.FRIENDS]
-            rich_plants = get_user_richplants(user_id, access)
-        # for anonymous
+            is_owner = False
+            
+            # plant is public
+            if plant_access == Plant.AccessTypeChoices.PUBLIC:
+                rich_plant = target_rich_plant
+            else:
+                raise PermissionDenied
+
+        # User name
+        user_name = current_user.username
+
+        # Breadcrubms
+        brcr = BrCr()
+    
+        if is_owner:
+            section_name = _('MyPlant')
+            brcr.add_level(True, '', section_name)
         else:
-            access = [Plant.AccessTypeChoices.PUBLIC,]
-            rich_plants = get_user_richplants(user_id, access)
-        section_name = _('PlantsOfUser') 
-        user_name = target_user.username
-        is_owner = False
-        brcr.add_level(True, '', f'{section_name} {user_name}')
+            section_name = _('PlantOfUser')
+            brcr.add_level(True, '', f'{section_name} {user_name}')
 
+        ## GET HISTORY
+        # TODO add plant history
+        # history = []
+        # for log in rich_plant.logs():
 
+        ## TODO:  add buttons: 
+        #                       - add photo
+        #                       - acton 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    ## DETECT USER
-    # TODO: anonymous | autorized | fiend | owner
-    #current_user = request.user
-
-    ## GET RICH PLANT 
-    plant = Plant.objects.filter(id=plant_id)[0]
-    rich_plant = RichPlant.new_from(plant)
-    rich_plant.get_attrs_dics()
-    rich_plant.get_logs()
-
-    ## GET HISTORY
-    # TODO add plant history
-    # history = []
-    # for log in rich_plant.logs():
-
-    ## TODO:  add buttons: 
-    #                       - add photo
-    #                       - acton 
-
-    ## DATA FOR TEMPLATE
-    context = {
-        'plant': rich_plant,
-        'title': _('PlantProfile'),
-    }
-    template = loader.get_template('plants/view.html')
-    return HttpResponse(template.render(context, request))
+        ## DATA FOR TEMPLATE
+        context = {
+            'plant': rich_plant,
+            'title': _('PlantProfile'),
+            'section_name': section_name,
+            'user_name': user_name,
+            'is_owner': is_owner,
+            'brcr_data': brcr.data,
+        }
+        template = loader.get_template('plants/view.html')
+        return HttpResponse(template.render(context, request))
 
 
 @login_required
