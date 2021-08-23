@@ -1,6 +1,7 @@
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from .models import Log, Attribute
+from users.models import User
 
 
 class ExtraAttrs:
@@ -17,7 +18,18 @@ class RichPlant:
         self.attrs_as_dic = self.__get_atts_as_dic()
         self.attrs = ExtraAttrs()
         self.__include_extra_attrs() 
-        
+    
+    def get_attrs_as_str(self, *args):
+        """Return string of requested attrs"""
+        result = ''
+        for key in args:
+            if key in self.attrs_as_dic:
+                result += self.attrs_as_dic[key] + ' '
+        return result
+
+    def get_owners_name(self):
+        """Returns username of Rich plant"""
+        return User.objects.get(id=self.id).username
 
     def __include_plant_attrs(self):
         """Copy Plant model fields"""

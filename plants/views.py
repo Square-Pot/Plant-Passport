@@ -10,12 +10,12 @@ from django.contrib.auth import authenticate, login
 from django.core.exceptions import PermissionDenied
 from users.forms import UserCreateForm
 from users.models import User
-from .models import Plant, Log, Attribute, Action, RichPlant
+from .models import Plant, Log, Attribute #, Action, RichPlant
 from .forms import PlantForm, AttributeForm, PhotoForm
 from .services import get_user_richplants, get_attrs_titles_with_transl,\
     check_is_user_friend_of_plant_owner, check_is_user_owner_of_plant
 from users.services import is_friend
-from .entities import BrCr
+from .entities import RichPlant, BrCr
 
 
 # https://docs.djangoproject.com/en/3.2/topics/auth/default/#the-login-required-decorator
@@ -87,7 +87,7 @@ def plant_view(request, plant_id):
     target_plant = get_object_or_404(Plant, id=plant_id)
     if target_plant:
         plant_access = target_plant.access_type
-        target_rich_plant = get_user_richplants(target_plant)
+        target_rich_plant = RichPlant(target_plant)
 
         # authenticated
         current_user = request.user
@@ -123,16 +123,23 @@ def plant_view(request, plant_id):
 
         # User name
         user_name = current_user.username
+        owners_name = rich_plant.get_owners_name()
 
         # Breadcrubms
         brcr = BrCr()
-    
+
         if is_owner:
             section_name = _('MyPlant')
-            brcr.add_level(True, '', section_name)
+            brcr.add_level(False, 'plants', section_name)
         else:
             section_name = _('PlantOfUser')
-            brcr.add_level(True, '', f'{section_name} {user_name}')
+            brcr.add_level(False, 'plants', f'{section_name} {owners_name}')
+
+        # Plant name
+        plant_name = rich_plant.get_attrs_as_str('genus', 'species')
+
+        
+        brcr.add_level(True, '', plant_name)
 
         ## GET HISTORY
         # TODO add plant history
