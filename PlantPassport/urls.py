@@ -25,7 +25,7 @@ urlpatterns = [
 ]
 
 urlpatterns += i18n_patterns(
-    path('', user_home, name='home'), 
+    path('', user_home, name='user_home'), 
     path('plants/', include('plants.urls')),
     path('signup/', signup, name='signup'),
     path('login/', login_view, name='login'),

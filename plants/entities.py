@@ -81,4 +81,4 @@ class BrCr:
         self.data.append([active, url, title])
 
     def home_init(self):
-        self.add_level(True, 'home', _('Home'))
+        self.add_level(True, 'user_home', _('Home'))
