@@ -1,6 +1,6 @@
 from django.utils.translation import gettext as _
 from plants.models import Log, Plant, Attribute
-from plants.entities import RichPlant, AttrFilter
+from plants.entities import RichPlant
 from users.models import User
 
 
@@ -22,17 +22,28 @@ def get_user_richplants(user_id, access=[]) -> list:
 
 
 
-
-
-
-def get_filteraible_attr_values(rich_plants: list) -> AttrFilter:
+def get_filteraible_attr_values(rich_plants: list) -> dict:
     """Temproray method: get availiable filterable attrs """
-    filter_obj = AttrFilter()
+    filter_data = {}
+
+    # generate blank structure with attr names
+    for attr_name in Attribute.keys.get_all_keys():
+        filter_data[attr_name] = []
+
+    used_values = {}
+
+    # fill
     for rp in rich_plants: 
         for attr_name in rp.attrs_as_dic:
+            if attr_name not in used_values:
+                used_values[attr_name] = []
             if check_is_attr_filterable(attr_name):
-                filter_obj.append_val_to_attr(attr_name, rp.attrs_as_dic[attr_name])
-    return filter_obj
+                value = rp.attrs_as_dic[attr_name]
+                if value not in used_values[attr_name]:
+                    filter_data[attr_name].append({'val':rp.attrs_as_dic[attr_name], 'checked':1})
+                    used_values[attr_name].append(value)
+    return filter_data
+
 
 def check_is_attr_filterable(attr_key):
     attr = Attribute.objects.get(key=attr_key)
@@ -72,5 +83,3 @@ def check_is_user_owner_of_plant(user, target_rich_plant):
     else:
         return False
 
-
-    

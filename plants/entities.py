@@ -9,19 +9,6 @@ class ExtraAttrs:
     pass
 
 
-class AttrFilter:
-    def __init__(self):
-        self.__set_blank_attrs()
-
-    def __set_blank_attrs(self):
-        all_attr_keys = Attribute.objects.values_list('key', flat=True)
-        for key in all_attr_keys:
-            setattr(self, key, [])
-
-    def append_val_to_attr(self, attr, value):
-      self.__dict__[attr].append(attr)
-
-
 class RichPlant:
     def __init__(self, plant_object):
         self.Plant = plant_object

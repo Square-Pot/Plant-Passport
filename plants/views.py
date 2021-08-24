@@ -66,10 +66,29 @@ def index(request, user_id=None):
         
     # Attribute titles
     attrs_titles_with_transl = get_attrs_titles_with_transl()
-    attrs_keys = Attribute.keys.get_all_keys()
+    #attrs_keys = Attribute.keys.get_all_keys()
+    
 
     # Filter
-    filterable_attrs = get_filteraible_attr_values(rich_plants)
+    filter_data = get_filteraible_attr_values(rich_plants)
+    print(filter_data)
+
+    _filterable_attrs = [
+            {'genus': [
+                        {'val':'lithops', 'checked':1},
+                        {'val':'conophytum', 'checked':1}, 
+                        {'val':'ophtalmophyllum', 'checked':1},
+                      ]
+            },
+            {'species':[
+                        {'val':'karasmontana', 'checked':1},
+                        {'val':'lesley', 'checked':1},
+                        {'val':'dorothea', 'checked':1},
+                       ]
+            },
+        ]
+
+
 
     # Template data
     context = {
@@ -80,8 +99,8 @@ def index(request, user_id=None):
         'user_name': user_name,
         'is_owner': is_owner,
         'brcr_data': brcr.data,
-        'filter_attrs': filterable_attrs,
-        'attrs_keys': attrs_keys,
+        'filter_attrs': filter_data,
+        #'attrs_keys': attrs_keys,
     }
     template = loader.get_template('plants/index.html')
     return HttpResponse(template.render(context, request))
