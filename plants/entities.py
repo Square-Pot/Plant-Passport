@@ -29,7 +29,7 @@ class RichPlant:
 
     def get_owners_name(self):
         """Returns username of Rich plant"""
-        return User.objects.get(id=self.id).username
+        return User.objects.get(id=self.owner).username
 
     def __include_plant_attrs(self):
         """Copy Plant model fields"""
