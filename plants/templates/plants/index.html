@@ -1,27 +1,46 @@
 {% extends "main.html" %}
 {% load i18n %}
 
+
     {% block content %}
     <h2>{{ section_name }}{% if not is_owner %} <b>{{ user_name }}</b>{% endif %}</h2>
-    <table class="table table-hover table-sm">
-        <tr>
-            <th><abbr title="{% trans 'Unique Plant Identificator' %}" class="initialism">UPID</abbr></th>
-            {% for attr, transl in attrs_titles.items %} 
-            <th><abbr title="{{ transl }}" class="initialism">{{ attr }}</abbr></th>
-            {% endfor %}
-        </tr>
     
-        {% for rp in rich_plants %}
-        <tr>
-            <td>
-                <a href="{% url 'plant_view' rp.id  %}">{{ rp.uid }}</a>
-            </td>   
-            {% for key,value in rp.attrs_as_dic.items %}
-            <td class="{{ key }}">{{ value }}</td>
-            {% endfor %}    
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="container">
+        <div class="row justify-content-end">
+            <button class="col-auto btn btn-outline-primary btn-sm mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+                Filters
+            </button>
+        </div>
+    
+        <div class="row">
+            <table class="table table-hover table-sm ">
+                <tr class="collapse bg-white border border-warning shadow" id="collapseFilters">
+                    <td></td>
+                    <td>Фильтры по роду</td>
+                    <td>Фильтры по виду</td>
+                    <td></td>
+                    <td></td>
+                <tr>
+                <tr>
+                    <th><abbr title="{% trans 'Unique Plant Identificator' %}" class="initialism">UPID</abbr></th>
+                    {% for attr, transl in attrs_titles.items %} 
+                    <th><abbr title="{{ transl }}" class="initialism">{{ attr }}</abbr></th>
+                    {% endfor %}
+                </tr>
+            
+                {% for rp in rich_plants %}
+                <tr>
+                    <td>
+                        <a href="{% url 'plant_view' rp.id  %}">{{ rp.uid }}</a>
+                    </td>   
+                    {% for key,value in rp.attrs_as_dic.items %}
+                    <td class="{{ key }}">{{ value }}</td>
+                    {% endfor %}    
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
     {% endblock %}
 
 

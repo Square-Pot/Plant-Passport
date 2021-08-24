@@ -84,6 +84,10 @@ class Attribute(models.Model):
     show_in_list = models.BooleanField(
         default=True,
     )
+
+    filterable = models.BooleanField(
+        default=False,
+    )
     
     objects = models.Manager()
 
