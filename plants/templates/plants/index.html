@@ -15,11 +15,9 @@
         <div class="row">
             <table class="table table-hover table-sm ">
                 <tr class="collapse bg-white border border-warning shadow" id="collapseFilters">
-                    <td></td>
-                    <td>Фильтры по роду</td>
-                    <td>Фильтры по виду</td>
-                    <td></td>
-                    <td></td>
+                    {% for attr_key in attrs_keys %}
+                    <td>{{ filter_attrs.attr_key }}</td>
+                    {% endfor %}
                 <tr>
                 <tr>
                     <th><abbr title="{% trans 'Unique Plant Identificator' %}" class="initialism">UPID</abbr></th>

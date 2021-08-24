@@ -13,7 +13,8 @@ from users.models import User
 from .models import Plant, Log, Attribute #, Action, RichPlant
 from .forms import PlantForm, AttributeForm, PhotoForm
 from .services import get_user_richplants, get_attrs_titles_with_transl,\
-    check_is_user_friend_of_plant_owner, check_is_user_owner_of_plant
+    check_is_user_friend_of_plant_owner, check_is_user_owner_of_plant,\
+    get_filteraible_attr_values
 from users.services import is_friend
 from .entities import RichPlant, BrCr
 
@@ -65,6 +66,10 @@ def index(request, user_id=None):
         
     # Attribute titles
     attrs_titles_with_transl = get_attrs_titles_with_transl()
+    attrs_keys = Attribute.keys.get_all_keys()
+
+    # Filter
+    filterable_attrs = get_filteraible_attr_values(rich_plants)
 
     # Template data
     context = {
@@ -75,6 +80,8 @@ def index(request, user_id=None):
         'user_name': user_name,
         'is_owner': is_owner,
         'brcr_data': brcr.data,
+        'filter_attrs': filterable_attrs,
+        'attrs_keys': attrs_keys,
     }
     template = loader.get_template('plants/index.html')
     return HttpResponse(template.render(context, request))

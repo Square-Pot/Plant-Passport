@@ -1,6 +1,6 @@
 from django.utils.translation import gettext as _
 from plants.models import Log, Plant, Attribute
-from plants.entities import RichPlant
+from plants.entities import RichPlant, AttrFilter
 from users.models import User
 
 
@@ -19,6 +19,28 @@ def get_user_richplants(user_id, access=[]) -> list:
     for plant in plants:
         rich_plants.append(RichPlant(plant))
     return rich_plants
+
+
+
+
+
+
+def get_filteraible_attr_values(rich_plants: list) -> AttrFilter:
+    """Temproray method: get availiable filterable attrs """
+    filter_obj = AttrFilter()
+    for rp in rich_plants: 
+        for attr_name in rp.attrs_as_dic:
+            if check_is_attr_filterable(attr_name):
+                filter_obj.append_val_to_attr(attr_name, rp.attrs_as_dic[attr_name])
+    return filter_obj
+
+def check_is_attr_filterable(attr_key):
+    attr = Attribute.objects.get(key=attr_key)
+    return attr.filterable
+
+def check_is_attr_show_in_list(attr):
+    attr = Attribute.objects.get(key=attr_key)
+    return attr.show_in_list
 
 def get_attrs_titles_with_transl() -> dict:
     """Returns attribut titles and translation"""
