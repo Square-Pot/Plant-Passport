@@ -66,7 +66,7 @@ def index(request, user_id=None):
         section_name = _('PlantsOfUser') 
         user_name = target_user.username
         is_owner = False
-        brcr.add_level(True, '', f'{section_name} {user_name}')
+        brcr.add_level(True, '', f'{section_name}: {user_name}')
         
     # Attribute titles
     attrs_titles_with_transl = get_attrs_titles_with_transl()
