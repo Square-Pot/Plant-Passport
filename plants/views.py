@@ -14,7 +14,8 @@ from .models import Plant, Log, Attribute #, Action, RichPlant
 from .forms import PlantForm, AttributeForm, PhotoForm
 from .services import get_user_richplants, get_attrs_titles_with_transl,\
     check_is_user_friend_of_plant_owner, check_is_user_owner_of_plant,\
-    get_filteraible_attr_values
+    get_filteraible_attr_values, get_filtered_attr_values_from_post, filter_data_update,\
+    filter_plants
 from users.services import is_friend
 from .entities import RichPlant, BrCr
 
@@ -26,7 +27,10 @@ from django.contrib.auth.decorators import login_required
 def index(request, user_id=None):
     """List of User/Someones Plants"""
 
-    # TODO: filter manager by genus, sp., etc.
+    # get filter data recieved from POST
+    post_filter_data = False
+    if request.method == 'POST':
+        post_filter_data = get_filtered_attr_values_from_post(request.POST)
     
     # Breadcrumbs data
     brcr = BrCr()
@@ -71,24 +75,10 @@ def index(request, user_id=None):
 
     # Filter
     filter_data = get_filteraible_attr_values(rich_plants)
-    print(filter_data)
-
-    _filterable_attrs = [
-            {'genus': [
-                        {'val':'lithops', 'checked':1},
-                        {'val':'conophytum', 'checked':1}, 
-                        {'val':'ophtalmophyllum', 'checked':1},
-                      ]
-            },
-            {'species':[
-                        {'val':'karasmontana', 'checked':1},
-                        {'val':'lesley', 'checked':1},
-                        {'val':'dorothea', 'checked':1},
-                       ]
-            },
-        ]
-
-
+    #print(filter_data)
+    if post_filter_data: 
+        filter_data = filter_data_update(filter_data, post_filter_data)
+        rich_plants = filter_plants(rich_plants, post_filter_data)
 
     # Template data
     context = {
@@ -100,7 +90,6 @@ def index(request, user_id=None):
         'is_owner': is_owner,
         'brcr_data': brcr.data,
         'filter_attrs': filter_data,
-        #'attrs_keys': attrs_keys,
     }
     template = loader.get_template('plants/index.html')
     return HttpResponse(template.render(context, request))

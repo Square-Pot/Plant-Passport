@@ -20,10 +20,46 @@ def get_user_richplants(user_id, access=[]) -> list:
         rich_plants.append(RichPlant(plant))
     return rich_plants
 
+def get_filtered_attr_values_from_post(post_data) -> dict:
+    """
+    Convert post-data to filterable attrs dict:
 
+    {
+        'genus': ['Lithops', 'Conophytum'], 
+        'species': ['karasmontana', 'Leslie'],
+    }
+    """
+    filter_data = {}
+
+    for key in post_data:
+        if 'checkbox' in key:
+            key = key.split('-')
+            attr_name = key[1]
+            attr_value = key[2]
+
+            if attr_name in filter_data:
+                filter_data[attr_name].append(attr_value)
+            else:
+                filter_data[attr_name] = [attr_value, ]
+    return filter_data
 
 def get_filteraible_attr_values(rich_plants: list) -> dict:
-    """Temproray method: get availiable filterable attrs """
+    """
+    Returns all availiable filterable attrs dict:
+
+    {
+        'genus': [
+                {'val':'lithops', 'checked':1},
+                {'val':'conophytum', 'checked':1}, 
+                {'val':'ophtalmophyllum', 'checked':1},
+            ],
+        'species':[
+                {'val':'karasmontana', 'checked':1},
+                {'val':'lesley', 'checked':1},
+                {'val':'dorothea', 'checked':1},
+            ],
+    }    
+    """
     filter_data = {}
 
     # generate blank structure with attr names
@@ -44,6 +80,40 @@ def get_filteraible_attr_values(rich_plants: list) -> dict:
                     used_values[attr_name].append(value)
     return filter_data
 
+def filter_data_update(full_filled_filter_data, post_filter_data):
+    # reset all checked status to 0 
+    for attr_name in full_filled_filter_data:
+        for d in full_filled_filter_data[attr_name]:
+            d['checked'] = 0
+
+    # set checked status to 1 as in posted data
+    for post_attr_name in post_filter_data:
+        for post_val in post_filter_data[post_attr_name]:
+            for d in full_filled_filter_data[post_attr_name]:
+                if d['val'] == post_val:
+                    d['checked'] = 1
+
+    return full_filled_filter_data
+
+def filter_plants(rich_plants: list, filter_data: dict) -> list:
+    """Filter plants according to filtered data"""
+    plant_pass_grade = {}
+    
+    # pass grade calculation
+    for plant in rich_plants:
+        plant_pass_grade[plant] = 0
+        for attr_name in filter_data:
+            for val in filter_data[attr_name]:
+                if getattr(plant.attrs, attr_name) == val:
+                    plant_pass_grade[plant] += 1
+    
+    # check grade 
+    filter_plants = []
+    for plant in plant_pass_grade:
+        if plant_pass_grade[plant] == len(filter_data):
+            filter_plants.append(plant)
+
+    return filter_plants
 
 def check_is_attr_filterable(attr_key):
     attr = Attribute.objects.get(key=attr_key)

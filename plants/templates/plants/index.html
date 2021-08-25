@@ -7,7 +7,7 @@
     
     <div class="container">
         <div class="row justify-content-end">
-            <button class="col-auto collapse btn btn-success btn-sm mb-2 mx-3" type="button" id="collapseFilters">
+            <button form="filterform" type="submit" class="col-auto collapse btn btn-success btn-sm mb-2 mx-3" type="button" id="collapseFilters"  >
                 Apply Filters
             </button>
             <button class="col-auto btn btn-outline-primary btn-sm mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
@@ -18,12 +18,14 @@
         <div class="row">
             <table class="table table-hover table-sm ">
                 <tr class="collapse bg-white border border-warning shadow" id="collapseFilters">
+                    <form id="filterform" method="post" action="{% url 'plants' %}" >
+                        {% csrf_token %}
                     <td></td>
                     {% for attr_name, val_dics in  filter_attrs.items %}
                         <td>
                             {% for value_dic in val_dics %}
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="chb-{{ value_dic.val }}" {% if value_dic.checked %}checked{% endif %}>
+                                    <input class="form-check-input" name="checkbox-{{ attr_name }}-{{ value_dic.val }}" type="checkbox" value="" id="chb-{{ value_dic.val }}" {% if value_dic.checked %}checked{% endif %}>
                                     <label class="form-check-label" for="chb-{{ value_dic.val }}">
                                         {{ value_dic.val }}
                                     </label>
@@ -31,6 +33,7 @@
                             {% endfor %}
                         </td>
                     {% endfor %}
+                    </form>
 
                 <tr>
                 <tr>
