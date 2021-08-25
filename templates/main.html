@@ -134,7 +134,7 @@
               {% include "breadcrumb.html" %}
               <!-- /Breadcrubms -->
             </nav>
-            <h4>{{ title }}</h4 >
+            {% if title %}<h4>{{ title }}</h4 >{% endif %}
             {% block content %}{% endblock %}
           </div>
           <!--  Sidebar -->

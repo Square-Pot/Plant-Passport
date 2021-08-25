@@ -88,7 +88,7 @@ def index(request, user_id=None):
         'rich_plants': rich_plants, 
         'attrs_titles': attrs_titles_with_transl,
         'attrs_not_showing': attrs_not_showing,
-        'title': _('ListOfPlants'),
+        #'title': _('ListOfPlants'),
         'section_name': section_name,
         'user_name': user_name,
         'is_owner': is_owner,
