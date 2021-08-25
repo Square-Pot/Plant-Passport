@@ -49,7 +49,9 @@
                         <a href="{% url 'plant_view' rp.id  %}">{{ rp.uid }}</a>
                     </td>   
                     {% for key,value in rp.attrs_as_dic.items %}
-                    <td class="{{ key }}">{{ value }}</td>
+                        {% if key not in attrs_not_showing %}
+                        <td class="{{ key }}">{{ value }}</td>
+                        {% endif %}
                     {% endfor %}    
                 </tr>
                 {% endfor %}

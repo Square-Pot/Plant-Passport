@@ -125,11 +125,22 @@ def check_is_attr_show_in_list(attr):
 
 def get_attrs_titles_with_transl() -> dict:
     """Returns attribut titles and translation"""
-    attr_titles = Attribute.keys.get_all_names()
+    attr_titles = []
+    attrs = Attribute.objects.filter(show_in_list=True)
+    for attr in attrs:
+        attr_titles.append(attr.name)
+
     result = {}
     for title in attr_titles:
         result[title] = _(title)
     return result
+
+def get_attr_keys_not_showing_in_list() -> list:
+    attrs = Attribute.objects.filter(show_in_list=False)
+    attr_keys = []
+    for attr in attrs:
+        attr_keys.append(attr.key)
+    return(attr_keys)
 
 def check_are_users_friends(user_1, user_2):
     """Check if one user is friend of another"""

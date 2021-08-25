@@ -15,7 +15,7 @@ from .forms import PlantForm, AttributeForm, PhotoForm
 from .services import get_user_richplants, get_attrs_titles_with_transl,\
     check_is_user_friend_of_plant_owner, check_is_user_owner_of_plant,\
     get_filteraible_attr_values, get_filtered_attr_values_from_post, filter_data_update,\
-    filter_plants
+    filter_plants, get_attr_keys_not_showing_in_list
 from users.services import is_friend
 from .entities import RichPlant, BrCr
 
@@ -70,20 +70,24 @@ def index(request, user_id=None):
         
     # Attribute titles
     attrs_titles_with_transl = get_attrs_titles_with_transl()
-    #attrs_keys = Attribute.keys.get_all_keys()
     
+    # Not showing attribute keys
+    attrs_not_showing = get_attr_keys_not_showing_in_list()
+    print(attrs_not_showing)
 
     # Filter
     filter_data = get_filteraible_attr_values(rich_plants)
-    #print(filter_data)
     if post_filter_data: 
         filter_data = filter_data_update(filter_data, post_filter_data)
         rich_plants = filter_plants(rich_plants, post_filter_data)
+
+    
 
     # Template data
     context = {
         'rich_plants': rich_plants, 
         'attrs_titles': attrs_titles_with_transl,
+        'attrs_not_showing': attrs_not_showing,
         'title': _('ListOfPlants'),
         'section_name': section_name,
         'user_name': user_name,
