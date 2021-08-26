@@ -2,60 +2,64 @@
 {% load i18n %}
 
     {% block content %}
+    <h3 class="text-center">{{ plant.fancy_name|safe }}</h3>
+    <hr>
     <div class="container">
         <div class="row">
-          <div class="col-sm-4">
+          <div class="col-sm-5">
             image
           </div>
-          <div class="col-sm-8">
+          <div class="col-sm-7">
             <div class="row row-cols-3 ">
                 <div class="col-4">
-                    <h6>UID</h6>
+                    <b>UID</b>
                 </div>
                 <div class="col-6">
                     <h6>{{ plant.uid }}</h6>
                 </div>
                 <div class="col-2">
-                    
+                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target=".collapseEmptyAttrs" aria-expanded="false" aria-controls="collapseEmptyAttrs">
+                        {% trans 'ShowEmptyFields' %}
+                      </button>
                 </div>
             </div>
-              {% for attr in plant.attrs_as_list_w_types  %}
-            <div class="row row-cols-3">
+            {% for attr in plant.attrs_as_list_w_types  %}
+            {% if attr.type != 3 %}
+            <div class="row row-cols-3 border-top pt-1 {% if not attr.value %} collapseEmptyAttrs{% endif%}">
                 <div class="col-4">
-                    {{ attr.key }}
+                    <b>{{ attr.name }}</b>
                 </div>
                 <div class="col-6">
                     {{ attr.value }}
                 </div>
                 <div class="col-2">
                     {% if is_owner %}
-                    <a href="{% url 'plant_edit_attr' plant.id attr.key %}" class="btn btn-primary btn-sm">{% trans 'Edit' %}</a>
+                    <a href="{% url 'plant_edit_attr' plant.id attr.key %}" class="btn btn-outline-primary btn-sm">{% trans 'Edit' %}</a>
                     {% endif %}
                 </div>
             </div>
+            {% endif %}
             {% endfor %}
           </div>
         </div>
+        {% for attr in plant.attrs_as_list_w_types  %}
+        {% if attr.type == 3 %}
+        <div class="row">
+            <div class="col-12">
+                <h5>{{attr.name}}</h5>
+                <p>{{attr.vale}}</p>
+                {% if is_owner %}
+                <a href="{% url 'plant_edit_attr' plant.id attr.key %}" class="btn btn-outline-primary btn-sm">{% trans 'Edit' %}</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
       </div>
 
 
+      <hr />
 
-    <table class="table table-hover table-sm">
-        <tr>
-            <th>UID</th>
-            <td>{{ plant.uid }}</td>
-            <td></td>   
-        </tr>
-        {% for attr in plant.attrs_as_list_w_types  %}
-        <tr>
-            <th>{{ attr.key }}</th>
-            <td class="{{ attr.key }}">{{ attr.value }}</td>
-            {% if is_owner %}
-            <td><a href="{% url 'plant_edit_attr' plant.id attr.key %}">{% trans 'Edit' %} - {{ attr.type }}</a></td>
-            {% endif %}
-        </tr>
-        {% endfor %}
-    </table>
     
     <!-- Watering and Feritlizing-->
     <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
