@@ -52,6 +52,8 @@ class Attribute(models.Model):
     class AttributeTypeChoices(models.IntegerChoices):
         STRING = 1
         NUMBER = 2
+        TEXT = 3
+        DATE = 4
 
     name = models.CharField(
         max_length=100, 

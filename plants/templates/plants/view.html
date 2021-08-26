@@ -2,18 +2,56 @@
 {% load i18n %}
 
     {% block content %}
+    <div class="container">
+        <div class="row">
+          <div class="col-sm-4">
+            image
+          </div>
+          <div class="col-sm-8">
+            <div class="row row-cols-3 ">
+                <div class="col-4">
+                    <h6>UID</h6>
+                </div>
+                <div class="col-6">
+                    <h6>{{ plant.uid }}</h6>
+                </div>
+                <div class="col-2">
+                    
+                </div>
+            </div>
+              {% for attr in plant.attrs_as_list_w_types  %}
+            <div class="row row-cols-3">
+                <div class="col-4">
+                    {{ attr.key }}
+                </div>
+                <div class="col-6">
+                    {{ attr.value }}
+                </div>
+                <div class="col-2">
+                    {% if is_owner %}
+                    <a href="{% url 'plant_edit_attr' plant.id attr.key %}" class="btn btn-primary btn-sm">{% trans 'Edit' %}</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+
+
     <table class="table table-hover table-sm">
         <tr>
             <th>UID</th>
             <td>{{ plant.uid }}</td>
             <td></td>   
         </tr>
-        {% for key, value in plant.attrs_as_dic.items  %}
+        {% for attr in plant.attrs_as_list_w_types  %}
         <tr>
-            <th>{{ key }}</th>
-            <td class="{{ key }}">{{ value }}</td>
+            <th>{{ attr.key }}</th>
+            <td class="{{ attr.key }}">{{ attr.value }}</td>
             {% if is_owner %}
-            <td><a href="{% url 'plant_edit_attr' plant.id key %}">{% trans 'Edit' %}</a></td>
+            <td><a href="{% url 'plant_edit_attr' plant.id attr.key %}">{% trans 'Edit' %} - {{ attr.type }}</a></td>
             {% endif %}
         </tr>
         {% endfor %}

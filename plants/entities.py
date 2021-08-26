@@ -16,6 +16,7 @@ class RichPlant:
         self.__include_plant_attrs()
         self.logs = self.__get_logs()
         self.attrs_as_dic = self.__get_atts_as_dic()
+        self.attrs_as_list_w_types = self.__get_attrs_as_list_w_types()
         self.attrs = ExtraAttrs()
         self.__include_extra_attrs() 
     
@@ -63,6 +64,19 @@ class RichPlant:
                     self.owner = log.data[key]
         return extra_attrs
 
+    def __get_attrs_as_list_w_types(self) -> list:
+        """Get extra attributes as list of dics with: key, value, type"""
+        attrs_as_dic = self.attrs_as_dic
+        attrs_as_list_w_types = []
+        for attr_key in attrs_as_dic:
+            d = {
+                    'key': attr_key, 
+                    'value': self.attrs_as_dic[attr_key],
+                    'type': self.__get_attr_type(attr_key),
+                }
+            attrs_as_list_w_types.append(d)
+        return attrs_as_list_w_types
+
     def __include_extra_attrs(self):
         """Add extra attributes to ReachPlant from dict"""
         for key in self.attrs_as_dic:
@@ -76,6 +90,11 @@ class RichPlant:
             attr_name = str(line).split('.')[-1]
             fields_names.append(attr_name)
         return fields_names
+
+    @staticmethod
+    def __get_attr_type(attr_key):
+        """Returns type of attribute by attribut key"""
+        return Attribute.objects.get(key=attr_key).value_type
     
 
 
