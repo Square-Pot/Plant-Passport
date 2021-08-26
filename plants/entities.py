@@ -18,7 +18,8 @@ class RichPlant:
         self.attrs_as_dic = self.__get_atts_as_dic()
         self.attrs_as_list_w_types = self.__get_attrs_as_list_w_types()
         self.attrs = ExtraAttrs()
-        self.__include_extra_attrs() 
+        self.__include_extra_attrs()
+        self.fancy_name = self.__get_fancy_name()
     
     def get_attrs_as_str(self, *args):
         """Return string of requested attrs"""
@@ -31,6 +32,28 @@ class RichPlant:
     def get_owners_name(self):
         """Returns username of Rich plant"""
         return User.objects.get(id=self.owner).username
+
+    def __get_fancy_name(self):
+        fancy_name = ''
+        attrs = self.attrs_as_list_w_types
+        for attr in attrs:
+            if attr['value']:
+                # Field Number always uppercase
+                if attr['key'] == "field_number":
+                    fancy_name += f"{attr['value'].upper} "
+                # Genus always capitlized and regular
+                elif attr['key'] == "genus":
+                    fancy_name += f"{attr['value'].capitalize()} "
+                # Species, subspecies, variety always italic and lowercase
+                elif attr['key'] in ['species', 'subspecies', 'variety']:
+                    fancy_name += f"<i>{attr['short_name']} {attr['value'].lower()}</i> " 
+                # Cultivated variety alway regular Uppercase
+                elif attr['key'] == 'cultivar':
+                    fancy_name += f"{attr['short_name']} {attr['value'].title()} " 
+                # etc.
+                elif attr['key'] in ['affinity', 'ex']:
+                    fancy_name += f"{attr['short_name']} {attr['value'].title()} " 
+        return fancy_name
 
     def __include_plant_attrs(self):
         """Copy Plant model fields"""
@@ -69,10 +92,13 @@ class RichPlant:
         attrs_as_dic = self.attrs_as_dic
         attrs_as_list_w_types = []
         for attr_key in attrs_as_dic:
+            attr =  Attribute.objects.get(key=attr_key)
             d = {
                     'key': attr_key, 
                     'value': self.attrs_as_dic[attr_key],
-                    'type': self.__get_attr_type(attr_key),
+                    'type': attr.value_type,
+                    'name': attr.name,
+                    'short_name': attr.short_name
                 }
             attrs_as_list_w_types.append(d)
         return attrs_as_list_w_types
@@ -91,10 +117,6 @@ class RichPlant:
             fields_names.append(attr_name)
         return fields_names
 
-    @staticmethod
-    def __get_attr_type(attr_key):
-        """Returns type of attribute by attribut key"""
-        return Attribute.objects.get(key=attr_key).value_type
     
 
 

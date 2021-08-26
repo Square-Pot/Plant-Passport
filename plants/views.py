@@ -172,7 +172,7 @@ def plant_view(request, plant_id):
         ## DATA FOR TEMPLATE
         context = {
             'plant': rich_plant,
-            'title': _('PlantProfile'),
+            #'title': _('PlantProfile:'),
             'section_name': section_name,
             'user_name': user_name,
             'is_owner': is_owner,
