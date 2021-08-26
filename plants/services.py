@@ -126,7 +126,7 @@ def check_is_attr_show_in_list(attr):
 def get_attrs_titles_with_transl() -> dict:
     """Returns attribut titles and translation"""
     attr_titles = []
-    attrs = Attribute.objects.filter(show_in_list=True)
+    attrs = Attribute.objects.filter(show_in_list=True).order_by('weight')
     for attr in attrs:
         attr_titles.append(attr.name)
 
