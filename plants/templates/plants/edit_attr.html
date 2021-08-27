@@ -2,11 +2,15 @@
 {% load i18n %}
 
     {% block content %}
-    <form action="{% url 'plant_edit_attr' plant_id attr_key %}" method="post" enctype="multipart/form-data">
-        <ul>
-        {% csrf_token %}
-            <li>{{ field.label }}{{ form }}</li>
-        </ul>
-        <input type="submit" value="Submit">
-    </form>
+    <div class="container my-4">
+        <form action="{% url 'plant_edit_attr' plant_id attr_key %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="col">
+                <div class="row row-cols-2 my-2 ">
+                    <div class="col">{{ form }}</div>
+                </div>
+                <button type="submit" class="btn btn-primary">{% trans 'Submit' %}</button>
+            </div>
+        </form>
+    </div>
     {% endblock %}

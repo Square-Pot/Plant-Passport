@@ -258,6 +258,7 @@ def plant_create(request, plant_id=None):
     }
     return HttpResponse(template.render(context, request))
 
+@login_required
 def edit_plant_attr(request, plant_id=None, attr_key=None):
     """Plant Attribute Editing"""
 
@@ -293,8 +294,11 @@ def edit_plant_attr(request, plant_id=None, attr_key=None):
 
     else:
         value = target_rich_plant.attrs_as_dic[attr_key]
-        label = Attribute.objects.filter(key=attr_key)[0].name
-        form = AttributeForm(label, attr_key, value)
+        attr = Attribute.objects.get(key=attr_key)
+        label = attr.name
+        max_length = attr.max_text_length 
+        type = attr.value_type
+        form = AttributeForm(label, attr_key, value, max_length, type)
 
     # Template data
     template = loader.get_template('plants/edit_attr.html')
@@ -306,6 +310,7 @@ def edit_plant_attr(request, plant_id=None, attr_key=None):
     }
     return HttpResponse(template.render(context, request))
 
+@login_required
 def upload_photo(request, plant_id):
     """Photo Uploading"""
 

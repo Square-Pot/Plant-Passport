@@ -54,6 +54,7 @@ class Attribute(models.Model):
         NUMBER = 2
         TEXT = 3
         DATE = 4
+        TEXTAREA = 5
 
     name = models.CharField(
         max_length=100, 
@@ -89,6 +90,10 @@ class Attribute(models.Model):
 
     filterable = models.BooleanField(
         default=False,
+    )
+
+    max_text_length = models.IntegerField(
+        default=100,
     )
     
     objects = models.Manager()
@@ -138,10 +143,15 @@ class Log(models.Model):
         null=False,
     )
 
+    hidden = models.BooleanField(
+        default=False,
+    )
+
     def __str__(self):
         return f"{self.user} {self.CHOICES[self.action_type]} for plant {self.plant.uid}: {str(self.data)}"
 
 
+# delete this! 
 class RichPlantAttrs():
     
     def __init__(self, plant_id):

@@ -21,14 +21,13 @@ class PlantForm(forms.Form):
 
 class AttributeForm(forms.Form):
 
-    def __init__(self, label=None, key=None, value=None, *args, **kwargs):
+    def __init__(self, label=None, key=None, value=None, max_length=None, type=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if key:
-            self.fields[key] = forms.CharField(label=label, initial=value, max_length=100, required=False)
-        else:
-            # why is this case possible?
-            # should be 404 or something
-            self.fields['attribute'] = forms.CharField(label='No label', max_length=100, required=False)
+        widget = None
+        if type == Attribute.AttributeTypeChoices.TEXTAREA:
+            widget = forms.Textarea
+        self.fields[key] = forms.CharField(label=label, initial=value, max_length=max_length, required=False, widget=widget)
+
 
 
 class PhotoForm(forms.ModelForm):

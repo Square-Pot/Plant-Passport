@@ -27,7 +27,7 @@
                 </div>
             </div>
             {% for attr in plant.attrs_as_list_w_types  %}
-            {% if attr.type != 3 %}
+            {% if attr.type != 5 %}
             <div class="row row-cols-3 border-top py-1 {% if not attr.value %}collapse collapseEmptyAttrs{% endif %}">
                 <div class="col-4">
                     <b>{{ attr.name }}</b>
@@ -46,7 +46,7 @@
           </div>
         </div>
         {% for attr in plant.attrs_as_list_w_types  %}
-            {% if attr.type == 3 %}
+            {% if attr.type == 5 %}
             <div class="row {% if not attr.value %}collapse collapseEmptyAttrs{% endif %}">
                 <div class="col-12">
                     <h5>{{attr.name}}</h5>

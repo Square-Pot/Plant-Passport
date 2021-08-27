@@ -2,13 +2,19 @@
 {% load i18n %}
 
     {% block content %}
+    <div class="container mb-4">
     <form action="{% url 'plant_create_edit' %}" method="post" enctype="multipart/form-data">
-        <ul>
         {% csrf_token %}
-        {% for field in form %}
-            <li>{{ field.label }}{{ field }}</li>
-        {% endfor %}
-        </ul>
-        <input type="submit" value="Submit">
+        <div class="col">
+            {% for field in form %}
+            <div class="row row-cols-2 my-2 ">
+                <div class="col-auto">{{ field.label }}:</div>
+                <div class="col">{{ field }}</div>
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">{% trans 'Submit' %}</button>
+        </div>
     </form>
+    </div>
     {% endblock %}
+
