@@ -36,7 +36,6 @@ class RichPlant:
     def __get_fancy_name(self):
         fancy_name = ''
         attrs = self.attrs_as_list_w_types
-        print(attrs)
         for attr in attrs:
             if attr['value']:
                 # Field Number always uppercase

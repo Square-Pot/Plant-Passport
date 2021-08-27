@@ -15,7 +15,7 @@ from .forms import PlantForm, AttributeForm, PhotoForm
 from .services import get_user_richplants, get_attrs_titles_with_transl,\
     check_is_user_friend_of_plant_owner, check_is_user_owner_of_plant,\
     get_filteraible_attr_values, get_filtered_attr_values_from_post, filter_data_update,\
-    filter_plants, get_attr_keys_not_showing_in_list
+    filter_plants, get_attr_keys_not_showing_in_list, create_log
 from users.services import is_friend
 from .entities import RichPlant, BrCr
 
@@ -81,8 +81,6 @@ def index(request, user_id=None):
         filter_data = filter_data_update(filter_data, post_filter_data)
         rich_plants = filter_plants(rich_plants, post_filter_data)
 
-    
-
     # Template data
     context = {
         'rich_plants': rich_plants, 
@@ -146,20 +144,13 @@ def plant_view(request, plant_id):
 
         # Breadcrubms
         brcr = BrCr()
-
         if is_owner:
             section_name = _('MyPlant')
             brcr.add_level(False, 'plants', section_name)
         else:
             section_name = _('PlantOfUser')
             brcr.add_level(False, 'plants', f'{section_name} {owners_name}')
-
-        # Plant name
-        #plant_name = rich_plant.get_attrs_as_str('genus', 'species')
-        plant_name = rich_plant.fancy_name
-
-        
-        brcr.add_level(True, '', plant_name)
+        brcr.add_level(True, '', rich_plant.fancy_name)
 
         ## GET HISTORY
         # TODO add plant history
@@ -170,10 +161,9 @@ def plant_view(request, plant_id):
         #                       - add photo
         #                       - acton 
 
-        ## DATA FOR TEMPLATE
+        # Template data
         context = {
             'plant': rich_plant,
-            #'title': _('PlantProfile:'),
             'section_name': section_name,
             'user_name': user_name,
             'is_owner': is_owner,
@@ -271,58 +261,42 @@ def plant_create(request, plant_id=None):
 def edit_plant_attr(request, plant_id=None, attr_key=None):
     """Plant Attribute Editing"""
 
-    ## I18N
-    # TODO: choose, save and read user setting for current language
-    cur_language = translation.get_language()
-    activate(cur_language)
-
-    ## DETECT USER
-    # TODO: anonymous | autorized 
-    #       ask authorize if not
-    #       check if user has owning rights for plant (with plant_id)
+    # check authentication 
     current_user = request.user
+    if not current_user.is_authenticated:
+        return HttpResponseForbidden()
 
-    ## GET RICH PLANT
-    if plant_id and attr_key:
-        plant = get_object_or_404(Plant, id=plant_id)
-        rich_plant = RichPlant.new_from(plant)
-        if rich_plant.get_owner() != request.user.id:
-            return HttpResponseForbidden()
-        rich_plant.get_attrs_dics()
-    else: 
-        pass #TODO 404
+    # try to get plant by id
+    target_plant = get_object_or_404(Plant, id=plant_id)
+    target_rich_plant = RichPlant(target_plant)
     
-    ## PROCESSING DATA FROM USER
+    # check access (is owner?)
+    user_is_owner = check_is_user_owner_of_plant(current_user, target_rich_plant)
+    if not user_is_owner:
+        return HttpResponseForbidden()
+    
+    # processing user data
     if request.method == 'POST':
-        form = AttributeForm()
-        #print(request.POST)
 
-        # TODO: Check:
-        #               if current user is owner
-        #               if attr key in attrs
-        #               is changes actually was made (was value changed?)
-        if True:
+        # check if attr key exist
+        if attr_key in Attribute.keys.get_all_keys():
             new_value = request.POST[attr_key]
 
-            ### CREATING LOGS 
-            # TODO: replace to services
-            new_log = Log(
-                action_type = 2,  # changed
-                user = current_user, 
-                plant = Plant.objects.filter(id=plant_id)[0], 
-                data = {attr_key: new_value},
+            # create log
+            create_log(
+                Log.ActionChoices.CHANGE,
+                current_user,
+                target_plant,
+                {attr_key: new_value},
             )
-            new_log.save()
-
-        # TODO: fix path
-        return HttpResponseRedirect(f'/plants/view/{ plant_id }')
+        return redirect('plant_view', plant_id=plant_id)
 
     else:
-        value = rich_plant.attrs_dics[attr_key]
+        value = target_rich_plant.attrs_as_dic[attr_key]
         label = Attribute.objects.filter(key=attr_key)[0].name
         form = AttributeForm(label, attr_key, value)
 
-    ## DATA FOR TEMPLATE
+    # Template data
     template = loader.get_template('plants/edit_attr.html')
     context = {
         'attr_key': attr_key,

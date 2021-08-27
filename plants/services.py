@@ -164,3 +164,12 @@ def check_is_user_owner_of_plant(user, target_rich_plant):
     else:
         return False
 
+def create_log(action_type: Log.ActionChoices, user: User, plant: Plant, data: dict):
+    """Create new log"""
+    new_log = Log(
+        action_type = action_type,
+        user = user, 
+        plant = plant, 
+        data = data
+    )
+    new_log.save()
