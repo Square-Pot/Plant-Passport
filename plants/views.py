@@ -155,7 +155,8 @@ def plant_view(request, plant_id):
             brcr.add_level(False, 'plants', f'{section_name} {owners_name}')
 
         # Plant name
-        plant_name = rich_plant.get_attrs_as_str('genus', 'species')
+        #plant_name = rich_plant.get_attrs_as_str('genus', 'species')
+        plant_name = rich_plant.fancy_name
 
         
         brcr.add_level(True, '', plant_name)

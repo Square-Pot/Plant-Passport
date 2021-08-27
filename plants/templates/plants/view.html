@@ -1,5 +1,6 @@
 {% extends "main.html" %}
 {% load i18n %}
+{% load static %}
 
     {% block content %}
     <h3 class="text-center">{{ plant.fancy_name|safe }}</h3>
@@ -7,34 +8,36 @@
     <div class="container">
         <div class="row">
           <div class="col-sm-5">
-            image
+            <img src="{% static 'lithops.jpg' %}" class="img-fluid" alt="{{ plant.fancy_name|safe }}">
           </div>
           <div class="col-sm-7">
-            <div class="row row-cols-3 ">
+            <div class="row row-cols-3 py-1 ">
                 <div class="col-4">
                     <b>UID</b>
                 </div>
-                <div class="col-6">
+                <div class="col-5">
                     <h6>{{ plant.uid }}</h6>
                 </div>
-                <div class="col-2">
-                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target=".collapseEmptyAttrs" aria-expanded="false" aria-controls="collapseEmptyAttrs">
-                        {% trans 'ShowEmptyFields' %}
-                      </button>
+                <div class="col-3 d-flex justify-content-end">
+                    {% if is_owner %}
+                    <button class="btn btn-primary btn-sm py-0" type="button" data-bs-toggle="collapse" data-bs-target=".collapseEmptyAttrs" aria-expanded="false" aria-controls="collapseEmptyAttrs">
+                        {% trans 'ShowEmpty' %}
+                    </button>
+                    {% endif %}
                 </div>
             </div>
             {% for attr in plant.attrs_as_list_w_types  %}
             {% if attr.type != 3 %}
-            <div class="row row-cols-3 border-top pt-1 {% if not attr.value %} collapseEmptyAttrs{% endif%}">
+            <div class="row row-cols-3 border-top py-1 {% if not attr.value %}collapse collapseEmptyAttrs{% endif %}">
                 <div class="col-4">
                     <b>{{ attr.name }}</b>
                 </div>
-                <div class="col-6">
+                <div class="col-5">
                     {{ attr.value }}
                 </div>
-                <div class="col-2">
+                <div class="col-3 d-flex justify-content-end ">
                     {% if is_owner %}
-                    <a href="{% url 'plant_edit_attr' plant.id attr.key %}" class="btn btn-outline-primary btn-sm">{% trans 'Edit' %}</a>
+                    <a href="{% url 'plant_edit_attr' plant.id attr.key %}" class="btn btn-outline-primary btn-sm py-0">{% trans 'Edit' %}</a>
                     {% endif %}
                 </div>
             </div>
@@ -43,24 +46,24 @@
           </div>
         </div>
         {% for attr in plant.attrs_as_list_w_types  %}
-        {% if attr.type == 3 %}
-        <div class="row">
-            <div class="col-12">
-                <h5>{{attr.name}}</h5>
-                <p>{{attr.vale}}</p>
-                {% if is_owner %}
-                <a href="{% url 'plant_edit_attr' plant.id attr.key %}" class="btn btn-outline-primary btn-sm">{% trans 'Edit' %}</a>
-                {% endif %}
+            {% if attr.type == 3 %}
+            <div class="row {% if not attr.value %}collapse collapseEmptyAttrs{% endif %}">
+                <div class="col-12">
+                    <h5>{{attr.name}}</h5>
+                    <p>{{attr.value}}</p>
+                    {% if is_owner %}
+                    <a href="{% url 'plant_edit_attr' plant.id attr.key %}" class="btn btn-outline-primary btn-sm">{% trans 'Edit' %}</a>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-        {% endif %}
+            {% endif %}
         {% endfor %}
       </div>
 
 
       <hr />
 
-    
+    {% comment %}
     <!-- Watering and Feritlizing-->
     <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {% trans 'Watering...' %}
@@ -94,6 +97,8 @@
     <!-- Photos  -->
     <button type="button" class="btn btn-secondary" formaction="{% url 'upload_photo' plant.id %}">{% trans 'Photo' %}</button>
     
+    {% endcomment %}
+
     <hr>
     <h4>{% trans 'ChangeHistory' %}</h4>
     <table border="1" style="width:100%">

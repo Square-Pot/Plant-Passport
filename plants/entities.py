@@ -36,20 +36,21 @@ class RichPlant:
     def __get_fancy_name(self):
         fancy_name = ''
         attrs = self.attrs_as_list_w_types
+        print(attrs)
         for attr in attrs:
             if attr['value']:
                 # Field Number always uppercase
-                if attr['key'] == "field_number":
-                    fancy_name += f"{attr['value'].upper} "
-                # Genus always capitlized and regular
+                if attr['key'] == "number":
+                    fancy_name += f"{attr['value'].upper()} – "
+                # Genus always capitlized and italic
                 elif attr['key'] == "genus":
-                    fancy_name += f"{attr['value'].capitalize()} "
+                    fancy_name += f"<i>{attr['value'].capitalize()}</i> "
                 # Species, subspecies, variety always italic and lowercase
                 elif attr['key'] in ['species', 'subspecies', 'variety']:
-                    fancy_name += f"<i>{attr['short_name']} {attr['value'].lower()}</i> " 
+                    fancy_name += f"{attr['short_name']} <i>{attr['value'].lower()}</i> " 
                 # Cultivated variety alway regular Uppercase
                 elif attr['key'] == 'cultivar':
-                    fancy_name += f"{attr['short_name']} {attr['value'].title()} " 
+                    fancy_name += f"{attr['short_name']}  ‘{attr['value'].title()}’ " 
                 # etc.
                 elif attr['key'] in ['affinity', 'ex']:
                     fancy_name += f"{attr['short_name']} {attr['value'].title()} " 

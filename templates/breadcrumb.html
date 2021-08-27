@@ -1,11 +1,11 @@
 
-            <ol class="breadcrumb">
+            <ol class="breadcrumb mt-2">
                 {% for active, url, title in brcr_data %}
                 <li class="breadcrumb-item{% if active %} active{% endif %}">
                     {% if url %}
-                    <a href="{{ url }}">{{ title }}</a>
+                    <a href="{{ url }}">{{ title|safe }}</a>
                     {% else %}
-                    {{ title }}
+                    {{ title|safe }}
                     {% endif %}
                 </li>
                 {% endfor %}
