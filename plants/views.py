@@ -1,5 +1,3 @@
-import random
-import string
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.template import loader
@@ -15,7 +13,7 @@ from .forms import PlantForm, AttributeForm, PhotoForm
 from .services import get_user_richplants, get_attrs_titles_with_transl,\
     check_is_user_friend_of_plant_owner, check_is_user_owner_of_plant,\
     get_filteraible_attr_values, get_filtered_attr_values_from_post, filter_data_update,\
-    filter_plants, get_attr_keys_not_showing_in_list, create_log
+    filter_plants, get_attr_keys_not_showing_in_list, create_log, create_new_plant
 from users.services import is_friend
 from .entities import RichPlant, BrCr
 
@@ -174,83 +172,40 @@ def plant_view(request, plant_id):
 
 
 @login_required
-def plant_create(request, plant_id=None):
+def plant_create(request):
     """Plant Creation"""
 
-    ## I18N
-    # TODO: choose, save and read user setting for current language
-    cur_language = translation.get_language()
-    activate(cur_language)
+    # authenticated
+    current_user = request.user
+    if not current_user.is_authenticated:
+        raise PermissionDenied
 
-    ## DETECT USER
-    # TODO: anonymous | autorized 
-    #       ask authorize if not
-    #       check if user has owning rights for plant (with plant_id)
-
-    ## GET RICH PLANT
-    # TODO: Why??
-    #       there is no need to edit plant!
-    if plant_id:
-        plant = get_object_or_404(Plant, id=plant_id)
-        rich_plant = RichPlant.new_from(plant)
-        if rich_plant.get_owner() != request.user: # works?
-            return HttpResponseForbidden()
-        rich_plant.get_attrs_dics()
-        attrs = rich_plant.attrs_dics
-    else: 
-        attrs = {}
-
-    ## PROCESSING DATA FROM USER
+    # processing user data
     if request.method == 'POST':
-        form = PlantForm(attrs, request.POST)
+        form = PlantForm(request.POST)
         if form.is_valid():
 
-            ## CREATING NEW PLANT
-            # TODO: replace to services
-            
-            # Create UID
-            # TODO: UID generation algorithm may be improved
-            #       should be replaced to services
-            while True: 
-                # Example: '798670'
-                random_string = ''.join(random.choices(string.digits, k=6))
-                
-                # Check uniqueness
-                if Plant.objects.filter(uid=random_string).count() == 0:
-                    uid = random_string
-                    break
-            
-            # TODO: fix it: user detection block is above
-            current_user = request.user
-            new_plant = Plant(uid=uid, creator=current_user)
-            new_plant.save()
-            
-            ### CREATING LOGS 
-            # TODO: replace to services
+            # create new plant
+            new_plant = create_new_plant(current_user)
+
+            # collect data
             data = {}
-            
-            # owner of plant
             data['owner'] = current_user.id
-            
-            # attributes
             for post_key in form.cleaned_data:
                 data[post_key] = form.cleaned_data[post_key]
 
-            new_log = Log(
-                action_type = 1,
-                user = current_user, 
-                plant = new_plant, 
-                data = data,
+            # create log
+            create_log(
+                Log.ActionChoices.ADDITION,
+                current_user,
+                new_plant,
+                data
             )
-            new_log.save()
-
-            # TODO: fix redirect path
-            return HttpResponseRedirect(f'/plants/view/{ new_plant.id }')
-
+            return redirect('plant_view', plant_id=new_plant.id)
     else:
         form = PlantForm()
 
-    ## DATA FOR TEMPLATE
+    # Template data
     template = loader.get_template('plants/create.html')
     context = {
         'form': form,

@@ -5,22 +5,22 @@ from django.forms import ModelForm
 
 
 class PlantForm(forms.Form):
-    
-    def __init__(self, attributes_dic={}, *args, **kwargs):
-        """
-        Generate form fields for all plant attributes
-        """
+    """
+    Generate form fields for all plant attributes
+    """
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if attributes_dic:
-            for attribute in Attribute.objects.all():
-                self.fields[attribute.key] = forms.CharField(label=attribute.name, initial=attributes_dic[attribute.key],  max_length=100, required=False)    
-        else: 
-            for attribute in Attribute.objects.all():
-                self.fields[attribute.key] = forms.CharField(label=attribute.name, max_length=100, required=False)    
+        for attribute in Attribute.objects.all():
+            widget = None
+            if attribute.value_type == Attribute.AttributeTypeChoices.TEXTAREA:
+                widget = forms.Textarea
+            self.fields[attribute.key] = forms.CharField(label=attribute.name, max_length=100, required=False, widget=widget)    
 
 
 class AttributeForm(forms.Form):
-
+    """
+    Form for editing plant attribute
+    """
     def __init__(self, label=None, key=None, value=None, max_length=None, type=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         widget = None

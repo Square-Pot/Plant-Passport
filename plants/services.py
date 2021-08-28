@@ -1,8 +1,12 @@
+import random
+import string
 from django.utils.translation import gettext as _
 from plants.models import Log, Plant, Attribute
 from plants.entities import RichPlant
 from users.models import User
 
+
+# Plants
 
 def get_user_plants(user_id, access=[]):
     """Returns Plant-objects of user by user id"""
@@ -19,6 +23,48 @@ def get_user_richplants(user_id, access=[]) -> list:
     for plant in plants:
         rich_plants.append(RichPlant(plant))
     return rich_plants
+
+def create_new_plant(user: User) -> Plant:
+    """New Plant creation"""
+    new_upid = get_new_upid()
+    new_plant = Plant(uid=new_upid, creator=user)
+    new_plant.save()
+    return new_plant
+
+def get_new_upid():
+    """Unique Plant ID Generator"""
+    while True: 
+        # Example: '798670'
+        random_string = ''.join(random.choices(string.digits, k=6))
+        
+        # Check uniqueness
+        if Plant.objects.filter(uid=random_string).count() == 0:
+            upid = random_string
+            break
+    return upid
+
+def filter_plants(rich_plants: list, filter_data: dict) -> list:
+    """Filter plants according to filtered data"""
+    plant_pass_grade = {}
+    
+    # pass grade calculation
+    for plant in rich_plants:
+        plant_pass_grade[plant] = 0
+        for attr_name in filter_data:
+            for val in filter_data[attr_name]:
+                if getattr(plant.attrs, attr_name) == val:
+                    plant_pass_grade[plant] += 1
+    
+    # check grade 
+    filter_plants = []
+    for plant in plant_pass_grade:
+        if plant_pass_grade[plant] == len(filter_data):
+            filter_plants.append(plant)
+
+    return filter_plants
+
+
+# Attributes
 
 def get_filtered_attr_values_from_post(post_data) -> dict:
     """
@@ -95,26 +141,6 @@ def filter_data_update(full_filled_filter_data, post_filter_data):
 
     return full_filled_filter_data
 
-def filter_plants(rich_plants: list, filter_data: dict) -> list:
-    """Filter plants according to filtered data"""
-    plant_pass_grade = {}
-    
-    # pass grade calculation
-    for plant in rich_plants:
-        plant_pass_grade[plant] = 0
-        for attr_name in filter_data:
-            for val in filter_data[attr_name]:
-                if getattr(plant.attrs, attr_name) == val:
-                    plant_pass_grade[plant] += 1
-    
-    # check grade 
-    filter_plants = []
-    for plant in plant_pass_grade:
-        if plant_pass_grade[plant] == len(filter_data):
-            filter_plants.append(plant)
-
-    return filter_plants
-
 def check_is_attr_filterable(attr_key):
     attr = Attribute.objects.get(key=attr_key)
     return attr.filterable
@@ -142,6 +168,9 @@ def get_attr_keys_not_showing_in_list() -> list:
         attr_keys.append(attr.key)
     return(attr_keys)
 
+
+# Users
+
 def check_are_users_friends(user_1, user_2):
     """Check if one user is friend of another"""
     if user_1 in user_2.friends.all():
@@ -163,6 +192,9 @@ def check_is_user_owner_of_plant(user, target_rich_plant):
         return True
     else:
         return False
+
+
+# Logs
 
 def create_log(action_type: Log.ActionChoices, user: User, plant: Plant, data: dict):
     """Create new log"""
