@@ -14,6 +14,8 @@ class PlantForm(forms.Form):
             widget = None
             if attribute.value_type == Attribute.AttributeTypeChoices.TEXTAREA:
                 widget = forms.Textarea
+            if attribute.value_type == Attribute.AttributeTypeChoices.DATE:
+                widget = forms.TextInput(attrs={'type': 'date'})
             self.fields[attribute.key] = forms.CharField(label=attribute.name, max_length=100, required=False, widget=widget)    
 
 
@@ -26,6 +28,8 @@ class AttributeForm(forms.Form):
         widget = None
         if type == Attribute.AttributeTypeChoices.TEXTAREA:
             widget = forms.Textarea
+        if type == Attribute.AttributeTypeChoices.DATE:
+            widget = forms.TextInput(attrs={'type': 'date'})
         self.fields[key] = forms.CharField(label=label, initial=value, max_length=max_length, required=False, widget=widget)
 
 
