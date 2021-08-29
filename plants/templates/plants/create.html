@@ -5,19 +5,41 @@
     <div class="container mb-4">
     <form action="{% url 'plant_create_edit' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="col">
-            {% for field in form %}
-            <div class="row row-cols-2 my-2 ">
-                <div class="col-auto">{{ field.label }}:</div>
-                <div class="col">{{ field }}</div>
+        <div class="row row-cols-2 my-2 ">
+            <div class="col">
+                {% for field in form %}
+                    {% if field.field.widget.input_type == "text" %}
+                    <div class="row row-cols-2 my-2 ">
+                        <div class="col-4"><abbr title="{% trans field.label  %}" class="initialism">{{ field.label }}</abbr>:</div>
+                        <div class="col">{{ field }}</div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
             </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-primary">{% trans 'Submit' %}</button>
+            <div class="col">
+                {% for field in form %}
+                    {% if field.field.widget.input_type == "number" or field.field.widget.input_type ==  "date" %}
+                    <div class="row row-cols-2 my-2 ">
+                        <div class="col-4"><abbr title="{% trans field.label  %}" class="initialism">{{ field.label }}</abbr>:</div>
+                        <div class="col">{{ field }}</div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
+        <div class="row">
+            <div class="col">
+                {% for field in form %}
+                    {% if field.field.widget.input_type != "text" and field.field.widget.input_type != "date" and field.field.widget.input_type != "number" %}
+                        <div class="row">{{ field.label }}</div>
+                        <div class="row>">{{ field }}</div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">{% trans 'Submit' %}</button>
     </form>
     </div>
-
-    <input type="date" class="form-control">
     {% endblock %}
 
 
