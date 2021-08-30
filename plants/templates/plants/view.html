@@ -101,20 +101,27 @@
 
     <hr>
     <h4>{% trans 'ChangeHistory' %}</h4>
-    <table border="1" style="width:100%">
-        <tr>
-            <td>{% trans 'Datetime' %}</td>
-            <td>{% trans 'Action' %}</td>
-            <td>{% trans 'Parameters' %}</td>
-        </tr>
+    <div class="container">
         {% for log in plant.logs  %}
-        <tr>
-            <td>{{ log.action_time }}</td>
-            <td>{{ log.action_type }}</td>
-            <td>{{ log.data }}</td>
-        </tr>
+        <div class="row">
+            <div class="col-3 d-flex align-items-center pe-0">
+                <div class="col-12 border-bottom border-primary border-2">{{ log.action_time }}</div>
+            </div>
+            <div class="col-1 border-start border-primary border-3">
+            </div>
+            <div class="col-8">
+                <div class="card my-4" style="width: 18rem;">
+                    <!-- img src="{% static 'lithops.jpg' %}" class="card-img-top" alt="..." -->
+                    <div class="card-body">
+                      <h5 class="card-title">{{ log.action_type }}</h5>
+                      <p class="card-text">{{ log.data }}</p>
+                      <!-- a href="#" class="btn btn-primary">Go somewhere</a -->
+                    </div>
+                </div>
+            </div>
+        </div> 
         {% endfor %}
-    </table>
+    </div> 
 
     {% endblock %}
 

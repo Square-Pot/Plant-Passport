@@ -64,7 +64,7 @@ class RichPlant:
 
     def __get_logs(self):
         """Get logs of this plant"""
-        return Log.objects.filter(plant=self.Plant.id)
+        return Log.objects.filter(plant=self.Plant.id).order_by('-action_time')
 
     def __get_atts_as_dic(self):
         """Get extra attributes and values from logs as dic"""

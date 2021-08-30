@@ -213,6 +213,7 @@ def plant_create(request):
     }
     return HttpResponse(template.render(context, request))
 
+
 @login_required
 def edit_plant_attr(request, plant_id=None, attr_key=None):
     """Plant Attribute Editing"""
@@ -264,6 +265,7 @@ def edit_plant_attr(request, plant_id=None, attr_key=None):
         'title': _('EditAttr'),
     }
     return HttpResponse(template.render(context, request))
+
 
 @login_required
 def upload_photo(request, plant_id):
