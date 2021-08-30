@@ -6,6 +6,7 @@ tasks:
       python -m pip install --upgrade pip
       python -m pip install Django
       python -m pip install --upgrade Pillow
+      python -m pip install django-imagekit
       python manage.py migrate
     command: |
       python manage.py runserver
