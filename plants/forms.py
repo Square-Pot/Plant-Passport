@@ -33,12 +33,18 @@ class AttributeForm(forms.Form):
     
     def __init__(self, label=None, key=None, value=None, max_length=None, type=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        widget = None
+        # String
+        if type == Attribute.AttributeTypeChoices.STRING:
+            self.fields[key] = forms.CharField(label=label, initial=value, max_length=max_length, required=False)
+        # Textarea
         if type == Attribute.AttributeTypeChoices.TEXTAREA:
-            widget = forms.Textarea
-        self.fields[key] = forms.CharField(label=label, initial=value, max_length=max_length, required=False, widget=widget)
-        
-        
+            self.fields[key] = forms.CharField(label=label, initial=value, max_length=max_length, required=False, widget=forms.Textarea)
+        # Date
+        if type == Attribute.AttributeTypeChoices.DATE:
+            self.fields[key] = forms.DateField(label=label, required=False, initial=value, widget=forms.widgets.DateInput(attrs={'type': 'date'}))
+        # Number
+        if type == Attribute.AttributeTypeChoices.NUMBER:
+            self.fields[key] = forms.DecimalField(label=label, initial=value, max_digits=5, required=False)
 
 
 class PhotoForm(forms.ModelForm):
