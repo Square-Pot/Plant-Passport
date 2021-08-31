@@ -49,6 +49,8 @@ class AttributeManager(models.Manager):
 
 
 class Attribute(models.Model):
+
+    # TODO before deploy: exclude the gap between 2 and 4
     class AttributeTypeChoices(models.IntegerChoices):
         STRING = 1
         NUMBER = 2

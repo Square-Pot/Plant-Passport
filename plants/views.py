@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.core.exceptions import PermissionDenied
 from users.forms import UserCreateForm
 from users.models import User
-from .models import Plant, Log, Attribute #, Action, RichPlant
+from .models import Plant, Log, Attribute, Action
 from .forms import PlantForm, AttributeForm, PhotoForm
 from .services import get_user_richplants, get_attrs_titles_with_transl,\
     check_is_user_friend_of_plant_owner, check_is_user_owner_of_plant,\
@@ -177,8 +177,8 @@ def plant_create(request):
 
     # authenticated
     current_user = request.user
-    if not current_user.is_authenticated:
-        raise PermissionDenied
+    # if not current_user.is_authenticated:
+    #     raise PermissionDenied
 
     # processing user data
     if request.method == 'POST':
@@ -218,10 +218,12 @@ def plant_create(request):
 def edit_plant_attr(request, plant_id=None, attr_key=None):
     """Plant Attribute Editing"""
 
+    #TODO add plant fancy name on the page where attr is editing
+
     # check authentication 
     current_user = request.user
-    if not current_user.is_authenticated:
-        return HttpResponseForbidden()
+    # if not current_user.is_authenticated:
+    #     return HttpResponseForbidden()
 
     # try to get plant by id
     target_plant = get_object_or_404(Plant, id=plant_id)
@@ -265,6 +267,70 @@ def edit_plant_attr(request, plant_id=None, attr_key=None):
         'title': _('EditAttr'),
     }
     return HttpResponse(template.render(context, request))
+
+
+@login_required
+def add_plant_action(request, plant_id, action_key):
+
+    #TODO plant_id could be list (for group action)?
+
+    # authenticated
+    current_user = request.user
+    # if not current_user.is_authenticated:
+    #     raise PermissionDenied
+
+    # try to get plant by id
+    target_plant = get_object_or_404(Plant, id=plant_id)
+    target_rich_plant = RichPlant(target_plant)
+
+    # check access (is owner?)
+    user_is_owner = check_is_user_owner_of_plant(current_user, target_rich_plant)
+    if not user_is_owner:
+        return HttpResponseForbidden()
+
+     # processing user data
+    if request.method == 'POST':
+
+        # check if attr key exist
+        if action_key in Action.keys.get_all_keys():
+            # get message
+            comment = request.POST['comment']
+
+            # if Action has related attrs
+
+            data = {
+                'action': action_key,
+                'comment': comment,
+            }
+
+            # create log
+            create_log(
+                Log.ActionChoices.ADDITION,
+                current_user,
+                target_plant,
+                {attr_key: new_value},
+            )
+        return redirect('plant_view', plant_id=plant_id)
+
+    else:
+        value = target_rich_plant.attrs_as_dic[attr_key]
+        attr = Attribute.objects.get(key=attr_key)
+        label = attr.name
+        max_length = attr.max_text_length 
+        type = attr.value_type
+        form = AttributeForm(label, attr_key, value, max_length, type)
+
+    # Template data
+    template = loader.get_template('plants/edit_attr.html')
+    context = {
+        'attr_key': attr_key,
+        'plant_id': plant_id,
+        'form': form,
+        'title': _('EditAttr'),
+    }
+    return HttpResponse(template.render(context, request))
+
+
 
 
 @login_required
