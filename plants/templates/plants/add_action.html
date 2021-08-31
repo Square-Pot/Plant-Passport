@@ -2,6 +2,7 @@
 {% load i18n %}
 
     {% block content %}
+    <h4>Add {{ action.name }} for: {{ plant.fancy_name|safe }}</h4>
     <div class="container my-4">
         <form action="{% url 'plant_add_action' plant.id action.key %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}

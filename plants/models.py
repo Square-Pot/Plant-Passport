@@ -141,7 +141,13 @@ class Action(models.Model):
         max_length=100, 
         blank=True,
     )
+
+    comment_option = models.BooleanField(
+        default=True,
+    )
+
     objects = models.Manager()
+
     keys = ActionManager()
 
     def __str__(self):

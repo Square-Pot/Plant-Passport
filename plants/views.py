@@ -283,6 +283,9 @@ def add_plant_action(request, plant_id, action_key):
     target_plant = get_object_or_404(Plant, id=plant_id)
     target_rich_plant = RichPlant(target_plant)
 
+    # try to get action by key
+    action = get_object_or_404(Action, key=action_key)
+
     # check access (is owner?)
     user_is_owner = check_is_user_owner_of_plant(current_user, target_rich_plant)
     if not user_is_owner:
@@ -310,17 +313,32 @@ def add_plant_action(request, plant_id, action_key):
                 target_plant,
                 data
             )
-        return redirect('plant_view', plant_id=plant_id)
+            
+            return redirect('plant_view', plant_id=plant_id)
+
+        else:
+            raise PermissionDenied
+
+    elif not action.comment_option:
+        
+            # create log
+            create_log(
+                Log.ActionChoices.ADDITION,
+                current_user,
+                target_plant,
+                {'action': action_key}
+            )
+            
+            return redirect('plant_view', plant_id=plant_id)
 
     else:
-        action = Action.objects.get(key=action_key)
         form = ActionForm(action)
 
     # Template data
     template = loader.get_template('plants/add_action.html')
     context = {
         'action': action,
-        'plant': target_plant,
+        'plant': target_rich_plant,
         'form': form,
         'watering_action_name': 'watering',
         'fertilizing_action_name': 'fertilizing',
