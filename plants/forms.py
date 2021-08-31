@@ -1,9 +1,8 @@
 import datetime
 from django import forms
-from .models import Attribute, Plant, Photo
-#from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.forms import ModelForm
-
+from django.utils.translation import gettext as _
+from .models import Attribute, Plant, Action, Photo
 
 
 class PlantForm(forms.Form):
@@ -45,6 +44,13 @@ class AttributeForm(forms.Form):
         # Number
         if type == Attribute.AttributeTypeChoices.NUMBER:
             self.fields[key] = forms.FloatField(label=label, initial=value, required=False)
+
+
+class ActionForm(forms.Form):
+    def __init__(self, action, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['comment'] = forms.CharField(label=_('Comment'), required=False, widget=forms.Textarea)
+
 
 
 class PhotoForm(forms.ModelForm):

@@ -9,7 +9,7 @@ from django.core.exceptions import PermissionDenied
 from users.forms import UserCreateForm
 from users.models import User
 from .models import Plant, Log, Attribute, Action
-from .forms import PlantForm, AttributeForm, PhotoForm
+from .forms import PlantForm, AttributeForm, ActionForm, PhotoForm
 from .services import get_user_richplants, get_attrs_titles_with_transl,\
     check_is_user_friend_of_plant_owner, check_is_user_owner_of_plant,\
     get_filteraible_attr_values, get_filtered_attr_values_from_post, filter_data_update,\
@@ -293,7 +293,7 @@ def add_plant_action(request, plant_id, action_key):
 
         # check if attr key exist
         if action_key in Action.keys.get_all_keys():
-            # get message
+            # get comment
             comment = request.POST['comment']
 
             # if Action has related attrs
@@ -308,25 +308,23 @@ def add_plant_action(request, plant_id, action_key):
                 Log.ActionChoices.ADDITION,
                 current_user,
                 target_plant,
-                {attr_key: new_value},
+                data
             )
         return redirect('plant_view', plant_id=plant_id)
 
     else:
-        value = target_rich_plant.attrs_as_dic[attr_key]
-        attr = Attribute.objects.get(key=attr_key)
-        label = attr.name
-        max_length = attr.max_text_length 
-        type = attr.value_type
-        form = AttributeForm(label, attr_key, value, max_length, type)
+        action = Action.objects.get(key=action_key)
+        form = ActionForm(action)
 
     # Template data
-    template = loader.get_template('plants/edit_attr.html')
+    template = loader.get_template('plants/add_action.html')
     context = {
-        'attr_key': attr_key,
-        'plant_id': plant_id,
+        'action': action,
+        'plant': target_plant,
         'form': form,
-        'title': _('EditAttr'),
+        'watering_action_name': 'watering',
+        'fertilizing_action_name': 'fertilizing',
+
     }
     return HttpResponse(template.render(context, request))
 

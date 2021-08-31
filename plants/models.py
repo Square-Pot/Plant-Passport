@@ -106,6 +106,48 @@ class Attribute(models.Model):
         return f"{self.weight} - {self.name} ({self.key})"
 
 
+class ActionManager(models.Manager):
+    def get_all_keys(self):
+        return self.values_list('key', flat=True)
+
+    def get_all_names(self):
+        return self.values_list('name', flat=True)
+
+
+class Action(models.Model):
+    name = models.CharField(
+        max_length=100, 
+        blank=False, 
+        unique=True,
+    ) 
+
+    key = models.CharField(
+        max_length=100, 
+        blank=False, 
+        unique=True,
+    )
+
+    related_attributes = models.ManyToManyField(
+        "Attribute", 
+        blank=True
+    )
+
+    icon = models.CharField(
+        max_length=100, 
+        blank=True, 
+    )
+
+    color = models.CharField(
+        max_length=100, 
+        blank=True,
+    )
+    objects = models.Manager()
+    keys = ActionManager()
+
+    def __str__(self):
+        return f"{self.name} - {self.key} ({self.color})"
+
+
 class Log(models.Model):
 
     CHOICES = {
@@ -151,39 +193,6 @@ class Log(models.Model):
 
     def __str__(self):
         return f"{self.user} {self.CHOICES[self.action_type]} for plant {self.plant.uid}: {str(self.data)}"
-
-
-class Action(models.Model):
-    name = models.CharField(
-        max_length=100, 
-        blank=False, 
-        unique=True,
-    ) 
-
-    key = models.CharField(
-        max_length=100, 
-        blank=False, 
-        unique=True,
-    )
-
-    related_attributes = models.ManyToManyField(
-        "Attribute", 
-        blank=True
-    )
-
-    icon = models.CharField(
-        max_length=100, 
-        blank=True, 
-    )
-
-    color = models.CharField(
-        max_length=100, 
-        blank=True,
-    )
-
-    def __str__(self):
-        return f"{self.name} - {self.key} ({self.color})"
-
 
 
 
