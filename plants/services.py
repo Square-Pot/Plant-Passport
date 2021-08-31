@@ -205,11 +205,6 @@ def create_log(action_type: Log.ActionChoices, user: User, plant: Plant, data: d
     for key in data:
         if isinstance(data[key], datetime.date) or isinstance(data[key], datetime.datetime):
             data[key] = data[key].isoformat()
-        
-    
-    print('Here' + '<'*100)
-    print(data)
-
 
     new_log = Log(
         action_type = action_type,
