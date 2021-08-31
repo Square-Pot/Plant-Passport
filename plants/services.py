@@ -1,5 +1,7 @@
 import random
 import string
+import datetime
+import decimal
 from django.utils.translation import gettext as _
 from plants.models import Log, Plant, Attribute
 from plants.entities import RichPlant
@@ -198,6 +200,17 @@ def check_is_user_owner_of_plant(user, target_rich_plant):
 
 def create_log(action_type: Log.ActionChoices, user: User, plant: Plant, data: dict):
     """Create new log"""
+
+    # selialize date fields
+    for key in data:
+        if isinstance(data[key], datetime.date) or isinstance(data[key], datetime.datetime):
+            data[key] = data[key].isoformat()
+        
+    
+    print('Here' + '<'*100)
+    print(data)
+
+
     new_log = Log(
         action_type = action_type,
         user = user, 

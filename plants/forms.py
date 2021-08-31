@@ -1,5 +1,6 @@
+import datetime
 from django import forms
-from .models import Attribute, Plant, RichPlant, Photo
+from .models import Attribute, Plant, Photo
 #from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.forms import ModelForm
 
@@ -23,14 +24,13 @@ class PlantForm(forms.Form):
                 self.fields[attribute.key] = forms.DateField(label=attribute.name, required=False, widget=forms.widgets.DateInput(attrs={'type': 'date'}))
             # Number
             if attribute.value_type == Attribute.AttributeTypeChoices.NUMBER:
-                self.fields[attribute.key] = forms.DecimalField(label=attribute.name, max_digits=5, required=False)
+                self.fields[attribute.key] = forms.FloatField(label=attribute.name, required=False)
             
 
 class AttributeForm(forms.Form):
     """
     Form for editing plant attribute
     """
-    
     def __init__(self, label=None, key=None, value=None, max_length=None, type=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # String
@@ -44,7 +44,7 @@ class AttributeForm(forms.Form):
             self.fields[key] = forms.DateField(label=label, required=False, initial=value, widget=forms.widgets.DateInput(attrs={'type': 'date'}))
         # Number
         if type == Attribute.AttributeTypeChoices.NUMBER:
-            self.fields[key] = forms.DecimalField(label=label, initial=value, max_digits=5, required=False)
+            self.fields[key] = forms.FloatField(label=label, initial=value, required=False)
 
 
 class PhotoForm(forms.ModelForm):

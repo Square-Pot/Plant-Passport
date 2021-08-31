@@ -152,64 +152,64 @@ class Log(models.Model):
 
 
 # delete this! 
-class RichPlantAttrs():
+# class RichPlantAttrs():
     
-    def __init__(self, plant_id):
-        self.plant_id = plant_id
+#     def __init__(self, plant_id):
+#         self.plant_id = plant_id
 
-    def logs(self):
-        return Log.objects.filter(plant=self.plant_id)
+#     def logs(self):
+#         return Log.objects.filter(plant=self.plant_id)
 
-    def owner_id(self) -> int:
-        log = Log.objects.filter(plant=self.plant_id, data__has_key='owner').order_by('-id')[0]
-        return log.data['owner']
+#     def owner_id(self) -> int:
+#         log = Log.objects.filter(plant=self.plant_id, data__has_key='owner').order_by('-id')[0]
+#         return log.data['owner']
 
-    def actual_attrs(self) -> dict:
-        # generate blank dic with all keys and placeholders
-        attrs_all_keys = Attribute.keys.get_all_keys().order_by('weight')
-        actual_attrs = {}
-        for key in attrs_all_keys:
-            actual_attrs[key] = '-'
+#     def actual_attrs(self) -> dict:
+#         # generate blank dic with all keys and placeholders
+#         attrs_all_keys = Attribute.keys.get_all_keys().order_by('weight')
+#         actual_attrs = {}
+#         for key in attrs_all_keys:
+#             actual_attrs[key] = '-'
 
-        # fill values with logs (playback)
-        logs = Log.objects.filter(plant=self.plant_id)
-        for log in logs: 
-            for key in log.data:
-                if key in actual_attrs:
-                    actual_attrs[key] = log.data[key]
-        return actual_attrs
+#         # fill values with logs (playback)
+#         logs = Log.objects.filter(plant=self.plant_id)
+#         for log in logs: 
+#             for key in log.data:
+#                 if key in actual_attrs:
+#                     actual_attrs[key] = log.data[key]
+#         return actual_attrs
 
-    def actual_attrs_values(self) -> list:
-        return list(self.actual_attrs().values())
+#     def actual_attrs_values(self) -> list:
+#         return list(self.actual_attrs().values())
 
-    def get_logs(self): 
-        return Log.objects.filter(plant=self.plant_id).order_by('-action_time')
+#     def get_logs(self): 
+#         return Log.objects.filter(plant=self.plant_id).order_by('-action_time')
 
 
-class RichPlant(Plant):
+# class RichPlant(Plant):
 
-    # classmethod for creation RichPlant from Plant
-    @classmethod
-    def new_from(cls, obj):
-        if issubclass(obj.__class__, Plant):
-            _new = cls(obj.id, obj.uid, obj.creation_date, obj.creator, obj.is_deleted)
-            return _new
-        else:
-            raise TypeError('Expected subclass of <class Plant>, got {}.'.format(type(obj)))
+#     # classmethod for creation RichPlant from Plant
+#     @classmethod
+#     def new_from(cls, obj):
+#         if issubclass(obj.__class__, Plant):
+#             _new = cls(obj.id, obj.uid, obj.creation_date, obj.creator, obj.is_deleted)
+#             return _new
+#         else:
+#             raise TypeError('Expected subclass of <class Plant>, got {}.'.format(type(obj)))
             
-    def get_attrs_values(self):
-        self.attrs_values = RichPlantAttrs(self.id).actual_attrs_values()
+#     def get_attrs_values(self):
+#         self.attrs_values = RichPlantAttrs(self.id).actual_attrs_values()
 
-    def get_attrs_dics(self):
-        self.attrs_dics = RichPlantAttrs(self.id).actual_attrs()
+#     def get_attrs_dics(self):
+#         self.attrs_dics = RichPlantAttrs(self.id).actual_attrs()
 
-    def get_owner(self):
-        self.owner = RichPlantAttrs(self.id).owner_id()
-        return self.owner
+#     def get_owner(self):
+#         self.owner = RichPlantAttrs(self.id).owner_id()
+#         return self.owner
 
-    def get_logs(self):
-        self.logs = RichPlantAttrs(self.id).get_logs()
-        return self.logs
+#     def get_logs(self):
+#         self.logs = RichPlantAttrs(self.id).get_logs()
+#         return self.logs
 
 
 class Action(models.Model):

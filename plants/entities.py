@@ -62,9 +62,9 @@ class RichPlant:
             value = getattr(self.Plant, field_name)
             setattr(self, field_name, value)
 
-    def __get_logs(self):
+    def __get_logs(self, order_by ='-action_time'):
         """Get logs of this plant"""
-        return Log.objects.filter(plant=self.Plant.id).order_by('-action_time')
+        return Log.objects.filter(plant=self.Plant.id).order_by(order_by)
 
     def __get_atts_as_dic(self):
         """Get extra attributes and values from logs as dic"""
@@ -77,7 +77,7 @@ class RichPlant:
             extra_attrs[key] = None
 
         # fill with values
-        for log in self.logs: 
+        for log in self.__get_logs(order_by='action_time'): 
             for key in log.data:
                 if key in extra_attrs:
                     extra_attrs[key] = log.data[key]
@@ -116,8 +116,6 @@ class RichPlant:
             attr_name = str(line).split('.')[-1]
             fields_names.append(attr_name)
         return fields_names
-
-    
 
 
 class BrCr:
