@@ -63,54 +63,54 @@
 
       <hr />
 
-      <!-- Watering and Feritlizing-->
-     <div class="btn-group" role="group">
+    <!-- Action Buttons -->
+
+    <!-- Watering and Feritlizing-->
+    <div class="btn-group" role="group">
         <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             {% trans 'Watering...' %}
         </button>
         <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-            <li><a class="dropdown-item" href="{% url 'plant_add_action' plant.id 'watering' %}">Regular</a></li>
-            <li><a class="dropdown-item" href="{% url 'plant_add_action' plant.id 'fertilizing' %}">With fertilizer</a></li>
+            <li><a class="dropdown-item" href="{% url 'plant_add_action' plant.id 'watering' %}">Regular watering</a></li>
+            <li><a class="dropdown-item" href="{% url 'plant_add_action' plant.id 'fertilizing' %}">Watering with fertilizer</a></li>
+        </ul>
+    </div>
+    
+    <!--  Pots and Substrate -->
+    <div class="btn-group" role="group">
+        <button id="btnGroupDrop2" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            {% trans 'Repotting...' %}
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="btnGroupDrop2">
+            <li><a class="dropdown-item" href="{% url 'plant_add_action' plant.id 'repotting' %}">{% trans 'Repotting' %}</a></li>
+            <li><a class="dropdown-item" href="{% url 'plant_add_action' plant.id 'change_soil' %}">{% trans 'Change soil' %}</a></li>
         </ul>
     </div>
 
-
-
-    {% comment %}
-    <!-- Watering and Feritlizing-->
-    <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {% trans 'Watering...' %}
-    </button>
-    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-    <a class="dropdown-item" href="#">{% trans 'Regular' %}</a>
-    <a class="dropdown-item" href="#">{% trans 'Fertilizer' %}</a>
+    <!--  Pests and Fungus -->
+    <div class="btn-group" role="group">
+        <button id="btnGroupDrop3" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            {% trans 'Pests...' %}
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="btnGroupDrop3">
+            <li><a class="dropdown-item" href="{% url 'plant_add_action' plant.id 'desinsection' %}">{% trans 'Desinsection' %}</a></li>
+            <li><a class="dropdown-item" href="{% url 'plant_add_action' plant.id 'antifungal' %}">{% trans 'Antifungal' %}</a></li>
+        </ul>
     </div>
 
-    <!-- Pots and Substrate -->
-    <button id="btnGroupDrop2" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {% trans 'Potting...' %}
-    </button>
-    <div class="dropdown-menu" aria-labelledby="btnGroupDrop2">
-    <a class="dropdown-item" href="#">{% trans 'Repotting' %}</a>
-    <a class="dropdown-item" href="#">{% trans 'Substrate' %}</a>
+    <!-- Other -->
+    <div class="btn-group"> 
+        <button type="button" class="btn btn-primary" formaction="{% url 'plant_add_action' plant.id 'other' %}" >
+            {% trans 'Other action' %}
+        </button>
     </div>
 
-    <!-- Pests and Fungus -->
-    <button id="btnGroupDrop3" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {% trans 'Curing...' %}
-    </button>
-    <div class="dropdown-menu" aria-labelledby="btnGroupDrop3">
-    <a class="dropdown-item" href="#">{% trans 'Desinsection' %}</a>
-    <a class="dropdown-item" href="#">{% trans 'Antifungal' %}</a>
-    </div>
-
-    <!-- Location and Relocation  -->
-    <button type="button" class="btn btn-secondary">{% trans 'Relocation' %}</button>
-    
     <!-- Photos  -->
-    <button type="button" class="btn btn-secondary" formaction="{% url 'upload_photo' plant.id %}">{% trans 'Photo' %}</button>
+    <div class="btn-group">
+        <button type="button" class="btn btn-secondary" formaction="{% url 'upload_photo' plant.id %}">{% trans 'Photo' %}</button>
+    </div>
     
-    {% endcomment %}
+    
 
     <hr>
     <h4>{% trans 'ChangeHistory' %}</h4>

@@ -47,9 +47,26 @@ class AttributeForm(forms.Form):
 
 
 class ActionForm(forms.Form):
-    def __init__(self, action, *args, **kwargs):
+    def __init__(self, action, rich_plant, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # comment field
         self.fields['comment'] = forms.CharField(label=_('Comment'), required=False, widget=forms.Textarea)
+
+        # related attributes optional fields
+        related_attrs = action.related_attributes.all()
+        for attr in related_attrs:
+            # String
+            if attr.value_type == Attribute.AttributeTypeChoices.STRING:
+                self.fields[attr.key] = forms.CharField(label=attr.name, initial=rich_plant.attrs_as_dic[attr.key], max_length=100, required=False)
+            # Number
+            if attr.value_type == Attribute.AttributeTypeChoices.NUMBER:
+                self.fields[attr.key] = forms.FloatField(label=attr.name, initial=rich_plant.attrs_as_dic[attr.key], required=False)
+
+        
+
+        
+
 
 
 

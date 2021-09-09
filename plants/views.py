@@ -299,8 +299,6 @@ def add_plant_action(request, plant_id, action_key):
             # get comment
             comment = request.POST['comment']
 
-            # if Action has related attrs
-
             data = {
                 'action': action_key,
                 'comment': comment,
@@ -313,6 +311,23 @@ def add_plant_action(request, plant_id, action_key):
                 target_plant,
                 data
             )
+
+            # process related attributes if they recieved
+            related_attr_data = {}
+
+            for attr_key in Attribute.keys.get_all_keys():
+                if attr_key in request.POST:
+                    related_attr_data[attr_key] = request.POST[attr_key]
+
+            if related_attr_data:
+
+                # create log
+                create_log(
+                    Log.ActionChoices.CHANGE,
+                    current_user,
+                    target_plant,
+                    related_attr_data
+                )
             
             return redirect('plant_view', plant_id=plant_id)
 
@@ -332,7 +347,7 @@ def add_plant_action(request, plant_id, action_key):
             return redirect('plant_view', plant_id=plant_id)
 
     else:
-        form = ActionForm(action)
+        form = ActionForm(action, target_rich_plant)
 
     # Template data
     template = loader.get_template('plants/add_action.html')
@@ -345,7 +360,6 @@ def add_plant_action(request, plant_id, action_key):
 
     }
     return HttpResponse(template.render(context, request))
-
 
 
 

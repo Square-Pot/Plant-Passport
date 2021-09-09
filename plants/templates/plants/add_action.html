@@ -2,7 +2,8 @@
 {% load i18n %}
 
     {% block content %}
-    <h4>Add {{ action.name }} for: {{ plant.fancy_name|safe }}</h4>
+    <h4>Add <b>{{ action.name }}</b> for plant:</h4>
+    <h5>{{ plant.fancy_name|safe }}</h5>
     <div class="container my-4">
         <form action="{% url 'plant_add_action' plant.id action.key %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
