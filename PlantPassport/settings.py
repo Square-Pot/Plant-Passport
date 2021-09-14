@@ -16,16 +16,8 @@ from pathlib import Path
 from django.utils.translation import ugettext_lazy as _
 
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Delete this:
-# SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'django-insecure-!cd0v*xol@f6k=q5k1i=**i(15bpm3dka8ipdd45mk+p7it!th'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -133,34 +125,39 @@ LANGUAGE_PATHS = [
 LANGUAGE_COOKIE_NAME = 'plant_passport_language'
 
 
-## Photos
+## Media files
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
+#USE_S3 = os.getenv('USE_S3') == 'TRUE'
+USE_S3 = True
 
-# STATIC_URL = '/static/'
-# STATICFILES_DIRS = ( os.path.join('static'), )
+if USE_S3:
+    # aws settings
+    # AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    # AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    # AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
 
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
-AWS_LOCATION = 'static'
-AWS_DEFAULT_ACL = None
+    AWS_DEFAULT_ACL = None
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+
+    # s3 static settings
+    STATIC_LOCATION = 'static'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+    STATICFILES_STORAGE = 'cdn.storage_backends.StaticStorage'
+
+    # s3 public media settings
+    PUBLIC_MEDIA_LOCATION = 'media'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'hello_django.storage_backends.PublicMediaStorage'
+else:
+    STATIC_URL = '/staticfiles/'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-
-
-
-
-
-
-
 
 
 # Default primary key field type
