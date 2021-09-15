@@ -380,10 +380,9 @@ def upload_photo(request, plant_id):
     if not user_is_owner:
         return HttpResponseForbidden()
 
-
     if request.method == 'POST':
         image_file = request.FILES['image_file']
-        # image_type = request.POST['image_type']
+
         if settings.USE_S3:
             upload = Photo(photo=image_file)
             upload.user = current_user
@@ -393,34 +392,25 @@ def upload_photo(request, plant_id):
             fs = FileSystemStorage()
             filename = fs.save(f'photos/{current_user.username}/{image_file.name}', image_file)
             image_url = fs.url(filename)
-        return render(request, 'upload.html', {'image_url': image_url})
-    return render(request, 'upload.html')
+
+        # create log
+        create_log(
+            Log.ActionChoices.ADDITION,
+            current_user,
+            target_plant,
+            {'action': 'add_photo', 'photo_url': image_url}
+        )
+        return redirect('plant_view', plant_id=plant_id)
+    
+    # Template data
+    template = loader.get_template('plants/upload_photo.html')
+    context = {
+        'plant': target_rich_plant,
+    }
+    return HttpResponse(template.render(context, request))
 
 
-    # ## PROCESSING DATA FROM USER
-    # if request.method == 'POST':
-    #     form = PhotoForm(request.POST, request.FILES)
-    #     if form.is_valid():
-    #         form.save()
-    #         # TODO: fix url
-    #         #return reverse('plant_view', kwargs={'plant_id': plant_id})
-    #         return HttpResponseRedirect(f'/plants/view/{ plant_id }')
-
-    #         ### CREATING LOGS 
-    #         # TODO: replace to services
-    #         #       create new log
-    # else:
-    #     form = PhotoForm()
-
-    # ## DATA FOR TEMPLATE
-    # template = loader.get_template('plants/upload_photo.html')
-    # context = {
-    #     'form': form,
-    #     'plant_id': plant_id,
-    #     'title': _('UploadPhoto'),
-    # }
-    # return HttpResponse(template.render(context, request))
-
+  
 
 
 

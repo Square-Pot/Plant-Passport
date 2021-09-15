@@ -2,10 +2,19 @@
 {% load i18n %}
 
     {% block content %}
-    <form action="{% url 'upload_photo' plant_id %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Upload</button>
-    </form>
-    <p><a href="{% url 'plant_view' plant_id %}">Return to home</a></p>
+    <div class="container">
+        <h4>{% trans 'UploadPhoto' %}</h4>
+        <hr><br>
+        <form action="{% url "upload_photo" plant.id %}" method="post" enctype="multipart/form-data" class="form">
+            {% csrf_token %}
+            <label class="file-label">
+                <input class="file-input" type="file" name="image_file">
+                <span class="file-cta">
+                <span class="file-label">{% trans 'ChooseFile...' %}</span>
+                </span>
+            </label>
+            <br />
+            <input type="submit" value="Submit" class="button is-primary" />
+        </form>
+    </div>
     {% endblock %}
