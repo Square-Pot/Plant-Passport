@@ -6,9 +6,11 @@ from django.utils.translation import activate
 from django.utils import translation
 from django.contrib.auth import authenticate, login
 from django.core.exceptions import PermissionDenied
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
 from users.forms import UserCreateForm
 from users.models import User
-from .models import Plant, Log, Attribute, Action
+from .models import Plant, Log, Attribute, Action, Photo, user_directory_path
 from .forms import PlantForm, AttributeForm, ActionForm, PhotoForm
 from .services import get_user_richplants, get_attrs_titles_with_transl,\
     check_is_user_friend_of_plant_owner, check_is_user_owner_of_plant,\
@@ -362,45 +364,62 @@ def add_plant_action(request, plant_id, action_key):
     return HttpResponse(template.render(context, request))
 
 
-
 @login_required
 def upload_photo(request, plant_id):
     """Photo Uploading"""
 
-    ## I18N
-    # TODO: choose, save and read user setting for current language
-    cur_language = translation.get_language()
-    activate(cur_language)
+    # authentication
+    current_user = request.user
 
-    ## DETECT USER
-    # TODO: anonymous | autorized 
-    #       ask authorize if not
-    #       check if user has owning rights for plant (with plant_id)
-    #current_user = request.user
+    # try to get plant by id
+    target_plant = get_object_or_404(Plant, id=plant_id)
+    target_rich_plant = RichPlant(target_plant)
 
-    ## PROCESSING DATA FROM USER
+    # check access (is owner?)
+    user_is_owner = check_is_user_owner_of_plant(current_user, target_rich_plant)
+    if not user_is_owner:
+        return HttpResponseForbidden()
+
+
     if request.method == 'POST':
-        form = PhotoForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            # TODO: fix url
-            #return reverse('plant_view', kwargs={'plant_id': plant_id})
-            return HttpResponseRedirect(f'/plants/view/{ plant_id }')
+        image_file = request.FILES['image_file']
+        # image_type = request.POST['image_type']
+        if settings.USE_S3:
+            upload = Photo(photo=image_file)
+            upload.user = current_user
+            upload.save()
+            image_url = upload.photo.url
+        else:
+            fs = FileSystemStorage()
+            filename = fs.save(f'photos/{current_user.username}/{image_file.name}', image_file)
+            image_url = fs.url(filename)
+        return render(request, 'upload.html', {'image_url': image_url})
+    return render(request, 'upload.html')
 
-            ### CREATING LOGS 
-            # TODO: replace to services
-            #       create new log
-    else:
-        form = PhotoForm()
 
-    ## DATA FOR TEMPLATE
-    template = loader.get_template('plants/upload_photo.html')
-    context = {
-        'form': form,
-        'plant_id': plant_id,
-        'title': _('UploadPhoto'),
-    }
-    return HttpResponse(template.render(context, request))
+    # ## PROCESSING DATA FROM USER
+    # if request.method == 'POST':
+    #     form = PhotoForm(request.POST, request.FILES)
+    #     if form.is_valid():
+    #         form.save()
+    #         # TODO: fix url
+    #         #return reverse('plant_view', kwargs={'plant_id': plant_id})
+    #         return HttpResponseRedirect(f'/plants/view/{ plant_id }')
+
+    #         ### CREATING LOGS 
+    #         # TODO: replace to services
+    #         #       create new log
+    # else:
+    #     form = PhotoForm()
+
+    # ## DATA FOR TEMPLATE
+    # template = loader.get_template('plants/upload_photo.html')
+    # context = {
+    #     'form': form,
+    #     'plant_id': plant_id,
+    #     'title': _('UploadPhoto'),
+    # }
+    # return HttpResponse(template.render(context, request))
 
 
 

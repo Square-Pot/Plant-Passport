@@ -201,19 +201,18 @@ class Log(models.Model):
         return f"{self.user} {self.CHOICES[self.action_type]} for plant {self.plant.uid}: {str(self.data)}"
 
 
-
 def user_directory_path(instance, filename):
     # TODO: file name scheme: uid_date
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-    return 'photos/user_{0}/{1}'.format(instance.user.id, filename)
+    return f'photos/{instance.user.username}/{filename}'
 
 
 class Photo(models.Model):
     description = models.CharField(max_length=255, blank=True)
-    photo = models.FileField(upload_to=user_directory_path)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         models.CASCADE,
         verbose_name=_('user'),
     )
+    photo = models.FileField(upload_to=user_directory_path)

@@ -107,7 +107,8 @@
 
     <!-- Photos  -->
     <div class="btn-group">
-        <button type="button" class="btn btn-secondary" formaction="{% url 'upload_photo' plant.id %}">{% trans 'Photo' %}</button>
+        <!--  button type="button" class="btn btn-secondary" formaction="{% url 'upload_photo' plant.id %}">{% trans 'Photo' %}</button -->
+        <a href="{% url 'upload_photo' plant.id %}">{% trans 'Add_Photo' %}</a>
     </div>
     
     

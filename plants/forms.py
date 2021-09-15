@@ -63,12 +63,6 @@ class ActionForm(forms.Form):
             if attr.value_type == Attribute.AttributeTypeChoices.NUMBER:
                 self.fields[attr.key] = forms.FloatField(label=attr.name, initial=rich_plant.attrs_as_dic[attr.key], required=False)
 
-        
-
-        
-
-
-
 
 class PhotoForm(forms.ModelForm):
     
