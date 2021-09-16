@@ -216,24 +216,19 @@ class Photo(models.Model):
         auto_now_add=True
     )
     
-    # photo = models.FileField(
-    #     upload_to=user_directory_path
-    # )
-
-    photo = models.ImageField(
+    original = models.ImageField(
         upload_to=user_directory_path
     )
 
-    photo_medium = ImageSpecField(
-        source='photo',
+    medium = ImageSpecField(
+        source='original',
         processors=[Thumbnail(200, 100)],
         format='JPEG',
-        #cachefile_storage=PublicMediaStorage,
         options={'quality': 60}
     )
 
-    photo_small = ImageSpecField(
-        source='photo',
+    small = ImageSpecField(
+        source='original',
         processors=[Thumbnail(100, 50)],
         format='JPEG',
         options={'quality': 60},

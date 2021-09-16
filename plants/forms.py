@@ -68,7 +68,7 @@ class PhotoForm(forms.ModelForm):
     
     class Meta:
         model = Photo
-        fields = ('description', 'photo', 'user')
+        fields = ('description', 'original', 'user')
 
 
     

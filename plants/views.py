@@ -384,11 +384,11 @@ def upload_photo(request, plant_id):
         image_file = request.FILES['image_file']
 
         if settings.USE_S3:
-            upload = Photo(photo=image_file)
+            upload = Photo(original=image_file)
             upload.user = current_user
             upload.save()
-            image_url = upload.photo.url
-            #image_url = upload.photo_medium.url
+            #image_url = upload.photo.url
+            image_url = upload.medium.url
             
         else:
             fs = FileSystemStorage()
