@@ -1,8 +1,11 @@
+import uuid
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext, gettext_lazy as _
 from django.utils import timezone
-from django.conf import settings
+from imagekit.models import ImageSpecField
+from pilkit.processors import Thumbnail
+from cdn.storage_backends import PublicMediaStorage
 
 
 class Plant(models.Model):
@@ -208,11 +211,47 @@ def user_directory_path(instance, filename):
 
 
 class Photo(models.Model):
-    description = models.CharField(max_length=255, blank=True)
-    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    uploaded_at = models.DateTimeField(
+        auto_now_add=True
+    )
+    
+    # photo = models.FileField(
+    #     upload_to=user_directory_path
+    # )
+
+    photo = models.ImageField(
+        upload_to=user_directory_path
+    )
+
+    photo_medium = ImageSpecField(
+        source='photo',
+        processors=[Thumbnail(200, 100)],
+        format='JPEG',
+        #cachefile_storage=PublicMediaStorage,
+        options={'quality': 60}
+    )
+
+    photo_small = ImageSpecField(
+        source='photo',
+        processors=[Thumbnail(100, 50)],
+        format='JPEG',
+        options={'quality': 60},
+    )
+
+    slug = models.SlugField(
+        max_length=255, 
+        unique=True,
+        default=uuid.uuid1
+    )
+
+    description = models.CharField(
+        max_length=255, 
+        blank=True
+    )
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         models.CASCADE,
         verbose_name=_('user'),
     )
-    photo = models.FileField(upload_to=user_directory_path)

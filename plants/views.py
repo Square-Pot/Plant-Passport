@@ -388,6 +388,8 @@ def upload_photo(request, plant_id):
             upload.user = current_user
             upload.save()
             image_url = upload.photo.url
+            #image_url = upload.photo_medium.url
+            
         else:
             fs = FileSystemStorage()
             filename = fs.save(f'photos/{current_user.username}/{image_file.name}', image_file)

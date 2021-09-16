@@ -11,9 +11,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import os
-from .secret import *
 from pathlib import Path
 from django.utils.translation import ugettext_lazy as _
+from .secret import *
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,6 +28,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'imagekit',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -158,6 +159,10 @@ else:
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+
+# imagekit
+IMAGEKIT_DEFAULT_CACHEFILE_STRATEGY = 'imagekit.cachefiles.strategies.Optimistic'
 
 
 # Default primary key field type
