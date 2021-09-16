@@ -1,4 +1,5 @@
 import uuid
+import time
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext, gettext_lazy as _
@@ -205,9 +206,8 @@ class Log(models.Model):
 
 
 def user_directory_path(instance, filename):
-    # TODO: file name scheme: uid_date
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-    return f'photos/{instance.user.username}/{filename}'
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    return f'photos/{instance.user.username}/{instance.plant.uid}_{timestr}'
 
 
 class Photo(models.Model):
@@ -249,4 +249,11 @@ class Photo(models.Model):
         settings.AUTH_USER_MODEL,
         models.CASCADE,
         verbose_name=_('user'),
+    )
+
+    plant = models.ForeignKey(
+        to=Plant,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )

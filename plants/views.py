@@ -384,23 +384,26 @@ def upload_photo(request, plant_id):
         image_file = request.FILES['image_file']
 
         if settings.USE_S3:
-            upload = Photo(original=image_file)
-            upload.user = current_user
-            upload.save()
+            photo = Photo(original=image_file)
+            photo.user = current_user
+            photo.plant = target_plant
+            photo.save()
             #image_url = upload.photo.url
-            image_url = upload.medium.url
+            image_url = photo.medium.url
+            photo_id = photo.id
             
         else:
             fs = FileSystemStorage()
             filename = fs.save(f'photos/{current_user.username}/{image_file.name}', image_file)
             image_url = fs.url(filename)
+            photo_id = None
 
         # create log
         create_log(
             Log.ActionChoices.ADDITION,
             current_user,
             target_plant,
-            {'action': 'add_photo', 'photo_url': image_url}
+            {'action': 'add_photo', 'photo_url': image_url, 'photo_id':photo_id}
         )
         return redirect('plant_view', plant_id=plant_id)
     
