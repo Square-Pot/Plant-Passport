@@ -123,13 +123,43 @@
             <div class="col-1 border-start border-primary border-3">
             </div>
             <div class="col-8">
-                <div class="card my-4" style="width: 18rem;">
-                    <!-- img src="{% static 'lithops.jpg' %}" class="card-img-top" alt="..." -->
+                <div class="card my-4" style="width: 25rem;">
+                    <div class="card-body">
+
+                    {% if log.action_type == 1 %}
+                        {% for key, value in log.data.items %}
+                            {% if key == 'action' %} <h5 class="card-title">{{ value }}</h5> {% endif %}
+                            {% if key == 'photo_url' %}<img src="{{ value }}" class="card-img-top" alt="..."> {% endif %}
+                            {% if key == 'comment' %}<p class="card-text">{{ value }}</p> {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if log.action_type == 2 %}
+                        <h5 class="card-title">{% trans 'ParametersEditing' %}</h5>
+                        {% for key, value in log.data.items %}
+                            <p class="card-text">
+                                <b>{{ key }}:</b> {{ value }} <br />
+                            </p>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if log.action_type == 3 %}
+                        <h5 class="card-title">Deleting</h5>
+                        <p class="card-text">Something was deleted...</p>
+                    {% endif %}
+
+                    </div>
+
+
+                    <!--
+                    <img src="{% static 'lithops.jpg' %}" class="card-img-top" alt="...">
                     <div class="card-body">
                       <h5 class="card-title">{{ log.action_type }}</h5>
                       <p class="card-text">{{ log.data }}</p>
-                      <!-- a href="#" class="btn btn-primary">Go somewhere</a -->
+                      <a href="#" class="btn btn-primary">Go somewhere</a>
                     </div>
+                    -->
+                    
                 </div>
             </div>
         </div> 
