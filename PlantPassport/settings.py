@@ -15,6 +15,7 @@ from pathlib import Path
 from django.utils.translation import ugettext_lazy as _
 from .secret import Secret
 
+SECRET_KEY = Secret.SECRET_KEY
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
