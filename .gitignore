@@ -1,4 +1,6 @@
 secret.py
+PlantPassport/secret.py
+
 
 
 # Byte-compiled / optimized / DLL files
@@ -130,3 +132,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
