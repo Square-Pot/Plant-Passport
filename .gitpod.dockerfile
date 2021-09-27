@@ -1,3 +1,9 @@
 FROM gitpod/workspace-full
-
-RUN sudo apt-get update  && sudo apt-get install -y gettext && sudo apt-get install -y libdmtx0a && sudo rm -rf /var/lib/apt/lists/*
+USER root
+RUN true \
+	&& apt-get -q update \
+	&& apt-get install -yq \
+		gettext \
+		# libdmtx0a \
+	&& apt-get autoremove -yq \
+	&& rm -rf /var/lib/apt/lists/*
