@@ -21,6 +21,7 @@ class RichPlant:
         self.__include_extra_attrs()
         self.fancy_name = self.__get_fancy_name()
         self.photos = None
+        self.profile_photo = None
     
     def get_attrs_as_str(self, *args):
         """Return string of requested attrs"""
@@ -86,6 +87,7 @@ class RichPlant:
                 # detect owner
                 if key == 'owner':
                     self.owner = log.data[key]
+
         return extra_attrs
 
     def __get_attrs_as_list_w_types(self) -> list:

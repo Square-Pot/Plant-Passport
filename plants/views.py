@@ -415,7 +415,7 @@ def upload_photo(request, plant_id):
     return HttpResponse(template.render(context, request))
 
 @login_required
-def set_profile_img(request, plant_id):
+def set_profile_img(request, plant_id, photo_id=None):
     """Set main photo for plant profile"""
 
     # authentication
@@ -430,16 +430,17 @@ def set_profile_img(request, plant_id):
     if not user_is_owner:
         return HttpResponseForbidden()
 
-    if request.method == 'POST':
-        # get photo id
+    if photo_id:
+        photo = get_object_or_404(Photo, id=photo_id)
+        
+        # check if photo is relaited to this plant
+        if not photo in target_rich_plant.get_photos():
+            return HttpResponseForbidden()
 
-        # create log
-        create_log(
-            Log.ActionChoices.ADDITION,
-            current_user,
-            target_plant,
-            {'action': 'add_photo', 'photo_url': image_url, 'photo_id':photo_id, 'photo_description': photo_description} 
-        )
+        # set new profile photo
+        target_plant.profile_photo = photo
+
+        return redirect('plant_view', plant_id=plant_id)
 
     # get photos
     photos = target_rich_plant.get_photos()

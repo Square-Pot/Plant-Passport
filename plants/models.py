@@ -40,6 +40,14 @@ class Plant(models.Model):
         default=0,
     )
 
+    profile_photo = models.ForeignKey(
+        'Photo',
+        related_name='+',
+        on_delete=models.CASCADE,
+        null=True,
+        default=None,
+    )
+
     def __str__(self):
         return f"{self.uid}  by  {self.creator} "
 
