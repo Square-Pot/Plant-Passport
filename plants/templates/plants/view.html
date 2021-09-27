@@ -131,6 +131,7 @@
                             {% if key == 'action' %} <h5 class="card-title">{{ value }}</h5> {% endif %}
                             {% if key == 'photo_url' %}<img src="{{ value }}" class="card-img-top" alt="..."> {% endif %}
                             {% if key == 'comment' %}<p class="card-text">{{ value }}</p> {% endif %}
+                            {% if key == 'photo_description' %}<p class="card-text">{{ value }}</p> {% endif %}
                         {% endfor %}
                     {% endif %}
 

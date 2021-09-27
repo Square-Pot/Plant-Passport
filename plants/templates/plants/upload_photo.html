@@ -7,14 +7,17 @@
         <hr><br>
         <form action="{% url "upload_photo" plant.id %}" method="post" enctype="multipart/form-data" class="form">
             {% csrf_token %}
-            <label class="file-label">
+            <div class="mb-3">
+                <label class="file-label">{% trans 'PhotoUploading: ' %}</label>
                 <input class="file-input" type="file" name="image_file">
-                <span class="file-cta">
-                <span class="file-label">{% trans 'ChooseFile...' %}</span>
-                </span>
-            </label>
-            <br />
-            <input type="submit" value="Submit" class="button is-primary" />
+            </div>
+            <div class="mb-3">
+                <label for="PhotoDescription" class="form-label">{% trans 'PhotoDescription: ' %}</label>
+                <textarea class="form-control" id="PhotoDescription" name="photo_descr" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <input type="submit" value="Submit" class="button is-primary" />
+            </div>
         </form>
     </div>
     {% endblock %}
