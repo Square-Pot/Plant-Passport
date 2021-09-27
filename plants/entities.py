@@ -1,6 +1,6 @@
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from .models import Log, Attribute
+from .models import Log, Attribute, Photo
 from users.models import User
 
 
@@ -20,6 +20,7 @@ class RichPlant:
         self.attrs = ExtraAttrs()
         self.__include_extra_attrs()
         self.fancy_name = self.__get_fancy_name()
+        self.photos = None
     
     def get_attrs_as_str(self, *args):
         """Return string of requested attrs"""
@@ -117,6 +118,9 @@ class RichPlant:
             fields_names.append(attr_name)
         return fields_names
 
+    def get_photos(self):
+        return Photo.objects.filter(plant=self.Plant)
+
 
 class BrCr:
     '''Breadcrumbs data generator class'''
@@ -139,3 +143,5 @@ class BrCr:
 
     def home_init(self):
         self.add_level(True, 'user_home', _('Home'))
+
+

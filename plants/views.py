@@ -414,6 +414,42 @@ def upload_photo(request, plant_id):
     }
     return HttpResponse(template.render(context, request))
 
+@login_required
+def set_profile_img(request, plant_id):
+    """Set main photo for plant profile"""
+
+    # authentication
+    current_user = request.user
+
+    # try to get plant by id
+    target_plant = get_object_or_404(Plant, id=plant_id)
+    target_rich_plant = RichPlant(target_plant)
+
+    # check access (is owner?)
+    user_is_owner = check_is_user_owner_of_plant(current_user, target_rich_plant)
+    if not user_is_owner:
+        return HttpResponseForbidden()
+
+    if request.method == 'POST':
+        # get photo id
+
+        # create log
+        create_log(
+            Log.ActionChoices.ADDITION,
+            current_user,
+            target_plant,
+            {'action': 'add_photo', 'photo_url': image_url, 'photo_id':photo_id, 'photo_description': photo_description} 
+        )
+
+    # get photos
+    photos = target_rich_plant.get_photos()
+
+    # Template data
+    template = loader.get_template('plants/set_profile_img.html')
+    context = {
+        'photos': photos,
+    }
+    return HttpResponse(template.render(context, request))
 
   
 
