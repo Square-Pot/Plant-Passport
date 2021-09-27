@@ -439,6 +439,7 @@ def set_profile_img(request, plant_id, photo_id=None):
 
         # set new profile photo
         target_plant.profile_photo = photo
+        target_plant.save()
 
         return redirect('plant_view', plant_id=plant_id)
 
@@ -448,6 +449,7 @@ def set_profile_img(request, plant_id, photo_id=None):
     # Template data
     template = loader.get_template('plants/set_profile_img.html')
     context = {
+        'plant': target_rich_plant,
         'photos': photos,
     }
     return HttpResponse(template.render(context, request))

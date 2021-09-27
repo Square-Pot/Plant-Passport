@@ -8,12 +8,12 @@
     <div class="container">
         <div class="row">
           <div class="col-sm-5">
-            {% if plant.profile_photo == None %}
+            {% if not plant.profile_photo  %}
             <img src="{% static 'lithops.jpg' %}" class="img-fluid" alt="{{ plant.fancy_name|safe }}">
             {% else %}
             <img src="{{ plant.profile_photo.small.url }}" class="img-fluid" alt="{{ plant.fancy_name|safe }}">
             {% endif %}
-            <a href="{% url 'set_profile_img' plant.id %}" class="btn btn-outline-primary btn-sm">{% trans 'SetPhoto' %}</a>
+            <a href="{% url 'set_profile_img_dialog' plant.id %}" class="btn btn-outline-primary btn-sm">{% trans 'SetPhoto' %}</a>
           </div>
           <div class="col-sm-7">
             <div class="row row-cols-3 py-1 ">
