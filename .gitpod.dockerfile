@@ -4,6 +4,11 @@ RUN true \
 	&& apt-get -q update \
 	&& apt-get install -yq \
 		gettext \
-    libdmtx0a \
 	&& apt-get autoremove -yq \
+	&& rm -rf /var/lib/apt/lists/*
+
+
+	&& apt -q update \
+	&& apt install -yq \ 
+		libdmtx0a \
 	&& rm -rf /var/lib/apt/lists/*
