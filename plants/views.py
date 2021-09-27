@@ -73,7 +73,6 @@ def index(request, user_id=None):
     
     # Not showing attribute keys
     attrs_not_showing = get_attr_keys_not_showing_in_list()
-    print(attrs_not_showing)
 
     # Filter
     filter_data = get_filteraible_attr_values(rich_plants)
