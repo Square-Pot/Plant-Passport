@@ -9,6 +9,8 @@ tasks:
       python -m pip install django-imagekit
       python -m pip install boto3
       python -m pip install django-storages
+      python -m pip install pylibdmtx
+      python -m pip install pylibdmtx[scripts]
       python manage.py migrate
     command: |
       python manage.py runserver
