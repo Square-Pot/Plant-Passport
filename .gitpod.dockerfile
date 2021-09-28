@@ -4,6 +4,7 @@ RUN true \
 	&& apt-get -q update \
 	&& apt-get install -yq \
 		gettext \
-		# libdmtx0a \
+		pydmtx \
 	&& apt-get autoremove -yq \
 	&& rm -rf /var/lib/apt/lists/*
+
