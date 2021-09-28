@@ -4,7 +4,7 @@ RUN true \
 	&& apt-get -q update \
 	&& apt-get install -yq \
 		gettext \
-		pydmtx \
+		libdmtx-dev \
 	&& apt-get autoremove -yq \
 	&& rm -rf /var/lib/apt/lists/*
 
