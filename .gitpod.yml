@@ -11,7 +11,7 @@ tasks:
       python -m pip install django-storages
       python -m pip install pylibdmtx 
       python -m pip install pylibdmtx[scripts]
-      python -m pip install fpdf
+      python -m pip install fpdf2
       python manage.py migrate
     command: |
       python manage.py runserver
