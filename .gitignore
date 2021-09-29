@@ -1,6 +1,8 @@
 secret.py
 PlantPassport/secret.py
 
+# pickle files
+*.pkl
 
 
 # Byte-compiled / optimized / DLL files

@@ -3,26 +3,41 @@ from pylibdmtx.pylibdmtx import encode
 from PIL import Image
 from fpdf import FPDF
 
-def image_to_byte_array(image:Image):
-  imgByteArr = io.BytesIO()
-  image.save(imgByteArr, format="PNG")
-  imgByteArr = imgByteArr.getvalue()
-  return imgByteArr
 
 # data matrix generate
 encoded = encode('121341'.encode('ASCII'))
 dmtx_img = Image.frombytes('RGB', (encoded.width, encoded.height), encoded.pixels)
-dmtx_img_as_bytes = image_to_byte_array(dmtx_img)
-
-print(type(dmtx_img_as_bytes))
-
-#img.save('dmtx.png')
 
 # pdf generate
 pdf = FPDF()
 pdf.add_page()
-pdf.set_font('Arial', '', 14)
+pdf.add_font('DejaVu_regular', fname='DejaVuSansCondensed.ttf', uni=True)
+pdf.add_font('DejaVu_italic', fname='DejaVuSansCondensed-Oblique.ttf', uni=True)
+
+
+pdf.set_font('DejaVu_regular', size=10)
 pdf.ln(10)
-pdf.write(5, 'hello world!')
-pdf.image(dmtx_img_as_bytes, 50, 50,)
+
+text = u"""
+Hello World
+Приветики
+"""
+
+for txt in text.split('\n'):
+  pdf.write(8, txt)
+  pdf.ln(8)
+
+pdf.set_font('DejaVu_italic', size=10)
+pdf.ln(10)
+
+text = u"""
+Hello World
+Приветики
+"""
+
+for txt in text.split('\n'):
+  pdf.write(8, txt)
+  pdf.ln(8)
+
+pdf.image(dmtx_img, 50, 50,)
 pdf.output('pdf-dmtx-test.pdf', 'F')
