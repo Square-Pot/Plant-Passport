@@ -13,11 +13,9 @@ tasks:
       python -m pip install pylibdmtx[scripts]
       python -m pip install fpdf2
       python manage.py migrate
-      npm install
       npm install axios
     command: |
       python manage.py runserver
-      npm run dev
   
 ports:
   - port: 8000
