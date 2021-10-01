@@ -7,10 +7,13 @@ from plants.services import check_is_user_owner_of_plant
 from .services import generate_labels_pdf
 
 @login_required
-def get_labels_pdf(request, plant_ids):
+def get_labels_pdf(request):
 
     # processing user data
     if request.method == 'POST':
+
+        if request.POST['plant_ids']:
+            plant_ids = request.POST.getlist('plant_ids')
 
         current_user = request.user
 
