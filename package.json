@@ -1,7 +1,7 @@
 {
   "name": "plant-passport-gitpod",
   "version": "1.0.0",
-  "description": "This is PlantPassport project under development on Gitpod infrastrucutre with a Python Django template.",
+  "description": "Tracking information about plants: watering, illnesses, appearence in modern way.",
   "main": "index.js",
   "directories": {
     "test": "test"
