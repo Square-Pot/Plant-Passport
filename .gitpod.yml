@@ -15,7 +15,6 @@ tasks:
       python manage.py migrate
       npm install
       npm install axios
-      npm run build
     command: |
       python manage.py runserver
       npm run dev
