@@ -1,0 +1,26 @@
+{
+  "name": "plant-passport-gitpod",
+  "version": "1.0.0",
+  "description": "This is PlantPassport project under development on Gitpod infrastrucutre with a Python Django template.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "axios": "^0.22.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spalk/Plant-Passport-gitpod.git"
+  },
+  "author": "dntx",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/spalk/Plant-Passport-gitpod/issues"
+  },
+  "homepage": "https://github.com/spalk/Plant-Passport-gitpod#readme"
+}
