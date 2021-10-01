@@ -18,37 +18,117 @@ def _generate_datamatrix(text)->Image:
     """Data matrix generate"""
     encoded = encode(text.encode('ASCII'))
     dmtx_img = Image.frombytes('RGB', (encoded.width, encoded.height), encoded.pixels)
+    #dmtx_img.thumbnail((64, 64))
     return dmtx_img
 
 
 def generate_labels_pdf(rich_plants:list):
     pdf = _create_pdf()
 
-    x, y = 60, 60
+    # start point
+    x, y = 0, 0
 
     for rp in rich_plants:
         puid = rp.uid
 
+        # preparing data 
         dm_img = _generate_datamatrix(puid)
-        field_num = rp.attrs.number.upper()
 
-        genus = rp.attrs.genus.capitalize()
-        species = rp.attrs.species.lower()
-        subspecies = rp.attrs.subspecies.lower()
-        variety = rp.attrs.variety.lower()
-        cultivar = rp.attrs.cultivar.title()
-        affinity = rp.attrs.affinity.title()
-        ex = rp.attrs.ex.title()
+        if rp.attrs.number:
+            field_num = rp.attrs.number.upper()
+        else:
+            field_num = None
 
+        if rp.attrs.genus:
+            #genus = rp.attrs.genus.capitalize()
+            genus = rp.attrs.genus.capitalize()[0] + '.'
+        else:
+            field_num = None
 
-        pdf.image(dm_img)
+        if rp.attrs.species:
+            species = rp.attrs.species.lower()
+        else:
+            species = None
+        
+        if rp.attrs.subspecies:
+            subspecies = rp.attrs.subspecies.lower()
+        else:
+            subspecies = None
 
-        with pdf.rotation(90, x=x, y=y):
-            pdf.cell(20, 10, field_num)
+        if rp.attrs.variety:
+            variety = rp.attrs.variety.lower()
+        else:
+            variety = None
 
-        pdf.cell(40, 10, f'{genus} sp. {subspecies}')
-        pdf.ln()
-        pdf.cell(40, 10, f'{variety} sp. {cultivar}')
+        if rp.attrs.cultivar:
+            cultivar = rp.attrs.cultivar.title()
+        else:
+            cultivar = None
+
+        if rp.attrs.affinity:
+            affinity = rp.attrs.affinity.title()
+        else:
+            affinity = None
+
+        if rp.attrs.ex:
+            ex = rp.attrs.ex.title()
+        else:
+            ex = None
+
+        # Image
+        pdf.image(dm_img, x=x, y=y)
+
+        # Field number
+        x += 22 
+        y += 21
+        pdf.set_xy(x, y)
+        pdf.set_font_size(11)
+        cell_width_fn = 18
+        cell_high_fn = 6
+        text = ''
+        if field_num:
+            text = field_num
+        with pdf.rotation(90):
+            pdf.cell(cell_width, cell_high, text, border=1, align="C")
+
+        # Gen. + sp. + ssp.
+        x += cell_high
+        y -= cell_width
+        pdf.set_xy(x, y)
+        cell_width = 60
+        cell_high = 6
+        pdf.set_font_size(10)
+        text = ''
+        if genus: 
+            text += genus
+        if species:
+            text += f' {species}'
+        if subspecies:
+            text += f' ssp. {subspecies}'
+        pdf.cell(cell_width, cell_high, text, border=1)
+
+        # var. + cv.
+        y +=  cell_high
+        pdf.set_xy(x, y)
+        text = '  '
+        if variety:
+            text += f'v. {variety}'
+        if cultivar:
+            text += f' cv. {cultivar}'
+        pdf.cell(cell_width, cell_high, text, border=1)
+
+        # aff. + ex. 
+        y +=  cell_high
+        pdf.set_xy(x, y)
+        text = '  '
+        if affinity:
+            text += f'aff. {affinity}'
+        if ex:
+            text += f' ex. {ex}'
+        pdf.cell(cell_width, cell_high, text, border=1)
+        
+        #
+        х = х-
 
 
     filename = 'pdf-dmtx-test.pdf'
