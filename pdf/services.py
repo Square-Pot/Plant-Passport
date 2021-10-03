@@ -79,8 +79,11 @@ def generate_labels_pdf(rich_plants:list):
         pdf.image(dm_img, x=x, y=y)
 
         # Field number
-        x += 22 
-        y += 21
+        fn_shift_x = 22 
+        fn_shift_y = 21
+        x += fn_shift_x
+        y += fn_shift_y
+
         pdf.set_xy(x, y)
         pdf.set_font_size(11)
         cell_width_fn = 18
@@ -89,11 +92,12 @@ def generate_labels_pdf(rich_plants:list):
         if field_num:
             text = field_num
         with pdf.rotation(90):
-            pdf.cell(cell_width, cell_high, text, border=1, align="C")
+            pdf.cell(cell_width_fn, cell_high_fn, text, border=1, align="C")
 
         # Gen. + sp. + ssp.
-        x += cell_high
-        y -= cell_width
+        x += cell_high_fn
+        y -= cell_width_fn
+
         pdf.set_xy(x, y)
         cell_width = 60
         cell_high = 6
@@ -128,7 +132,10 @@ def generate_labels_pdf(rich_plants:list):
         pdf.cell(cell_width, cell_high, text, border=1)
         
         #
-        х = х-
+        bb = x
+        #x = bb - fn_shift_x - cell_high_fn - cell_width
+        x = 0
+        y += 8
 
 
     filename = 'pdf-dmtx-test.pdf'
