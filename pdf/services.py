@@ -2,8 +2,15 @@
 import io
 from django.templatetags.static import static
 from pylibdmtx.pylibdmtx import encode
+import PIL
 from PIL import Image
 from fpdf import FPDF
+
+# Data Matrix size
+IMG_WIDTH = 40  # px
+
+# Resolution calulation according to observation: 50px = 18mm
+PX_in_MM = 2.7
 
 
 def _create_pdf()->FPDF:
@@ -17,16 +24,16 @@ def _create_pdf()->FPDF:
 def _generate_datamatrix(text)->Image:
     """Data matrix generate"""
     encoded = encode(text.encode('ASCII'))
-    dmtx_img = Image.frombytes('RGB', (encoded.width, encoded.height), encoded.pixels)
-    #dmtx_img.thumbnail((64, 64))
+    dmtx_img = Image.frombytes('RGB', (encoded.width, encoded.height), encoded.pixels)  # Image size is 70x70 px, where margins are 10px
+    dmtx_img = dmtx_img.crop((10, 10 , 60, 60))                                         # Crop white margins. Resulting image size is: 50x50 px
+    dmtx_img = dmtx_img.resize((IMG_WIDTH, IMG_WIDTH), resample=PIL.Image.LANCZOS)      # Resize to IMG_WIDTH square. Think what TODO when this matrix-size will exhaust
     return dmtx_img
-
 
 def generate_labels_pdf(rich_plants:list):
     pdf = _create_pdf()
 
     # start point
-    x, y = 0, 0
+    x, y = 10, 10
 
     for rp in rich_plants:
         puid = rp.uid
@@ -76,17 +83,18 @@ def generate_labels_pdf(rich_plants:list):
             ex = None
 
         # Image
+        pdf.set_xy(x, y)
         pdf.image(dm_img, x=x, y=y)
 
         # Field number
-        fn_shift_x = 22 
-        fn_shift_y = 21
+        fn_shift_x = IMG_WIDTH // PX_in_MM
+        fn_shift_y = IMG_WIDTH // PX_in_MM
         x += fn_shift_x
         y += fn_shift_y
 
         pdf.set_xy(x, y)
-        pdf.set_font_size(11)
-        cell_width_fn = 18
+        pdf.set_font_size(10)
+        cell_width_fn = IMG_WIDTH // PX_in_MM
         cell_high_fn = 6
         text = ''
         if field_num:
@@ -100,7 +108,7 @@ def generate_labels_pdf(rich_plants:list):
 
         pdf.set_xy(x, y)
         cell_width = 60
-        cell_high = 6
+        cell_high = IMG_WIDTH // PX_in_MM / 3
         pdf.set_font_size(10)
         text = ''
         if genus: 
@@ -134,7 +142,7 @@ def generate_labels_pdf(rich_plants:list):
         #
         bb = x
         #x = bb - fn_shift_x - cell_high_fn - cell_width
-        x = 0
+        x = 10
         y += 8
 
 
