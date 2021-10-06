@@ -3,7 +3,7 @@ import io
 from django.templatetags.static import static
 from pylibdmtx.pylibdmtx import encode
 import PIL
-from PIL import Image
+from PIL import Image, ImageEnhance
 from fpdf import FPDF
 
 DATA_MATRIX_SIZE = 30   # px
@@ -64,19 +64,19 @@ class Label:
         """Generating text lines according to data"""
         # Line 1 generating
         if self.genus and self.species and self.subspecies:
-            text_line_1 = f'{self.genus[0]}. {self.species}  ssp. {self.subspecies}'
+            text_line_1 = f'**__{self.genus[0]}.__** __{self.species}__  ssp. __{self.subspecies}__'
         else:
             text_line_1 = ''
-            text_line_1 += f'{self.genus} ' if self.genus else ''
-            text_line_1 += f'{self.species} ' if self.species else ''
-            text_line_1 += f'ssp. {self.subspecies} ' if self.species else ''
+            text_line_1 += f'**__{self.genus}__** ' if self.genus else ''
+            text_line_1 += f'__{self.species}__ ' if self.species else ''
+            text_line_1 += f'ssp. __{self.subspecies}__ ' if self.species else ''
         if text_line_1: 
             self.text_lines.append(text_line_1)
 
         # Line 2 generating
         text_line_2 = ''
-        text_line_2 += f'v. {self.variety} ' if self.variety else ''
-        text_line_2 += f'cv. {self.cultivar} ' if self.cultivar else ''
+        text_line_2 += f'v. __{self.variety}__ ' if self.variety else ''
+        text_line_2 += f'cv. __{self.cultivar}__ ' if self.cultivar else ''
         if text_line_2: 
             self.text_lines.append(text_line_2)
 
@@ -99,8 +99,11 @@ class Label:
         encoded = encode(self.puid.encode('ASCII'))
         dmtx_img = Image.frombytes('RGB', (encoded.width, encoded.height), encoded.pixels)                  # Image size is 70x70 px, where margins are 10px
         dmtx_img = dmtx_img.crop((10, 10 , 60, 60))                                                         # Crop white margins. Resulting image size is: 50x50 px
-        dmtx_img = dmtx_img.resize((self.dmtx_side_px, self.dmtx_side_px), resample=PIL.Image.LANCZOS)      # Resize to IMG_WIDTH square. Think what TODO when this matrix-size will exhaust
-        self.dmtx = dmtx_img
+        #dmtx_img = dmtx_img.resize((self.dmtx_side_px, self.dmtx_side_px), resample=PIL.Image.LANCZOS)     
+        dmtx_img = dmtx_img.resize((self.dmtx_side_px, self.dmtx_side_px))                                   # Resize to IMG_WIDTH square. Think what TODO when this matrix-size will exhaust
+        enhancer = ImageEnhance.Contrast(dmtx_img)
+        final_dmtx_img = enhancer.enhance(1.5)
+        self.dmtx = final_dmtx_img
 
 
 class LabelsBuilder:
@@ -122,8 +125,11 @@ class LabelsBuilder:
         """PDF-object create and setup"""
         pdf = FPDF()
         pdf.add_page()
-        pdf.add_font('DejaVu_regular', fname='static/DejaVuSansCondensed.ttf', uni=True)
-        pdf.set_font('DejaVu_regular', size=10)
+        pdf.add_font('dejavu', 'B', fname='static/DejaVuSansCondensed-Bold.ttf', uni=True)
+        pdf.add_font('dejavu', 'BI',  fname='static/DejaVuSansCondensed-BoldOblique.ttf', uni=True)
+        pdf.add_font('dejavu', 'I', fname='static/DejaVuSansCondensed-Oblique.ttf', uni=True)
+        pdf.add_font('dejavu', fname='static/DejaVuSansCondensed.ttf', uni=True)
+        pdf.set_font('dejavu', size=10)
         return pdf
 
     def _get_label_position(self, label:Label):
@@ -181,7 +187,7 @@ class LabelsBuilder:
         self.pdf.set_font_size(8)
         heigh = label.dmtx_side_mm                              # high of field number cell is equal to size of data matrix
         width = self.field_num_cell_width
-        text = label.field_number if label.field_number else ''
+        text = f'{label.field_number}' if label.field_number else ''
         with self.pdf.rotation(90):
             self.pdf.cell(heigh, width, text, border=self.show_brd, align="C")
 
@@ -196,7 +202,7 @@ class LabelsBuilder:
         width = label.full_length - label.dmtx_side_mm - self.field_num_cell_width
 
         for text in label.text_lines:
-            self.pdf.cell(width, heigh, text, border=self.show_brd)
+            self.pdf.cell(width, heigh, text, border=self.show_brd, markdown=True)
             self.cur_y += heigh
             self._xy_update()
 
@@ -219,3 +225,4 @@ class LabelsBuilder:
         filename = 'pdf-dmtx-test.pdf'
         self.pdf.output(filename, 'F')
         return filename
+
