@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from plants.models import Plant
 from plants.entities import RichPlant
 from plants.services import check_is_user_owner_of_plant
-from .services import generate_labels_pdf
+from .services import LabelsBuilder
 
 @login_required
 def get_labels_pdf(request):
@@ -30,7 +30,9 @@ def get_labels_pdf(request):
 
         
         # generate pdf and take path to it
-        path_to_pdf = generate_labels_pdf(rich_plants)
+        labels  = LabelsBuilder(rich_plants)
+        labels.generate_labels()
+        path_to_pdf = labels.get_pdf()
         if path_to_pdf:
             filename = 'user_labels.pdf'
             pdf_file = open(path_to_pdf, 'rb')
