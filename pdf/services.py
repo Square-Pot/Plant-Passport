@@ -8,7 +8,10 @@ from fpdf import FPDF
 
 DATA_MATRIX_SIZE = 30   # px
 LABEL_LENGHT = 80       # mm
-VERTICAL_SPACE = 20     # mm
+NEXT_COLUMN_X = 90      # mm
+VERTICAL_SPACE = 6      # mm
+START_X = 10            # mm 
+START_Y = 10            # mm
 
 
 class Label:
@@ -84,9 +87,10 @@ class Label:
         if text_line_3:
             self.text_lines.append(text_line_3)
 
-        #
+        # Placeholder if no data
         if len(self.text_lines) == 0:
-            self.text_lines.append('empty')
+            self.text_lines.append('_' * 15)
+            self.text_lines.append('_' * 15)
 
 
 
@@ -104,15 +108,14 @@ class LabelsBuilder:
         self.rich_plants = rich_plants
         self.page_high = 297                                    # high of A4 
         self.v_space = VERTICAL_SPACE                           # vertical space between labels
-        self.start_x = 10                                       # x of origin
-        self.start_y = 10                                       # y of origin 
-        self.column_shift = 90
+        self.start_x = START_X                                  # x of origin
+        self.start_y = START_Y                                  # y of origin 
+        self.column_shift = NEXT_COLUMN_X
         self.show_brd = 0                                       # showing of borders in cells for debugging
         self.field_num_cell_width = 6
         self.pdf = self._create_pdf()
         self.cur_x = self.start_x
         self.cur_y = self.start_y
-        self.cur_lable_num = 0
         self.cur_column = 1
 
     def _create_pdf(self) -> FPDF:
@@ -123,22 +126,33 @@ class LabelsBuilder:
         pdf.set_font('DejaVu_regular', size=10)
         return pdf
 
-    def _get_start_y_position(self, label:Label):
+    def _get_label_position(self, label:Label):
         """Y-position calculation for current label"""
         label_heigh = label.get_width()
         v_space_left = self.page_high - self.cur_y              # free space left in the bottom of the page
-        if not v_space_left - label_heigh > 10:
-            self.cur_y = self.start_y
-            if self.cur_column == 2:
-                self.pdf.add_page()
-                self.cur_column = 1
-            else:
+
+        if v_space_left - label_heigh -self.v_space < 10:
+            if self.cur_column == 1:
+                self.cur_y = self.start_y
+                self.cur_x = self.start_x + self.column_shift
                 self.cur_column = 2
-        else:
+            elif self.cur_column == 2:
+                self.pdf.add_page()
+                self.cur_x = self.start_x
+                self.cur_y = self.start_y
+                self.cur_column = 1
+        else: 
             if self.cur_column == 1:
                 self.cur_x = self.start_x
+                if self.cur_y == self.start_y:
+                    pass
+                else:
+                    self.cur_y += self.v_space
             elif self.cur_column == 2:
-                self.cru_x = self.start_x + self.column_shift
+                self.cur_x = self.start_x + self.column_shift
+                self.cur_y += self.v_space
+
+        self._xy_update()
 
     def _xy_update(self, shift_x=0, shift_y=0):
         """
@@ -149,7 +163,6 @@ class LabelsBuilder:
 
     def _place_dmtx(self, label:Label):
         """Placing data matrix image"""
-        self._xy_update()
         self.pdf.image(label.dmtx, x=self.cur_x, y=self.cur_y)
         self.cur_x += label.dmtx_side_mm
 
@@ -174,28 +187,25 @@ class LabelsBuilder:
 
     def _place_text_lines(self, label:Label):
         """Placing text lines"""
-        if not label.get_lines_number == 0:
-            print(f'*** Label UID: {label.puid}, number of lines: {label.get_lines_number()}')
-            self.cur_x += self.field_num_cell_width
-            self.cur_y -= label.dmtx_side_mm
+        self.cur_x += self.field_num_cell_width
+        self.cur_y -= label.dmtx_side_mm
+        self._xy_update()
+
+        self.pdf.set_font_size(8)
+        heigh = label.dmtx_side_mm / label.get_lines_number()
+        width = label.full_length - label.dmtx_side_mm - self.field_num_cell_width
+
+        for text in label.text_lines:
+            self.pdf.cell(width, heigh, text, border=self.show_brd)
+            self.cur_y += heigh
             self._xy_update()
-
-            self.pdf.set_font_size(8)
-            heigh = label.dmtx_side_mm / label.get_lines_number()
-            width = label.full_length - label.dmtx_side_mm - self.field_num_cell_width
-
-            for text in label.text_lines:
-                self.pdf.cell(width, heigh, text, border=self.show_brd)
-                self.cur_y += heigh
-                self._xy_update()
 
     def generate_labels(self):
         """Generate list of Labels objects"""
         for rp in self.rich_plants:
-            self.cur_lable_num += 1 
             label = Label()
             label.extract_data(rp)
-            self._get_start_y_position(label)
+            self._get_label_position(label)
 
             self._place_dmtx(label)
             self._place_frame(label)
@@ -203,7 +213,7 @@ class LabelsBuilder:
             self._place_text_lines(label)
 
             self.cur_x = self.pdf.get_x()
-            self.cur_y = self.pdf.get_y() + self.v_space
+            self.cur_y = self.pdf.get_y()
 
     def get_pdf(self):
         filename = 'pdf-dmtx-test.pdf'
