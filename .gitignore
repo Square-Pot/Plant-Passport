@@ -4,6 +4,9 @@ PlantPassport/secret.py
 # pickle files
 *.pkl
 
+# pdfs
+static/pdf_labels
+
 # npm
 node_modules/
 package-lock.json
