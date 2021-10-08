@@ -1,5 +1,6 @@
 
 import io
+import os
 from django.templatetags.static import static
 from pylibdmtx.pylibdmtx import encode
 import PIL
@@ -107,8 +108,9 @@ class Label:
 
 
 class LabelsBuilder:
-    def __init__(self, rich_plants:list):
+    def __init__(self, rich_plants:list, user):
         self.rich_plants = rich_plants
+        self.user = user
         self.page_high = 297                                    # high of A4 
         self.v_space = VERTICAL_SPACE                           # vertical space between labels
         self.start_x = START_X                                  # x of origin
@@ -222,7 +224,9 @@ class LabelsBuilder:
             self.cur_y = self.pdf.get_y()
 
     def get_pdf(self):
-        filename = 'pdf-dmtx-test.pdf'
-        self.pdf.output(filename, 'F')
-        return filename
+        """Generating PDF-file"""
+        filename = f'{self.user.username}_labels.pdf'
+        fullpath = os.path.join('static', 'pdf_labels', filename)
+        self.pdf.output(fullpath, 'F')
+        return fullpath
 
