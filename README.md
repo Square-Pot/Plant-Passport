@@ -24,17 +24,17 @@ This is PlantPassport project under development on Gitpod infrastrucutre with a 
 2. Photos and gallery on timeline
 
 ### Detailed tasks for step Two:
-    - add events:
-        - watering
-        - fertilizing
-        - repotting
+    + add events:
+        + watering
+        + fertilizing
+        + repotting
         - pollination
     - conditions:
         - blooming
         - sickness
-    - plant view page: add link for setting up of main plant picture (for profile and thumbnai in plant list)
+    + plant view page: add link for setting up of main plant picture (for profile and thumbnai in plant list)
     - groups: on plant list page add ability to add plants to exitsting groupps
-    - fancy timeline with changes and events
+    + fancy timeline with changes and events
     - events-filter
     - friends and  viewing status of plants profiles:
         - public: for all
@@ -42,5 +42,10 @@ This is PlantPassport project under development on Gitpod infrastrucutre with a 
         - privat: for me 
 
 ## Step Three
-1. QR-code generator
-2. QR-code detector
+1. Data Matrix Code generator
+2. Data Matrix Code detector
+
+### Detailed tasks for step Three:
+    + pdf with labels generator
+    - show Data Matrix on plant page
+    - add interface for upload image or multiple images for detecting PUID from Data Matrix  and addition if for particular plants
