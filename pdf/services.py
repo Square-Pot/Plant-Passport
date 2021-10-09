@@ -70,7 +70,7 @@ class Label:
             text_line_1 = ''
             text_line_1 += f'**__{self.genus}__** ' if self.genus else ''
             text_line_1 += f'__{self.species}__ ' if self.species else ''
-            text_line_1 += f'ssp. __{self.subspecies}__ ' if self.species else ''
+            text_line_1 += f'ssp. __{self.subspecies}__ ' if self.subspecies else ''
         if text_line_1: 
             self.text_lines.append(text_line_1)
 
