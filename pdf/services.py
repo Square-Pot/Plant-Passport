@@ -36,20 +36,20 @@ class Label:
     def extract_data(self, rich_plant):
         """Fill current object with data from RichPlant"""
         self.puid =         rich_plant.uid
-        self.field_number = rich_plant.attrs.number.upper()                 if rich_plant.attrs.number else None
+        self.field_number = rich_plant.attrs.number.strip().upper()                 if rich_plant.attrs.number else None
         
         # Line 1 data
-        self.genus =        rich_plant.attrs.genus.capitalize()[0] + '.'    if rich_plant.attrs.genus else None
-        self.species =      rich_plant.attrs.species.lower()                if rich_plant.attrs.species else None
-        self.subspecies =   rich_plant.attrs.subspecies.lower()             if rich_plant.attrs.subspecies else None
+        self.genus =        rich_plant.attrs.genus.strip().capitalize()             if rich_plant.attrs.genus else None
+        self.species =      rich_plant.attrs.species.strip().lower()                if rich_plant.attrs.species else None
+        self.subspecies =   rich_plant.attrs.subspecies.strip().lower()             if rich_plant.attrs.subspecies else None
         
         # Line 2 data
-        self.variety =      rich_plant.attrs.variety.lower()                if rich_plant.attrs.variety else None
-        self.cultivar =     rich_plant.attrs.cultivar.title()               if rich_plant.attrs.cultivar else None
+        self.variety =      rich_plant.attrs.variety.strip().lower()                if rich_plant.attrs.variety else None
+        self.cultivar =     rich_plant.attrs.cultivar.strip().title()               if rich_plant.attrs.cultivar else None
 
         # Line 3 data
-        self.affinity =     rich_plant.attrs.affinity.title()               if rich_plant.attrs.affinity else None
-        self.ex =           rich_plant.attrs.ex.title()                     if rich_plant.attrs.ex else None
+        self.affinity =     rich_plant.attrs.affinity.strip().title()               if rich_plant.attrs.affinity else None
+        self.ex =           rich_plant.attrs.ex.strip().title()                     if rich_plant.attrs.ex else None
 
         self._generate_text_lines()
         self._generate_datamatrix()
@@ -90,8 +90,8 @@ class Label:
 
         # Placeholder if no data
         if len(self.text_lines) == 0:
-            self.text_lines.append('_' * 15)
-            self.text_lines.append('_' * 15)
+            self.text_lines.append('_' * 20)
+            self.text_lines.append('_' * 20)
 
 
 
