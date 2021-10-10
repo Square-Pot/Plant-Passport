@@ -50,6 +50,7 @@ class Label:
         # Line 3 data
         self.affinity =     rich_plant.attrs.affinity.strip().title()               if rich_plant.attrs.affinity else None
         self.ex =           rich_plant.attrs.ex.strip().title()                     if rich_plant.attrs.ex else None
+        self.source =       rich_plant.attrs.source.strip()                         if rich_plant.attrs.source else None
 
         self._generate_text_lines()
         self._generate_datamatrix()
@@ -77,7 +78,8 @@ class Label:
         # Line 2 generating
         text_line_2 = ''
         text_line_2 += f'v. __{self.variety}__ ' if self.variety else ''
-        text_line_2 += f'cv. __{self.cultivar}__ ' if self.cultivar else ''
+        text_line_2 += f'cv. ‘{self.cultivar}’ ' if self.cultivar else ''
+        
         if text_line_2: 
             self.text_lines.append(text_line_2)
 
@@ -85,6 +87,7 @@ class Label:
         text_line_3 = ''
         text_line_3 += f'aff. {self.affinity} ' if self.affinity else ''
         text_line_3 += f'ex. {self.ex} ' if self.ex else ''
+        text_line_3 += f'({self.source})' if self.source else ''
         if text_line_3:
             self.text_lines.append(text_line_3)
 
@@ -222,6 +225,8 @@ class LabelsBuilder:
 
             self.cur_x = self.pdf.get_x()
             self.cur_y = self.pdf.get_y()
+
+            self.pdf.set_font('dejavu', '', 10)
 
     def get_pdf(self):
         """Generating PDF-file"""
