@@ -87,7 +87,7 @@ class Label:
         text_line_3 = ''
         text_line_3 += f'aff. {self.affinity} ' if self.affinity else ''
         text_line_3 += f'ex. {self.ex} ' if self.ex else ''
-        text_line_3 += f'({self.source})' if self.source else ''
+        text_line_3 += f'[{self.source}]' if self.source else ''
         if text_line_3:
             self.text_lines.append(text_line_3)
 
@@ -207,9 +207,11 @@ class LabelsBuilder:
         width = label.full_length - label.dmtx_side_mm - self.field_num_cell_width
 
         for text in label.text_lines:
+            self.pdf.set_font('dejavu', '', 10)
             self.pdf.cell(width, heigh, text, border=self.show_brd, markdown=True)
             self.cur_y += heigh
             self._xy_update()
+        self.pdf.set_font('dejavu', '', 10)
 
     def generate_labels(self):
         """Generate list of Labels objects"""
@@ -225,8 +227,6 @@ class LabelsBuilder:
 
             self.cur_x = self.pdf.get_x()
             self.cur_y = self.pdf.get_y()
-
-            self.pdf.set_font('dejavu', '', 10)
 
     def get_pdf(self):
         """Generating PDF-file"""
