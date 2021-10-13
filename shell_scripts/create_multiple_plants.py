@@ -3,13 +3,14 @@
 # django shell:
 # exec(open('shell_scripts/create_multiple_plants.py').read())
 
-from plants.models      import  Log
+from plants.models      import  Plant
+from plants.entities    import  RichPlant
 from users.models       import  User
 from plants.services    import  create_log, \
                                 create_new_plant
 
 # Set user owner ID for new plants
-USER_ID = 1
+USER_ID = 2
 
 # Set path to csv file
 CSV_FILE = 'shell_scripts/mesembs_utf.csv'
