@@ -12,10 +12,15 @@ from users.forms import UserCreateForm
 from users.models import User
 from .models import Plant, Log, Attribute, Action, Photo, user_directory_path
 from .forms import PlantForm, AttributeForm, ActionForm, PhotoForm
-from .services import get_user_richplants, get_attrs_titles_with_transl,\
-    check_is_user_friend_of_plant_owner, check_is_user_owner_of_plant,\
-    get_filteraible_attr_values, get_filtered_attr_values_from_post, filter_data_update,\
-    filter_plants, get_attr_keys_not_showing_in_list, create_log, create_new_plant
+from .services import   get_user_richplants, \
+                        get_attrs_titles_with_transl, \
+                        check_is_user_friend_of_plant_owner, \
+                        check_is_user_owner_of_plant, \
+                        get_filteraible_attr_values, \
+                        get_filtered_attr_values_from_post, \
+                        filter_data_update,\
+                        filter_plants, get_attr_keys_not_showing_in_list, \
+                        create_log, create_new_plant
 from users.services import is_friend
 from .entities import RichPlant, BrCr
 
