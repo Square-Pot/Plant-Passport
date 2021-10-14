@@ -41,12 +41,15 @@ class RichPlant:
             if attr['value']:
                 # Field Number always uppercase
                 if attr['key'] == "number":
-                    fancy_name += f"{attr['value'].upper()} – "
+                    fancy_name += f"{attr['value'].upper()}: "
                 # Genus always capitlized and italic
                 elif attr['key'] == "genus":
                     fancy_name += f"<i>{attr['value'].capitalize()}</i> "
-                # Species, subspecies, variety always italic and lowercase
-                elif attr['key'] in ['species', 'subspecies', 'variety']:
+                # species  
+                elif attr['key'] == 'species':
+                    fancy_name += f"<i>{attr['value'].lower()}</i> " 
+                # subspecies, variety always italic and lowercase with short name
+                elif attr['key'] in ['subspecies', 'variety']:
                     fancy_name += f"{attr['short_name']} <i>{attr['value'].lower()}</i> " 
                 # Cultivated variety alway regular Uppercase
                 elif attr['key'] == 'cultivar':
