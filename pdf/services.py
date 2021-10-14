@@ -206,8 +206,11 @@ class LabelsBuilder:
         heigh = label.dmtx_side_mm / label.get_lines_number()
         width = label.full_length - label.dmtx_side_mm - self.field_num_cell_width
 
-        for text in label.text_lines:
-            self.pdf.set_font('dejavu', '', 10)
+        for cnt, text in enumerate(label.text_lines, start=1) :
+            if cnt > 2:
+                self.pdf.set_font('dejavu', '', 8)
+            else:
+                self.pdf.set_font('dejavu', '', 10)
             self.pdf.cell(width, heigh, text, border=self.show_brd, markdown=True)
             self.cur_y += heigh
             self._xy_update()
