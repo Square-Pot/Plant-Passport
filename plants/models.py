@@ -230,16 +230,16 @@ class Photo(models.Model):
 
     medium = ImageSpecField(
         source='original',
-        processors=[Thumbnail(200, 100)],
+        processors=[Thumbnail(1000, 1000)],
         format='JPEG',
-        options={'quality': 60}
+        options={'quality': 80}
     )
 
     small = ImageSpecField(
         source='original',
-        processors=[Thumbnail(100, 50)],
+        processors=[Thumbnail(400, 400)],
         format='JPEG',
-        options={'quality': 60},
+        options={'quality': 80},
     )
 
     slug = models.SlugField(
