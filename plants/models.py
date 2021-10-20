@@ -182,7 +182,7 @@ class Log(models.Model):
     action_time = models.DateTimeField(
         _('action time'),
         default=timezone.now,
-        editable=False,
+        #ditable=False,
     )
 
     user = models.ForeignKey(
