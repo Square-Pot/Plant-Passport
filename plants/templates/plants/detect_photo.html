@@ -18,6 +18,10 @@
         {% for line in messages %}
         <p>{{ line }}</p> 
         {% endfor %}
+
+        {% for plant in rich_plants %}
+        <p>Photo was automatically added for plant: {{ rp.fancy_name }}</p> 
+        {% endfor %}
         
     </div>
     {% endblock %}

@@ -445,7 +445,7 @@ def upload_photo_decode_matrix(request):
                     messages.append(f'No plant was found with PUID: {puid}')
                     break
                 
-                rich_plant = RichPlant(target_plant)
+                rich_plant = RichPlant(plant)
 
                 # check access (is owner?)
                 user_is_owner = check_is_user_owner_of_plant(current_user, rich_plant)
@@ -459,7 +459,7 @@ def upload_photo_decode_matrix(request):
                 if settings.USE_S3:
                     photo = Photo(original=image_file)
                     photo.user = current_user
-                    photo.plant = target_plant
+                    photo.plant = plant
                     #photo.description = photo_description
                     photo.save()
                     image_url = photo.medium.url
@@ -476,7 +476,7 @@ def upload_photo_decode_matrix(request):
                 create_log(
                     Log.ActionChoices.ADDITION,
                     current_user,
-                    target_plant,
+                    plant,
                     {'action': 'add_photo', 'photo_url': image_url, 'photo_id':photo_id, 'photo_description': photo_description} 
                 )
             context['rich_plants'] = rich_plants
@@ -484,8 +484,6 @@ def upload_photo_decode_matrix(request):
             messages.append('Plant identification was failed')
     else:
         messages.append('Please upload a photo')
-
-    print(messages)
 
     # Template data
     template = loader.get_template('plants/detect_photo.html')
