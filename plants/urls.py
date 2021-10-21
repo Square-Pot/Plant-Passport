@@ -14,6 +14,7 @@ urlpatterns = [
     path('<int:plant_id>/upload_photo', views.upload_photo, name='upload_photo'),
     path('<int:plant_id>/set_profile_img', views.set_profile_img, name='set_profile_img_dialog'),
     path('<int:plant_id>/set_profile_img/<int:photo_id>', views.set_profile_img, name='set_profile_img'),
+    path('detect', views.upload_photo_decode_matrix, name='detect_photo'),
 ] 
 
 if settings.DEBUG:

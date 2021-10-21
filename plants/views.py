@@ -20,7 +20,7 @@ from .services import   get_user_richplants, \
                         get_filtered_attr_values_from_post, \
                         filter_data_update,\
                         filter_plants, get_attr_keys_not_showing_in_list, \
-                        create_log, create_new_plant
+                        create_log, create_new_plant, detect_data_matrix
 from users.services import is_friend
 from .entities import RichPlant, BrCr
 
@@ -417,6 +417,82 @@ def upload_photo(request, plant_id):
         'plant': target_rich_plant,
     }
     return HttpResponse(template.render(context, request))
+
+
+@login_required
+def upload_photo_decode_matrix(request):
+    """Photo Uploading, try to detect PUID by Data Matrix and save if successful"""
+
+    # authentication
+    current_user = request.user
+
+    messages = []
+    context = {}
+
+    if request.method == 'POST':
+        image_file = request.FILES['image_file']
+
+        # try to detect PUID by Data Matrix
+        puids = detect_data_matrix(image_file.file)
+        if len(puids) > 0:
+            rich_plants = []
+            for puid in puids:
+
+                # try to get plant by puid
+                try:
+                    plant = Plant.objects.get(uid=puid)
+                except Plant.DoesNotExist:
+                    messages.append(f'No plant was found with PUID: {puid}')
+                    break
+                
+                rich_plant = RichPlant(target_plant)
+
+                # check access (is owner?)
+                user_is_owner = check_is_user_owner_of_plant(current_user, rich_plant)
+                if not user_is_owner:
+                    messages.append(f'{current_user.username} is not the owner of plant with PUID: {puid}')
+                    break
+
+                rich_plants.append(rich_plant)
+                
+                # save image
+                if settings.USE_S3:
+                    photo = Photo(original=image_file)
+                    photo.user = current_user
+                    photo.plant = target_plant
+                    #photo.description = photo_description
+                    photo.save()
+                    image_url = photo.medium.url
+                    photo_id = photo.id
+                    
+                else:
+                    fs = FileSystemStorage()
+                    filename = fs.save(f'photos/{current_user.username}/{image_file.name}', image_file)
+                    image_url = fs.url(filename)
+                    photo_id = None
+
+                # create log
+                photo_description = 'Autodetected photo'
+                create_log(
+                    Log.ActionChoices.ADDITION,
+                    current_user,
+                    target_plant,
+                    {'action': 'add_photo', 'photo_url': image_url, 'photo_id':photo_id, 'photo_description': photo_description} 
+                )
+            context['rich_plants'] = rich_plants
+        else: 
+            messages.append('Plant identification was failed')
+    else:
+        messages.append('Please upload a photo')
+
+    print(messages)
+
+    # Template data
+    template = loader.get_template('plants/detect_photo.html')
+    context['messages'] = messages
+
+    return HttpResponse(template.render(context, request))
+
 
 @login_required
 def set_profile_img(request, plant_id, photo_id=None):

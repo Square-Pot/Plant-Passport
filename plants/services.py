@@ -2,6 +2,9 @@ import random
 import string
 import datetime
 import decimal
+import numpy as np
+import cv2
+from pylibdmtx import pylibdmtx
 from django.utils.translation import gettext as _
 from plants.models import Log, Plant, Attribute
 from plants.entities import RichPlant
@@ -64,6 +67,23 @@ def filter_plants(rich_plants: list, filter_data: dict) -> list:
             filter_plants.append(plant)
 
     return filter_plants
+
+
+def detect_data_matrix(image) -> list:
+    """Detects PUIDs on image. Return list of PUIDs or empty list"""
+    #img = cv2.imread(image, cv2.IMREAD_UNCHANGED)
+    img = cv2.imdecode(np.frombuffer(image.read(), np.uint8), 1)
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    ret,thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    result: list = pylibdmtx.decode(thresh)
+
+    detected_puids = []
+    for i in result:
+        puid = i.data.decode("utf-8") 
+        detected_puids.append(puid)
+
+    return detected_puids
 
 
 # Attributes

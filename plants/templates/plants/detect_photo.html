@@ -1,0 +1,23 @@
+{% extends "main.html" %}
+{% load i18n %}
+
+    {% block content %}
+    <div class="container">
+        <h4>{% trans 'UploadPhotoWithAutoPlantIdentification' %}</h4>
+        <hr><br>
+        <form action="{% url "detect_photo" %}" method="post" enctype="multipart/form-data" class="form">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="file-label">{% trans 'PhotoUploading: ' %}</label>
+                <input class="file-input" type="file" name="image_file">
+            </div>
+            <div class="mb-3">
+                <input type="submit" value="Submit" class="button is-primary" />
+            </div>
+        </form>
+        {% for line in messages %}
+        <p>{{ line }}</p> 
+        {% endfor %}
+        
+    </div>
+    {% endblock %}
