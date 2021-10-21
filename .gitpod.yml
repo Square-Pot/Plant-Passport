@@ -13,7 +13,7 @@ tasks:
       python -m pip install pylibdmtx[scripts]
       python -m pip install fpdf2
       python -m pip install numpy
-      python -m pip install opencv-python
+      python -m pip install opencv-python-headless
       python manage.py migrate
       npm install axios
     command: |
