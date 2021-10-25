@@ -1,5 +1,6 @@
 import random
 import string
+import time
 import datetime
 import copy
 import decimal
@@ -75,6 +76,8 @@ def filter_plants(rich_plants: list, filter_data: dict) -> list:
 def detect_data_matrix(image) -> list:
     """Detects PUIDs on image. Return list of PUIDs or empty list"""
 
+    start_time_decoding = time.time()
+
     # resize image if it's too large
     image_for_decode = copy.deepcopy(image)
     i = Image.open(image_for_decode)
@@ -83,30 +86,19 @@ def detect_data_matrix(image) -> list:
     # optimal size of one side of image for decoding
     opt_size = 800
     if w > opt_size  or h > opt_size: 
+        start_time_resizing = time.time()
         side = w if w > h else h
         scale_factor = opt_size / side
-        print(w, h, scale_factor)
-
         image_resized = i.resize((int(w*scale_factor), int(h*scale_factor)),)
-
         img_byte_arr = io.BytesIO()
         image_resized.save(img_byte_arr, format='PNG')
-        #img_byte_arr.getvalue()
-        
-        #image_file = StringIO()
-        #image_resized.save(image_file, 'JPEG', quality=90)
-        #image.file = image_resized
-
         img = cv2.imdecode(np.frombuffer(img_byte_arr.getvalue(), np.uint8), 1)
-
-        print('>>>>>>>>>> Image was resized')
+        # TODO: add logger maybe?
+        print(f'Resizing time: { time.time() - start_time_resizing } sec')
     else:
         image = image.file
-        print(type(image))
         img = cv2.imdecode(np.frombuffer(image.read(), np.uint8), 1)
-        print('>>>>>>>>>> Image has normal size')
-
-    
+   
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ret,thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     result: list = pylibdmtx.decode(thresh)
@@ -116,9 +108,11 @@ def detect_data_matrix(image) -> list:
         puid = i.data.decode("utf-8") 
         detected_puids.append(puid)
 
-    print(detected_puids)
+    # remove duplicates
+    detected_puids = list(set(detected_puids))
 
-    # TODO remove doubles
+    # TODO: add logger maybe?
+    print(f'PUID decoding image ({w}x{h}) time: { time.time() - start_time_decoding } sec')
 
     return detected_puids
 
