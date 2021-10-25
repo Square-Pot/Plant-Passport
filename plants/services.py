@@ -255,7 +255,7 @@ def check_is_user_owner_of_plant(user, target_rich_plant):
 
 # Logs
 
-def create_log(action_type: Log.ActionChoices, user: User, plant: Plant, data: dict, action_time: None):
+def create_log(action_type: Log.ActionChoices, user: User, plant: Plant, data: dict, action_time=None):
     """Create new log"""
 
     # selialize date fields
