@@ -84,7 +84,7 @@ def detect_data_matrix(image) -> list:
     w, h = i.size
 
     # optimal size of one side of image for decoding
-    opt_size = 800
+    opt_size = 600
     if w > opt_size  or h > opt_size: 
         start_time_resizing = time.time()
         side = w if w > h else h
