@@ -433,7 +433,7 @@ def upload_photo_decode_matrix(request):
         image_file = request.FILES['image_file']
 
         # try to detect PUID by Data Matrix
-        puids = detect_data_matrix(image_file.file)
+        puids = detect_data_matrix(image_file) ### .file
         if len(puids) > 0:
             rich_plants = []
             for puid in puids:
