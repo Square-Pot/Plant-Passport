@@ -12,6 +12,10 @@
                 <input class="file-input" type="file" name="image_file">
             </div>
             <div class="mb-3">
+                <label for="PhotoDatetime" class="form-label">{% trans 'PhotoDatetime: ' %}</label>
+                <input type="date" name="photo_datetime" id="PhotoDatetime">
+            </div>
+            <div class="mb-3">
                 <label for="PhotoDescription" class="form-label">{% trans 'PhotoDescription: ' %}</label>
                 <textarea class="form-control" id="PhotoDescription" name="photo_descr" rows="3"></textarea>
             </div>

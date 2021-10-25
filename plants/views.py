@@ -387,6 +387,7 @@ def upload_photo(request, plant_id):
     if request.method == 'POST':
         image_file = request.FILES['image_file']
         photo_description = request.POST['photo_descr']
+        photo_datetime = request.POST['photo_datetime'] if request.POST['photo_datetime'] else None
         if settings.USE_S3:
             photo = Photo(original=image_file)
             photo.user = current_user
@@ -407,7 +408,8 @@ def upload_photo(request, plant_id):
             Log.ActionChoices.ADDITION,
             current_user,
             target_plant,
-            {'action': 'add_photo', 'photo_url': image_url, 'photo_id':photo_id, 'photo_description': photo_description} 
+            {'action': 'add_photo', 'photo_url': image_url, 'photo_id':photo_id, 'photo_description': photo_description},
+            action_time = photo_datetime
         )
         return redirect('plant_view', plant_id=plant_id)
     
