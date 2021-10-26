@@ -450,9 +450,9 @@ def upload_photo_decode_matrix(request):
 
     if request.method == 'POST':
 
-        # TODO check if file exist
-        image_file = request.FILES['image_file']
-
+        image_file = request.FILES.get('image_file', False)
+        if not image_file:
+            return redirect('detect_photo')
 
         if 'PhotoDateFromExif' in request.POST:
             # try to get date from exif    
@@ -460,8 +460,6 @@ def upload_photo_decode_matrix(request):
             messages.append(f'Date from EXIF: {photo_datetime}')
         else:
             photo_datetime =  None
-
-        
 
         # try to detect PUID by Data Matrix
         puids = detect_data_matrix(image_file)
