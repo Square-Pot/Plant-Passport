@@ -387,10 +387,10 @@ def upload_photo(request, plant_id):
 
     if request.method == 'POST':
 
-        # TODO check if file was chosen
-        # request.POST.get("title", "")
+        image_file = request.FILES.get('image_file', False)
+        if not image_file:
+            return redirect('upload_photo', plant_id=plant_id)
 
-        image_file = request.FILES['image_file']
         photo_description = request.POST['photo_descr']
         
         if 'PhotoDateFromExif' in request.POST:
