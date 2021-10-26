@@ -72,7 +72,6 @@ def filter_plants(rich_plants: list, filter_data: dict) -> list:
 
     return filter_plants
 
-
 def detect_data_matrix(image) -> list:
     """Detects PUIDs on image. Return list of PUIDs or empty list"""
 
@@ -116,9 +115,18 @@ def detect_data_matrix(image) -> list:
 
     return detected_puids
 
+def get_date_from_exif(image):
+    """Get date when a photo was taken from EXIF"""
+    image_to_read_exif = copy.deepcopy(image)
+    i = Image.open(image_to_read_exif)
 
-def optimize_img_size(image):
-    pass
+    try:
+        dt_str = i._getexif()[36867]
+        dt = datetime.datetime.strptime(dt_str, '%Y:%m:%d %H:%M:%S')
+        return dt.strftime('%Y-%m-%d')
+    except:
+        return None
+
 
 
 
