@@ -20,7 +20,8 @@ from .services import   get_user_richplants, \
                         get_filtered_attr_values_from_post, \
                         filter_data_update,\
                         filter_plants, get_attr_keys_not_showing_in_list, \
-                        create_log, create_new_plant, detect_data_matrix
+                        create_log, create_new_plant, detect_data_matrix, \
+                        get_date_from_exif
 from users.services import is_friend
 from .entities import RichPlant, BrCr
 
@@ -385,9 +386,25 @@ def upload_photo(request, plant_id):
         return HttpResponseForbidden()
 
     if request.method == 'POST':
-        image_file = request.FILES['image_file']
+
+        image_file = request.FILES.get('image_file', False)
+        if not image_file:
+            return redirect('upload_photo', plant_id=plant_id)
+
         photo_description = request.POST['photo_descr']
-        photo_datetime = request.POST['photo_datetime'] if request.POST['photo_datetime'] else None
+        
+        if 'PhotoDateFromExif' in request.POST:
+            # try to get date from exif    
+            exif_date = get_date_from_exif(image_file)
+            if exif_date:
+                photo_datetime = exif_date
+            else:
+                # if failed, try to get from date field
+                photo_datetime = request.POST['photo_datetime'] if request.POST['photo_datetime'] else None
+        else:
+            # try to get from date field
+            photo_datetime = request.POST['photo_datetime'] if request.POST['photo_datetime'] else None
+
         if settings.USE_S3:
             photo = Photo(original=image_file)
             photo.user = current_user
@@ -432,10 +449,20 @@ def upload_photo_decode_matrix(request):
     context = {}
 
     if request.method == 'POST':
-        image_file = request.FILES['image_file']
+
+        image_file = request.FILES.get('image_file', False)
+        if not image_file:
+            return redirect('detect_photo')
+
+        if 'PhotoDateFromExif' in request.POST:
+            # try to get date from exif    
+            photo_datetime = get_date_from_exif(image_file)
+            messages.append(f'Date from EXIF: {photo_datetime}')
+        else:
+            photo_datetime =  None
 
         # try to detect PUID by Data Matrix
-        puids = detect_data_matrix(image_file) ### .file
+        puids = detect_data_matrix(image_file)
         if len(puids) > 0:
             rich_plants = []
             for puid in puids:
@@ -479,7 +506,8 @@ def upload_photo_decode_matrix(request):
                     Log.ActionChoices.ADDITION,
                     current_user,
                     plant,
-                    {'action': 'add_photo', 'photo_url': image_url, 'photo_id':photo_id, 'photo_description': photo_description} 
+                    {'action': 'add_photo', 'photo_url': image_url, 'photo_id':photo_id, 'photo_description': photo_description},
+                    action_time = photo_datetime
                 )
             context['rich_plants'] = rich_plants
         else: 

@@ -12,6 +12,11 @@
                 <input class="file-input" type="file" name="image_file">
             </div>
             <div class="mb-3">
+                <p>Try to get a date whet photo was taken from EXIF or input it manually:</p>
+                <label for="PhotoDateFromExif" class="form-label">{% trans 'Try to get from EXIF: ' %}</label>
+                <input class="form-check-input" type="checkbox" value="True" name="PhotoDateFromExif" id="PhotoDateFromExifChecked" checked>
+            </div>
+            <div class="mb-3">
                 <label for="PhotoDatetime" class="form-label">{% trans 'PhotoDatetime: ' %}</label>
                 <input type="date" name="photo_datetime" id="PhotoDatetime">
             </div>

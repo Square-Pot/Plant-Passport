@@ -4,10 +4,10 @@ import cv2
 from pylibdmtx import pylibdmtx
 
 # has data matrix
-#image = cv2.imread('example.jpg', cv2.IMREAD_UNCHANGED)
+image = cv2.imread('IMG_20211021_2212254.jpg', cv2.IMREAD_UNCHANGED)
 
 # has not data matrix
-image = cv2.imread('bad.png', cv2.IMREAD_UNCHANGED)
+#image = cv2.imread('bad.png', cv2.IMREAD_UNCHANGED)
 
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
