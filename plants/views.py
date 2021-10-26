@@ -386,9 +386,12 @@ def upload_photo(request, plant_id):
         return HttpResponseForbidden()
 
     if request.method == 'POST':
+
+        # TODO check if file was chosen
+        # request.POST.get("title", "")
+
         image_file = request.FILES['image_file']
         photo_description = request.POST['photo_descr']
-
         
         if 'PhotoDateFromExif' in request.POST:
             # try to get date from exif    
@@ -401,8 +404,6 @@ def upload_photo(request, plant_id):
         else:
             # try to get from date field
             photo_datetime = request.POST['photo_datetime'] if request.POST['photo_datetime'] else None
-
-        print('>>>>>>>>>>>>Photo Date: ', photo_datetime)
 
         if settings.USE_S3:
             photo = Photo(original=image_file)
@@ -448,10 +449,22 @@ def upload_photo_decode_matrix(request):
     context = {}
 
     if request.method == 'POST':
+
+        # TODO check if file exist
         image_file = request.FILES['image_file']
 
+
+        if 'PhotoDateFromExif' in request.POST:
+            # try to get date from exif    
+            photo_datetime = get_date_from_exif(image_file)
+            messages.append(f'Date from EXIF: {photo_datetime}')
+        else:
+            photo_datetime =  None
+
+        
+
         # try to detect PUID by Data Matrix
-        puids = detect_data_matrix(image_file) ### .file
+        puids = detect_data_matrix(image_file)
         if len(puids) > 0:
             rich_plants = []
             for puid in puids:
@@ -495,7 +508,8 @@ def upload_photo_decode_matrix(request):
                     Log.ActionChoices.ADDITION,
                     current_user,
                     plant,
-                    {'action': 'add_photo', 'photo_url': image_url, 'photo_id':photo_id, 'photo_description': photo_description} 
+                    {'action': 'add_photo', 'photo_url': image_url, 'photo_id':photo_id, 'photo_description': photo_description},
+                    action_time = photo_datetime
                 )
             context['rich_plants'] = rich_plants
         else: 
