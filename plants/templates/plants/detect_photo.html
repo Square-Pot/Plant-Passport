@@ -25,7 +25,7 @@
         {% endfor %}
 
         {% for plant in rich_plants %}
-        <p>Photo was automatically added for plant: <a href="{% url "plant_view" plant.id %}">{{ plant.fancy_name }}</a></p>
+        <p>Photo was automatically added for plant: <a href="{% url "plant_view" plant.id %}">{{ plant.fancy_name|safe }}</a></p>
         {% endfor %}
         
     </div>
