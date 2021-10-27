@@ -15,6 +15,7 @@ class RichPlant:
         self.owner = None
         self.__include_plant_attrs()
         self.logs = self.__get_logs()
+        self.logs_for_cards = self.__prepare_logs_for_cards()
         self.attrs_as_dic = self.__get_atts_as_dic()
         self.attrs_as_list_w_types = self.__get_attrs_as_list_w_types()
         self.attrs = ExtraAttrs()
@@ -69,6 +70,34 @@ class RichPlant:
     def __get_logs(self, order_by ='-action_time'):
         """Get logs of this plant"""
         return Log.objects.filter(plant=self.Plant.id).order_by(order_by)
+
+    def __prepare_logs_for_cards(self):
+        prepared_logs = []
+
+        for log in self.logs: 
+            l = LogForCard()
+
+            if log.action_type == 1:
+                l.title = _('Addition')
+            elif log.action_type == 2:
+                l.title = _('Editing')
+            elif log.action_type == 3: 
+                l.title = _('Deleting')
+
+            for key in log.data:
+                if key == 'action':
+                    l.subtitle = log.data[key]
+                elif key == 'photo_url':
+                    l.img_url = log.data[key]
+                elif key == 'comment' or key == 'photo_description':
+                    l.text = log.data[key]
+                else:
+                    l.attrs[key] = log.data[key]
+
+            prepared_logs.append(l)
+
+        return prepared_logs
+
 
     def __get_atts_as_dic(self):
         """Get extra attributes and values from logs as dic"""
@@ -149,3 +178,11 @@ class BrCr:
         self.add_level(True, 'user_home', _('Home'))
 
 
+class LogForCard:
+    def __init__(self):
+        self.title = None
+        self.subtitle = None
+        self.img_url = None
+        self.img_alt = None
+        self.text = None
+        self.attrs = {}

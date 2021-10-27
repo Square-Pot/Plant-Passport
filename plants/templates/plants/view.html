@@ -120,7 +120,7 @@
     <hr>
     <h4>{% trans 'ChangeHistory' %}</h4>
     <div class="container">
-        {% for log in plant.logs  %}
+        {% for log in plant.logs_for_cards  %}
         <div class="row">
             <div class="col-3 d-flex align-items-center pe-0">
                 <div class="col-12 border-bottom border-primary border-2">{{ log.action_time }}</div>
@@ -130,50 +130,16 @@
             <div class="col-8">
                 <div class="card my-4" style="width: 25rem;">
                     <div class="card-body">
-
-                    {% if log.action_type == 1 %}
-                        <h5 class="card-title">{% trans 'Addtion' %}</h5>
-                        {% for key, value in log.data.items %}
-                            {% if key == 'action' %}<h6 class="card-subtitle mb-2 text-muted">{{ value }}</h6>
-                            {% elif key == 'photo_url' %}<img src="{{ value }}" class="card-img-top" alt="..."> 
-                            {% elif key == 'comment' %}<p class="card-text">{{ value }}</p> 
-                            {% elif key == 'photo_description' %}<p class="card-text">{{ value }}</p> 
-                            {% else %}
-                            <p class="card-text">
-                                <b>{{ key }}:</b> {{ value }} <br />
-                            </p>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-
-                    {% if log.action_type == 2 %}
-                        <h5 class="card-title">{% trans 'ParametersEditing' %}</h5>
-                        {% for key, value in log.data.items %}
-                            <p class="card-text">
-                                <b>{{ key }}:</b> {{ value }} <br />
-                            </p>
-                        {% endfor %}
-                    {% endif %}
-
-                    {% if log.action_type == 3 %}
-                        <h5 class="card-title">Deleting</h5>
-                        <p class="card-text">Something was deleted...</p>
-                    {% endif %}
-                    <hr />
-
-
+                        <h5 class="card-title">{{ log.title }}</h5>
+                        {% if log.subtitle %}<h6 class="card-subtitle mb-2 text-muted">{{ log.subtitle }}</h6>{% endif %}
+                        {% if log.img_url %}<img src="{{ log.img_url }}" class="card-img-top" alt="{{ log.img_alt }}">{% endif %}
+                        {% if log.text %}<p class="card-text">{{ log.text }}</p> {% endif %}
+                        <ul class="list-group list-group-flush">
+                            {% for key, value in log.attrs.items %}
+                            <li class="list-group-item">{{ key }}: {{ value }}</li>
+                            {% endfor %}
+                        </ul>
                     </div>
-
-
-                    <!--
-                    <img src="{% static 'lithops.jpg' %}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                      <h5 class="card-title">{{ log.action_type }}</h5>
-                      <p class="card-text">{{ log.data }}</p>
-                      <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                    -->
-                    
                 </div>
             </div>
         </div> 
