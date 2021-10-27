@@ -77,6 +77,8 @@ class RichPlant:
         for log in self.logs: 
             l = LogForCard()
 
+            l.action_time = log.action_time
+
             if log.action_type == 1:
                 l.title = _('Addition')
             elif log.action_type == 2:
