@@ -92,7 +92,8 @@ class RichPlant:
                 elif key == 'comment' or key == 'photo_description':
                     l.text = log.data[key]
                 else:
-                    l.attrs[key] = log.data[key]
+                    if key not in ['photo_id', ]:
+                        l.attrs[key] = log.data[key]
 
             prepared_logs.append(l)
 

@@ -136,7 +136,7 @@
                         {% if log.text %}<p class="card-text">{{ log.text }}</p> {% endif %}
                         <ul class="list-group list-group-flush">
                             {% for key, value in log.attrs.items %}
-                            <li class="list-group-item">{{ key }}: {{ value }}</li>
+                            <li class="list-group-item"><b>{{ key }}</b>: {{ value }}</li>
                             {% endfor %}
                         </ul>
                     </div>
