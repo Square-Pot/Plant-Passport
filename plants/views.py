@@ -155,7 +155,10 @@ def groups(request, user_id=None):
             genuses[genus] = 1
 
     # TODO why here empty genus? 
-    genuses.pop('')
+    try:
+        genuses.pop('')
+    except:
+        pass
 
     print(genuses)
 
