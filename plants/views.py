@@ -147,7 +147,7 @@ def groups(request, user_id=None):
     # make dic of available genuses and count plants
     genuses = {}
     for rp in rich_plants: 
-        genus = rp.attrs.genus.lower()
+        genus = rp.attrs.genus #.lower()
         print(genus)
         if genus in genuses:  
             genuses[genus] += 1
