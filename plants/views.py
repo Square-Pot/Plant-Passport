@@ -23,7 +23,7 @@ from .services import   get_user_richplants, \
                         create_log, create_new_plant, detect_data_matrix, \
                         get_date_from_exif
 from users.services import is_friend
-from .entities import RichPlant, BrCr
+from .entities import RichPlant, BrCr, GenusForGroups
 
 
 # https://docs.djangoproject.com/en/3.2/topics/auth/default/#the-login-required-decorator
@@ -100,6 +100,95 @@ def index(request, user_id=None, genus=None, tags=None):
     }
     template = loader.get_template('plants/index.html')
     return HttpResponse(template.render(context, request))
+
+
+def groups(request, user_id=None):
+    """ Groups of user plants: genuses, tags, etc. """
+
+    # Breadcrumbs data
+    brcr = BrCr()
+
+    # Show personal plants
+    if not user_id: 
+        # authenticated
+        current_user = request.user
+        if current_user.is_authenticated:
+            user_id = current_user.id
+            rich_plants = get_user_richplants(user_id)
+
+            # # Translators: Section name
+            # section_name = _('MyPlants')
+            user_name = current_user.username
+            # is_owner = True
+            # brcr.add_level(True, '', section_name)
+
+        # anonymous
+        else:
+            return redirect('login')
+
+    # Show someone's plants
+    else:
+        target_user = get_object_or_404(User, id=user_id)
+        current_user = request.user
+        # for friend
+        if current_user.is_authenticated and is_friend(current_user, target_user):
+            access = [Plant.AccessTypeChoices.PUBLIC, Plant.AccessTypeChoices.FRIENDS]
+            rich_plants = get_user_richplants(user_id, access)
+        # for anonymous
+        else:
+            access = [Plant.AccessTypeChoices.PUBLIC,]
+            rich_plants = get_user_richplants(user_id, access)
+
+        # section_name = _('PlantsOfUser') 
+        user_name = target_user.username
+        # is_owner = False
+        # brcr.add_level(True, '', f'{section_name}: {user_name}')
+
+    # make dic of available genuses and count plants
+    genuses = {}
+    for rp in rich_plants: 
+        genus = rp.attrs.genus.lower()
+        print(genus)
+        if genus in genuses:  
+            genuses[genus] += 1
+        else: 
+            genuses[genus] = 1
+
+    # TODO why here empty genus? 
+    genuses.pop('')
+
+    print(genuses)
+
+    # convert genuses dic to list of objects
+    genuses_objects = []
+    for genus in genuses: 
+        genus_obj = GenusForGroups()
+        genus_obj.name = genus
+        genus_obj.number = genuses[genus]
+        genuses_objects.append(genus_obj)
+
+
+    for i in genuses_objects:
+        print(i.name)
+
+
+
+    # Template data
+    context = {
+        'genuses': genuses_objects, 
+        'user_name': user_name,
+        #'brcr_data': brcr.data,
+    }
+    template = loader.get_template('plants/groups.html')
+    return HttpResponse(template.render(context, request))
+
+
+    
+
+
+
+
+
 
 
 def plant_view(request, plant_id):

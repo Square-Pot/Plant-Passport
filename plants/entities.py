@@ -8,6 +8,12 @@ class ExtraAttrs:
     """Class for storing extra attributes in RichPlant"""
     pass
 
+class GenusForGroups: 
+    """Object for transfering genus data to groups page"""
+    def __init__(self):
+        self.name = None        # genus name
+        self.number = None      # count of plants for this genus
+
 
 class RichPlant:
     def __init__(self, plant_object):

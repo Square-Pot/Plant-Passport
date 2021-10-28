@@ -1,0 +1,32 @@
+{% extends "main.html" %}
+{% load i18n %}
+    {% block content %}
+    <div class="container">
+        
+        <div class="row">
+            <h2>by Genus</h2>
+            {% for genus in genuses %}
+            <button type="button" class="btn btn-primary position-relative">
+                <a style="color:inherit" href="{% url 'plants_by_genus' genus.name %}">{{ genus.name }}</a>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ genus.number }}
+                <span class="visually-hidden">{{ genus.number }} {% trans 'plants found' %}</span>
+                </span>
+            </button>
+            {% endfor %}
+        </div>
+        <div class="row">
+            <h2>by Tag</h2>
+            <button type="button" class="btn btn-primary position-relative">
+                South Window
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    21
+                </span>
+            </button>
+        </div>
+    </div>
+    {% endblock %}
+
+
+
+
