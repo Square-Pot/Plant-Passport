@@ -25,12 +25,17 @@ def get_user_plants(user_id, access=[]):
     plants = Plant.objects.filter(id__in=plant_ids, access_type__in=access)
     return plants
 
-def get_user_richplants(user_id, access=[]) -> list:
+def get_user_richplants(user_id, access=[], genus=None) -> list:
     """Returns RichPlant-objects of user by user id"""
     plants = get_user_plants(user_id, access)
     rich_plants = []
     for plant in plants:
-        rich_plants.append(RichPlant(plant))
+        rich_plant = RichPlant(plant)
+        if genus: 
+            if rich_plant.attrs.genus.lower() == genus.lower():
+                rich_plants.append(rich_plant)
+        else:
+            rich_plants.append(rich_plant)
     return rich_plants
 
 def create_new_plant(user: User) -> Plant:
