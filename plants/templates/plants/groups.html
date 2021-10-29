@@ -4,7 +4,7 @@
     <div class="container">
         
         <div>
-            <h2>by Genus</h2>
+            <h4>by Genus</h4>
             {% for genus in genuses %}
             <button type="button" class="btn btn-outline-secondary position-relative mx-3 my-3">
                 <a style="color:inherit" href="{% url 'plants_by_genus' genus.name %}">{{ genus.name }}</a>
@@ -16,7 +16,7 @@
             {% endfor %}
         </div>
         <div>
-            <h2>by Tag</h2>
+            <h4>by Tag</h4>
             <button type="button" class="btn btn-outline-secondary position-relative  mx-3 my-3">
                 South Window
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">

@@ -178,18 +178,11 @@ def groups(request, user_id=None):
     context = {
         'genuses': genuses_objects_sorted, 
         'user_name': user_name,
+        'title': _('Plants grouped:'),
         #'brcr_data': brcr.data,
     }
     template = loader.get_template('plants/groups.html')
     return HttpResponse(template.render(context, request))
-
-
-    
-
-
-
-
-
 
 
 def plant_view(request, plant_id):
