@@ -6,7 +6,7 @@
         <div class="row">
             <h2>by Genus</h2>
             {% for genus in genuses %}
-            <button type="button" class="btn btn-primary position-relative">
+            <button type="button" class="btn btn-primary position-relative mx-3 my-3">
                 <a style="color:inherit" href="{% url 'plants_by_genus' genus.name %}">{{ genus.name }}</a>
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                 {{ genus.number }}
@@ -17,7 +17,7 @@
         </div>
         <div class="row">
             <h2>by Tag</h2>
-            <button type="button" class="btn btn-primary position-relative">
+            <button type="button" class="btn btn-primary position-relative  mx-3 my-3">
                 South Window
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                     21
