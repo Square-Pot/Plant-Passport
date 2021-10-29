@@ -1,7 +1,7 @@
 
 class Secret:
     # Dajngo secret key
-    SECRET_KEY = 'ededede'
+    SECRET_KEY = ''
 
     # Amazone S3
     AWS_STORAGE_BUCKET_NAME = ''
