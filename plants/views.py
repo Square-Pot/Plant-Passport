@@ -171,15 +171,12 @@ def groups(request, user_id=None):
         genus_obj.number = genuses[genus]
         genuses_objects.append(genus_obj)
 
-
-    for i in genuses_objects:
-        print(i.name)
-
-
+    # sorted by name
+    genuses_objects_sorted = sorted(genuses_objects, key=lambda x: x.name, reverse=False)
 
     # Template data
     context = {
-        'genuses': genuses_objects, 
+        'genuses': genuses_objects_sorted, 
         'user_name': user_name,
         #'brcr_data': brcr.data,
     }
