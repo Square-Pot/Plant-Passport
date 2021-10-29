@@ -5,8 +5,8 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.index, name="plants"),
-    path('groups/', views.groups, name="groups"),
+    path('all/', views.index, name="plants"),
+    path('', views.groups, name="groups"),
     path('genus/<str:genus>', views.index, name='plants_by_genus'),
     path('by_user/<int:user_id>', views.index, name="plants_by_user"),
     path('create/', views.plant_create, name='plant_create_edit'),
