@@ -147,7 +147,8 @@ def groups(request, user_id=None):
     # make dic of available genuses and count plants
     genuses = {}
     for rp in rich_plants: 
-        genus = rp.attrs.genus #.lower()
+        genus = rp.attrs.genus
+        genus = genus.lower() if genus else 'None'
         print(genus)
         if genus in genuses:  
             genuses[genus] += 1
@@ -156,7 +157,7 @@ def groups(request, user_id=None):
 
     # TODO why here empty genus? 
     try:
-        genuses.pop('')
+        genuses.pop('None')
     except:
         pass
 

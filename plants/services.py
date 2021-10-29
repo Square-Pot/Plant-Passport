@@ -32,7 +32,8 @@ def get_user_richplants(user_id, access=[], genus=None) -> list:
     for plant in plants:
         rich_plant = RichPlant(plant)
         if genus: 
-            if rich_plant.attrs.genus.lower() == genus.lower():
+            genus_in_plant = rich_plant.attrs.genus
+            if genus_in_plant.lower() == genus.lower():
                 rich_plants.append(rich_plant)
         else:
             rich_plants.append(rich_plant)

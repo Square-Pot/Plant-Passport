@@ -3,10 +3,10 @@
     {% block content %}
     <div class="container">
         
-        <div class="row">
+        <div>
             <h2>by Genus</h2>
             {% for genus in genuses %}
-            <button type="button" class="btn btn-primary position-relative mx-3 my-3">
+            <button type="button" class="btn btn-primary position-relative mx-2 my-2">
                 <a style="color:inherit" href="{% url 'plants_by_genus' genus.name %}">{{ genus.name }}</a>
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                 {{ genus.number }}
