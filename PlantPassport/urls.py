@@ -25,6 +25,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls), 
     path('get_labels_pdf/', get_labels_pdf, name='get_labels_pdf'), 
+    path('api-admin/', include('rest_framework.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
