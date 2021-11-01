@@ -17,14 +17,21 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
 from django.urls import include, path
-from users.views import signup, login_view, logout_view, send_friend_request, accept_friend_request, user_home
-from pdf.views import get_labels_pdf
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework import routers
+from users.views import signup, login_view, logout_view, send_friend_request, accept_friend_request, user_home
+from pdf.views import get_labels_pdf
+from api.views import PlantViewSet
+
+
+router = routers.DefaultRouter()
+router.register(r'plants', PlantViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls), 
     path('get_labels_pdf/', get_labels_pdf, name='get_labels_pdf'), 
+    path('api/', include(router.urls)),
     path('api-admin/', include('rest_framework.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
@@ -40,6 +47,3 @@ urlpatterns += i18n_patterns(
 )
 
 
-# urlpatterns += i18n_patterns(
-#     path('plants/', include(('plants.urls', 'plants'), namespace='plants')),
-# )
