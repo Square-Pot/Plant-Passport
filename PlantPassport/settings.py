@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'plants.apps.PlantsConfig',
     'users.apps.UsersConfig',
     'storages',
+    'taggit',
 ]
 
 MIDDLEWARE = [
