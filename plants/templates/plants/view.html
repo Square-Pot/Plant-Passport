@@ -117,11 +117,9 @@
 
     <hr>
 
-    <!-- Tags-->
+    <!-- Tags -->
 
-    {{ plant_serialized }}
-
-    {{ plant_serialized| json_script:"plant"}}
+    {{ plant_serialized| json_script:"current_plant"}}
 
 
 
@@ -143,7 +141,7 @@
               
               <div class="input-group mb-3 my-2" v-if="create_new_shown">
                 <span class="input-group-text">New tag name:</span>
-                <input v-model="new_tags" type="text" class="form-control" placeholder="Separate with comma, case independent" aria-label="Recipient's username" aria-describedby="button-addon2">
+                <input v-model="new_tag" type="text" class="form-control" placeholder="Separate with comma, case independent" aria-label="Recipient's username" aria-describedby="button-addon2">
                 <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="createTagPost">Add</button>
               </div>
             </div>

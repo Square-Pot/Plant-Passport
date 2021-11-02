@@ -1,4 +1,5 @@
-
+var current_plant = JSON.parse(document.getElementById('current_plant').textContent);
+var csrftoken = Cookies.get('csrftoken');
 
 Vue.component('tag-item', {
     props: ['tag'],
@@ -16,23 +17,28 @@ var app = new Vue({
       { id: 1, text: 'Cheese', number: 23 },
       { id: 2, text: 'Whatever', number: 41 }
     ],
-    new_tags: [],
-
   }, 
   methods: {
     showCreateNewDiv: function () {
       this.create_new_shown = true
     },
     createTagPost: function () {
-      console.log('new_tags:', new_tags);
+      const new_tag = { tag_name: this.new_tag, plant_id: current_plant.id};
+      console.log(new_tag);
+      //console.log(current_plant);
       // POST request using axios with error handling
-      const new_tag = { tag_name: new_tag };
-      axios.post("https://galangal.ru/api/", new_tag)
-        .then(response => this.articleId = response.data.id)
-        .catch(error => {
-        this.errorMessage = error.message;
-        console.error("There was an error!", error);
-      });
+      // axios.post("https://galangal.ru/api/", new_tag)
+      //   .then(response => this.articleId = response.data.id)
+      //   .catch(error => {
+      //   this.errorMessage = error.message;
+      //   console.error("There was an error!", error);
+      // });
+
+      // const likebutton = (id) => {
+      //   axios.post(`/api/post/${id}/like/`, { headers: { 'X-CSRFToken': csrftoken } })
+    }
+
+
     }
   }
 })
