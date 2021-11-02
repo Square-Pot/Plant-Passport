@@ -133,6 +133,7 @@ LANGUAGE_COOKIE_NAME = 'plant_passport_language'
 
 #USE_S3 = os.getenv('USE_S3') == 'TRUE'
 USE_S3 = True
+#USE_S3 = False
 
 if USE_S3:
     # aws settings
@@ -192,4 +193,14 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+    )
 }
+
+
+
+
