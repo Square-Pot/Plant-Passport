@@ -6,6 +6,7 @@ from . import views
 
 urlpatterns = [
     path('plant_list/', views.ListPlants, name="api plant list"),
+    path('add_tag_to_plant/<int:plant_id>/<str:tag>', views.add_tag_to_plant, name="add tag to plant"),
 ] 
 
 if settings.DEBUG:

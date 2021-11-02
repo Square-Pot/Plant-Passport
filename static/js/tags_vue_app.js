@@ -1,5 +1,5 @@
 var current_plant = JSON.parse(document.getElementById('current_plant').textContent);
-var csrftoken = Cookies.get('csrftoken');
+//var csrftoken = Cookies.get('csrftoken');
 
 Vue.component('tag-item', {
     props: ['tag'],
@@ -24,21 +24,20 @@ var app = new Vue({
     },
     createTagPost: function () {
       const new_tag = { tag_name: this.new_tag, plant_id: current_plant.id};
+      const url = `https://8000-tan-sturgeon-gacaq6nm.ws-eu17.gitpod.io/api/add_tag_to_plant/${current_plant.id}/${this.new_tag}`;
       console.log(new_tag);
-      //console.log(current_plant);
-      // POST request using axios with error handling
-      // axios.post("https://galangal.ru/api/", new_tag)
-      //   .then(response => this.articleId = response.data.id)
-      //   .catch(error => {
-      //   this.errorMessage = error.message;
-      //   console.error("There was an error!", error);
-      // });
-
+      console.log(current_plant);
+      console.log('url:', url);
+      axios.get(url)
+        .then((response) => {
+        console.log(response.data);
+        console.log(response.status);
+        console.log(response.statusText);
+        console.log(response.headers);
+        console.log(response.config);
+      });
       // const likebutton = (id) => {
       //   axios.post(`/api/post/${id}/like/`, { headers: { 'X-CSRFToken': csrftoken } })
-    }
-
-
     }
   }
 })
