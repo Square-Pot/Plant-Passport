@@ -114,10 +114,46 @@
     <div class="btn-group">
         <a href="{% url 'upload_photo' plant.id %}" class="btn btn-primary" role="button">{% trans 'Add_Photo' %}</a>
     </div>
-    
+
+    <hr>
+
+    <!-- Tags-->
+
+    {{ plant_serialized }}
+
+    {{ plant_serialized| json_script:"plant"}}
+
+
+
+    <div>
+
+        <div id="tags">
+            <div class="container">
+              <tag-item
+                          v-for="tag in extisitng_tags"
+                          v-bind:tag="tag"
+                          v-bind:key="tag.id"
+            ></tag-item>
+              
+              <hr />
+              
+              <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="showCreateNewDiv">Create New</button>
+        
+              <hr />
+              
+              <div class="input-group mb-3 my-2" v-if="create_new_shown">
+                <span class="input-group-text">New tag name:</span>
+                <input v-model="new_tags" type="text" class="form-control" placeholder="Separate with comma, case independent" aria-label="Recipient's username" aria-describedby="button-addon2">
+                <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="createTagPost">Add</button>
+              </div>
+            </div>
+        </div>
+
+    </div>
     
 
     <hr>
+    
     <h4>{% trans 'ChangeHistory' %}</h4>
     <div class="container">
         {% for log in plant.logs_for_cards  %}
@@ -146,8 +182,10 @@
         {% endfor %}
     </div> 
 
+    <script src="{% static 'js/tags_vue_app.js' %}"></script>
+
     {% endblock %}
 
 
-
+    
 
