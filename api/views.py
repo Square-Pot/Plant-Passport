@@ -51,6 +51,18 @@ def add_tag_to_plant(request, plant_id: int, tag: str):
         return Response({"message": "Tag %s was added successfully" % tag})
 
 
+@api_view(['GET', 'POST'])
+@permission_classes((permissions.IsAuthenticated,))
+def remove_tag_from_plant(request, plant_id: int, tag: str):
+    current_user = request.user
+    target_plant = get_object_or_404(Plant, id=plant_id)
+    rich_plant = RichPlant(target_plant)
+    # TODO maybe new tag should send via POST
+    if check_is_user_owner_of_plant(current_user, rich_plant):
+        target_plant.tags.remove(tag)
+        return Response({"message": "Tag %s was removed successfully" % tag})
+
+
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticatedOrReadOnly,))
 def get_plant_tags(request, plant_id: int):
