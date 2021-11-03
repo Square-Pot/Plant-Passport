@@ -4,7 +4,7 @@ var current_plant = JSON.parse(document.getElementById('current_plant').textCont
 Vue.component('tag-item', {
     props: ['tag'],
     template: '<button type="button" class="btn btn-primary btn-sm mx-2"> \
-    {{ tag.text }} <span class="badge bg-secondary">{{ tag.number }}</span> \
+    {{ tag.name }} <span class="badge bg-secondary">{{ tag.id }}</span> \
   </button>'
   })
   
@@ -19,6 +19,21 @@ var app = new Vue({
     ],
   }, 
   methods: {
+    getExistingTags: function() {
+      const url = `https://8000-tan-sturgeon-gacaq6nm.ws-eu17.gitpod.io/api/get_plant_tags/${current_plant.id}`;
+      console.log(url);
+      axios.get(url)
+        .then((response) => {
+        //const resp = JSON.parse(response);
+        this.extisitng_tags = response.data
+        console.log(response.data);
+        console.log(response.status);
+        console.log(response.statusText);
+        console.log(response.headers);
+        console.log(response.config);
+        console.log(resp);
+      });
+    },
     showCreateNewDiv: function () {
       this.create_new_shown = true
     },
@@ -36,10 +51,14 @@ var app = new Vue({
         console.log(response.headers);
         console.log(response.config);
       });
+      this.getExistingTags();
       // const likebutton = (id) => {
       //   axios.post(`/api/post/${id}/like/`, { headers: { 'X-CSRFToken': csrftoken } })
     }
-  }
+  },
+  beforeMount(){
+    this.getExistingTags()
+ },
 })
 
   
