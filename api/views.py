@@ -68,8 +68,16 @@ def remove_tag_from_plant(request, plant_id: int, tag: str):
 
 
 @api_view(['GET'])
-@permission_classes((permissions.IsAuthenticatedOrReadOnly,))
+#@permission_classes((permissions.IsAuthenticatedOrReadOnly,))
+@permission_classes((permissions.AllowAny,))
 def get_plant_tags(request, plant_id: int):
+    target_plant = get_object_or_404(Plant, id=plant_id)
+    return Response(target_plant.tags.all().values())
+
+
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticatedOrReadOnly,))
+def get_plant_tags_and_rest(request, plant_id: int):
     # get plant tags
     target_plant = get_object_or_404(Plant, id=plant_id)
     plant_tags = target_plant.tags.all().values()
@@ -78,7 +86,7 @@ def get_plant_tags(request, plant_id: int):
     # get user tags
     current_user = request.user
     all_user_tags = Tag.objects.filter(plant__creator=current_user).values()
-    print('*', all_user_tags)
+    #print('*', all_user_tags)
 
     # list of dics with all user tags and belonging to current plant
     tags_with_belonging = []
@@ -91,7 +99,8 @@ def get_plant_tags(request, plant_id: int):
     return Response(tags_with_belonging)
 
 @api_view((['GET']))
-@permission_classes((permissions.IsAuthenticated,))
+#@permission_classes((permissions.IsAuthenticated,))
+@permission_classes((permissions.AllowAny,))
 def get_user_tags(request):
     current_user = request.user
     all_tags = Tag.objects.filter(plant__creator=current_user)
