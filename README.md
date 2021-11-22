@@ -48,4 +48,4 @@ This is PlantPassport project under development on Gitpod infrastrucutre with a 
 ### Detailed tasks for step Three:
     + pdf with labels generator
     - show Data Matrix on plant page
-    - add interface for upload image or multiple images for detecting PUID from Data Matrix  and addition if for particular plants
+    + add interface for upload image or multiple images for detecting PUID from Data Matrix  and addition if for particular plants
