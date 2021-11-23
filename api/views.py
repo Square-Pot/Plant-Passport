@@ -93,11 +93,20 @@ def get_plant_tags_and_rest(request, plant_id: int):
     tags_with_belonging = []
     for tag in all_user_tags:
         if tag in plant_tags:
-            tags_with_belonging.append({'tag': tag, 'belongs_to_plant': True})
+            tag_dic = {}
+            tag_dic['id'] = tag['id']
+            tag_dic['name'] = tag['name']
+            tag_dic['belongs'] = True
+            tags_with_belonging.append(tag_dic)
         else:
-            tags_with_belonging.append({'tag': tag, 'belongs_to_plant': False})
+            tag_dic = {}
+            tag_dic['id'] = tag['id']
+            tag_dic['name'] = tag['name']
+            tag_dic['belongs'] = False
+            tags_with_belonging.append(tag_dic)
 
     return Response(tags_with_belonging)
+
 
 @api_view((['GET']))
 #@permission_classes((permissions.IsAuthenticated,))
