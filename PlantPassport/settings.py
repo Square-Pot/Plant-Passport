@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'storages',
     'taggit',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'PlantPassport.urls'
@@ -201,6 +204,8 @@ REST_FRAMEWORK = {
     )
 }
 
-
+CORS_ALLOWED_ORIGINS = [
+    'https://codepen.io/',
+]
 
 
