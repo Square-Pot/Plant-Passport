@@ -76,7 +76,8 @@ def get_plant_tags(request, plant_id: int):
 
 
 @api_view(['GET'])
-@permission_classes((permissions.IsAuthenticatedOrReadOnly,))
+#@permission_classes((permissions.IsAuthenticatedOrReadOnly,))
+@permission_classes((permissions.AllowAny,))
 def get_plant_tags_and_rest(request, plant_id: int):
     # get plant tags
     target_plant = get_object_or_404(Plant, id=plant_id)
