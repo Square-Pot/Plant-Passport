@@ -16,6 +16,7 @@ from taggit.models import Tag
 from plants.services import check_is_user_owner_of_plant
 from plants.entities import RichPlant
 from plants.models import Plant
+from users.models import User
 
 
 
@@ -78,14 +79,15 @@ def get_plant_tags(request, plant_id: int):
 @api_view(['GET'])
 #@permission_classes((permissions.IsAuthenticatedOrReadOnly,))
 @permission_classes((permissions.AllowAny,))
-def get_plant_tags_and_rest(request, plant_id: int):
+def get_plant_tags_and_rest(request, plant_id: int, user_id: int):
     # get plant tags
     target_plant = get_object_or_404(Plant, id=plant_id)
     plant_tags = target_plant.tags.all().values()
     print('*', plant_tags)
 
     # get user tags
-    current_user = request.user
+    #current_user = request.user
+    current_user = User.objects.get(id = user_id)
     all_user_tags = Tag.objects.filter(plant__creator=current_user).values()
     #print('*', all_user_tags)
 
