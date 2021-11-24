@@ -7,7 +7,7 @@ from . import views
 urlpatterns = [
     path('plant_list/', views.ListPlants, name="api plant list"),
     path('add_tag_to_plant/<int:plant_id>/<str:tag>', views.add_tag_to_plant, name="add tag to plant"),
-    path('remove_tag_from_plant/<int:plant_id>/<str:tag>', views.remove_tag_from_plant, name="remove tag from plant"),
+    path('remove_tag_from_plant/<int:plant_id>/<int:tag_id>', views.remove_tag_from_plant, name="remove tag from plant"),
     path('get_plant_tags/<int:plant_id>', views.get_plant_tags, name="get plant tags"),
     path('get_plant_tags_and_rest/<int:plant_id>/<int:user_id>', views.get_plant_tags_and_rest, name="get plant tags and rest"),
     path('get_user_tags/', views.get_user_tags, name="get user tags"), 
