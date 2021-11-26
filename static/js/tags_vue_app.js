@@ -77,6 +77,9 @@ var app = new Vue({
         .post(`${api_url}/create_new_tag`, new_tag, {headers: {'X-CSRFToken': csrftoken}})
         .then((response) => {
             console.log(response.data);
+            this.active_tags = []
+            this.passive_tags = []
+            this.getTags()
         });
     },
     getTags: function () {
