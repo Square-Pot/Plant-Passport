@@ -84,7 +84,7 @@ var app = new Vue({
     },
     getTags: function () {
       axios
-        .get(`${api_url}/get_plant_tags_and_rest/${current_plant.id}/${current_user.id}`)
+        .get(`${api_url}/get_plant_tags_and_rest/${current_plant.id}`)
         .then((response) => {
           this.all_tags = response.data;
           console.log(this.all_tags);
