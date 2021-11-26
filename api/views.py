@@ -106,7 +106,7 @@ def get_plant_tags(request, plant_id: int):
 @api_view(['GET'])
 #@permission_classes((permissions.IsAuthenticated,))
 @permission_classes((permissions.AllowAny,))
-def get_plant_tags_and_rest(request, plant_id: int, user_id: int):
+def get_plant_tags_and_rest(request, plant_id: int):
     target_plant = get_object_or_404(Plant, id=plant_id)
     plant_tags = target_plant.tags.all().values()
     current_user = request.user
