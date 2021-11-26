@@ -1,8 +1,8 @@
 /* Get vars from template  */
 var current_plant = JSON.parse(document.getElementById('current_plant').textContent);
 var current_user = JSON.parse(document.getElementById('current_user').textContent);
-//var api_url = 'http://galangal.ru/api';
-var api_url = 'https://8000-magenta-pike-w7rmbicg.ws-eu17.gitpod.io/api';
+var api_url = 'http://galangal.ru/api';
+//var api_url = 'https://8000-magenta-pike-w7rmbicg.ws-eu17.gitpod.io/api';
 
 
 /* Get from cookies  */
@@ -73,8 +73,6 @@ var app = new Vue({
         tag_name: this.new_tag,
         plant_id: current_plant.id,
       };
-      console.log(new_tag);
-      console.log(csrftoken);
       axios
         .post(`${api_url}/create_new_tag`, new_tag, {headers: {'X-CSRFToken': csrftoken}})
         .then((response) => {
@@ -85,7 +83,6 @@ var app = new Vue({
       axios
         .get(`${api_url}/get_plant_tags_and_rest/${current_plant.id}/${current_user.id}`)
         .then((response) => {
-          //console.log(response.data);
           this.all_tags = response.data;
           console.log(this.all_tags);
           this.all_tags.forEach(this.sortTags);
