@@ -104,41 +104,50 @@ def get_plant_tags(request, plant_id: int):
 
 
 @api_view(['GET'])
-@permission_classes((permissions.IsAuthenticated,))
+#@permission_classes((permissions.IsAuthenticated,))
+@permission_classes((permissions.AllowAny,))
 def get_plant_tags_and_rest(request, plant_id: int, user_id: int):
-    current_user = request.user
     target_plant = get_object_or_404(Plant, id=plant_id)
-    rich_plant = RichPlant(target_plant)
     plant_tags = target_plant.tags.all().values()
+    current_user = request.user
+    if current_user.is_authenticated: 
+        rich_plant = RichPlant(target_plant)
+        # for owner show plant tags and other available tags
+        if check_is_user_owner_of_plant(current_user, rich_plant):
+            all_user_tags = Tag.objects.filter(plant__creator=current_user).values()
+            # list of dics with all user tags and belonging to current plant
+            tags_with_belonging = []
+            # for check uniqueness in result list of dics
+            used_tags = []
+            for tag in all_user_tags:
+                if tag not in used_tags:
+                    used_tags.append(tag)
+                    if tag in plant_tags:
+                        tag_dic = {}
+                        tag_dic['id'] = tag['id']
+                        tag_dic['name'] = tag['name']
+                        tag_dic['belongs'] = True
+                        tags_with_belonging.append(tag_dic)
+                    else:
+                        tag_dic = {}
+                        tag_dic['id'] = tag['id']
+                        tag_dic['name'] = tag['name']
+                        tag_dic['belongs'] = False
+                        tags_with_belonging.append(tag_dic)
+            return Response(tags_with_belonging)
 
-    # for owner show plant tags and other available tags
-    if check_is_user_owner_of_plant(current_user, rich_plant):
-        all_user_tags = Tag.objects.filter(plant__creator=current_user).values()
-        # list of dics with all user tags and belonging to current plant
-        tags_with_belonging = []
-        # for check uniqueness in result list of dics
-        used_tags = []
-        for tag in all_user_tags:
-            if tag not in used_tags:
-                used_tags.append(tag)
-                if tag in plant_tags:
-                    tag_dic = {}
-                    tag_dic['id'] = tag['id']
-                    tag_dic['name'] = tag['name']
-                    tag_dic['belongs'] = True
-                    tags_with_belonging.append(tag_dic)
-                else:
-                    tag_dic = {}
-                    tag_dic['id'] = tag['id']
-                    tag_dic['name'] = tag['name']
-                    tag_dic['belongs'] = False
-                    tags_with_belonging.append(tag_dic)
-        return Response(tags_with_belonging)
-
-    # for not owners show only plant tags
+        # for not owners show only plant tags
+        else:
+            tags_with_belonging = []
+            for tag in plant_tags:
+                tag_dic = {}
+                tag_dic['id'] = tag['id']
+                tag_dic['name'] = tag['name']
+                tag_dic['belongs'] = True
+                tags_with_belonging.append(tag_dic)
+            return Response(tags_with_belonging)
     else:
-        # get plant tags
-        target_plant = get_object_or_404(Plant, id=plant_id)
+        # for anons
         tags_with_belonging = []
         for tag in plant_tags:
             tag_dic = {}
@@ -147,6 +156,7 @@ def get_plant_tags_and_rest(request, plant_id: int, user_id: int):
             tag_dic['belongs'] = True
             tags_with_belonging.append(tag_dic)
         return Response(tags_with_belonging)
+
 
 
 @api_view((['GET']))

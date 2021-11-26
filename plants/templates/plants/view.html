@@ -13,7 +13,9 @@
             {% else %}
             <img src="{{ plant.profile_photo.small.url }}" class="img-fluid" alt="{{ plant.fancy_name|safe }}">
             {% endif %}
+            {% if is_owner %}
             <a href="{% url 'set_profile_img_dialog' plant.id %}" class="btn btn-outline-primary btn-sm">{% trans 'SetPhoto' %}</a>
+            {% endif %}
           </div>
           <div class="col-sm-7">
             <div class="row row-cols-3 py-1 ">
@@ -69,7 +71,7 @@
       <hr />
 
     <!-- Action Buttons -->
-
+    {% if is_owner %}
     <!-- Watering and Feritlizing-->
     <div class="btn-group" role="group">
         <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -114,7 +116,7 @@
     <div class="btn-group">
         <a href="{% url 'upload_photo' plant.id %}" class="btn btn-primary" role="button">{% trans 'Add_Photo' %}</a>
     </div>
-
+    {% endif %}
     <hr>
 
     <!-- Tags -->
@@ -143,7 +145,7 @@
               
              
               <hr />
-              
+              {% if is_owner %}
               <button class="btn btn-outline-success" type="button" id="button-addon2" v-on:click="create_new_shown = !create_new_shown">Create New</button>
         
               <hr />
@@ -153,6 +155,7 @@
                 <input  v-model="new_tag"  type="text" class="form-control" placeholder="Separate with comma, case independent" aria-label="Recipient's username" aria-describedby="button-addon2" >
                 <button class="btn btn-outline-secondary" type="button" id="button-addon2" @click="createTag">Add</button>
               </div>
+              {% endif %}
             </div>
           </div>
 
