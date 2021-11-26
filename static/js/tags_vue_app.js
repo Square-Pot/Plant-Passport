@@ -100,6 +100,9 @@ var app = new Vue({
       console.log(remove_tag_url);
       axios.get(remove_tag_url).then((response) => {
         console.log(response.data);
+        this.active_tags = []
+        this.passive_tags = []
+        this.getTags()
       });
     },
     addTag: function (tag_id) {
@@ -107,6 +110,9 @@ var app = new Vue({
       console.log(add_tag_url);
       axios.get(add_tag_url).then((response) => {
         console.log(response.data);
+        this.active_tags = []
+        this.passive_tags = []
+        this.getTags()
       });
     }
   },
