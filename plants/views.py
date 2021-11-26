@@ -24,7 +24,7 @@ from .services import   get_user_richplants, \
                         get_date_from_exif
 from users.services import is_friend
 from .entities import RichPlant, BrCr, GenusForGroups
-from api.serializers import PlantSerializer
+from api.serializers import PlantSerializer, UserSerializer
 
 
 # https://docs.djangoproject.com/en/3.2/topics/auth/default/#the-login-required-decorator
@@ -251,6 +251,7 @@ def plant_view(request, plant_id):
         #                       - acton 
 
         plant_serialized = PlantSerializer(target_plant).data
+        user_serialized = UserSerializer(current_user).data
 
         # Template data
         context = {
@@ -260,6 +261,7 @@ def plant_view(request, plant_id):
             'is_owner': is_owner,
             'brcr_data': brcr.data,
             'plant_serialized': plant_serialized,
+            'user_serialized': user_serialized,
         }
         template = loader.get_template('plants/view.html')
         return HttpResponse(template.render(context, request))
