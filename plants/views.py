@@ -23,8 +23,9 @@ from .services import   get_user_richplants, \
                         create_log, create_new_plant, detect_data_matrix, \
                         get_date_from_exif
 from users.services import is_friend
-from .entities import RichPlant, BrCr, GenusForGroups
+from .entities import RichPlant, BrCr, GenusForGroups, TagForGroups
 from api.serializers import PlantSerializer, UserSerializer
+from taggit.models import Tag
 
 
 # https://docs.djangoproject.com/en/3.2/topics/auth/default/#the-login-required-decorator
@@ -131,6 +132,7 @@ def groups(request, user_id=None):
     else:
         target_user = get_object_or_404(User, id=user_id)
         current_user = request.user
+        tags = Tag.objects.filter(entry__user=current_user)
         # for friend
         if current_user.is_authenticated and is_friend(current_user, target_user):
             access = [Plant.AccessTypeChoices.PUBLIC, Plant.AccessTypeChoices.FRIENDS]
@@ -147,7 +149,9 @@ def groups(request, user_id=None):
 
     # make dic of available genuses and count plants
     genuses = {}
-    for rp in rich_plants: 
+    tags = {}
+    for rp in rich_plants:
+        # genuses 
         genus = rp.attrs.genus
         genus = genus.lower() if genus else 'None'
         print(genus)
@@ -156,13 +160,21 @@ def groups(request, user_id=None):
         else: 
             genuses[genus] = 1
 
+        # tags
+        for tag in rp.Plant.tags.values():
+            if tag['id'] in tags:
+                tags[tag['id']] += 1
+            else:
+                tags[tag['id']] = 1
+
+
     # TODO why here empty genus? 
     try:
         genuses.pop('None')
     except:
         pass
 
-    print(genuses)
+    #print(genuses)
 
     # convert genuses dic to list of objects
     genuses_objects = []
@@ -172,12 +184,23 @@ def groups(request, user_id=None):
         genus_obj.number = genuses[genus]
         genuses_objects.append(genus_obj)
 
+    # convert tags dic to list of objects
+    tag_objects = []
+    for tag_id in tags:
+        tag = Tag.objects.get(id=tag_id)
+        tag_obj = TagForGroups()
+        tag_obj.name = tag.name
+        tag_obj.id = tag.id
+        tag_obj.number = tags[tag_id]
+        tag_objects.append(tag_obj)
+
     # sorted by name
     genuses_objects_sorted = sorted(genuses_objects, key=lambda x: x.name, reverse=False)
 
     # Template data
     context = {
         'genuses': genuses_objects_sorted, 
+        'tags': tag_objects,
         'user_name': user_name,
         'title': _('Plants grouped:'),
         #'brcr_data': brcr.data,

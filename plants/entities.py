@@ -14,6 +14,14 @@ class GenusForGroups:
         self.name = None        # genus name
         self.number = None      # count of plants for this genus
 
+class TagForGroups:
+    """Object for transfering genus data to groups page"""
+    def __init__(self):
+        self.name = None
+        self.number = None
+        self.id = None
+
+
 
 class RichPlant:
     def __init__(self, plant_object):
