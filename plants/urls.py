@@ -8,6 +8,7 @@ urlpatterns = [
     path('all/', views.index, name="plants"),
     path('', views.groups, name="groups"),
     path('genus/<str:genus>', views.index, name='plants_by_genus'),
+    path('tag/<int:tag_id>', views.index, name='plants_by_tag_id'),
     path('by_user/<int:user_id>', views.index, name="plants_by_user"),
     path('create/', views.plant_create, name='plant_create_edit'),
     path('<int:plant_id>/view', views.plant_view, name='plant_view'),

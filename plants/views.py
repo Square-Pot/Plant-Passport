@@ -32,7 +32,7 @@ from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
 
 
-def index(request, user_id=None, genus=None, tags=None):
+def index(request, user_id=None, genus=None, tag_id=None):
     """List of User/Someones Plants"""
 
     # get filter data recieved from POST
@@ -49,7 +49,7 @@ def index(request, user_id=None, genus=None, tags=None):
         current_user = request.user
         if current_user.is_authenticated:
             user_id = current_user.id
-            rich_plants = get_user_richplants(user_id, genus=genus)
+            rich_plants = get_user_richplants(user_id, genus=genus, tag_id=tag_id)
             # Translators: Section name
             section_name = _('MyPlants')
             user_name = current_user.username

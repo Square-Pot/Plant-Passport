@@ -19,7 +19,7 @@
             <h4>by Tag</h4>
             {% for tag in tags %}
             <button type="button" class="btn btn-outline-secondary position-relative  mx-3 my-3">
-                <a style="color:inherit" href="">{{ tag.name }}</a>
+                <a style="color:inherit" href="{% url 'plants_by_tag_id' tag.id %}">{{ tag.name }}</a>
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
                 {{ tag.number }}
                 <span class="visually-hidden">{{ tag.number }} {% trans 'plants found' %}</span>

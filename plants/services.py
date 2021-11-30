@@ -13,21 +13,26 @@ from django.utils.translation import gettext as _
 from plants.models import Log, Plant, Attribute
 from plants.entities import RichPlant
 from users.models import User
+from taggit.models import Tag
 
 
 # Plants
 
-def get_user_plants(user_id, access=[]):
+def get_user_plants(user_id, access=[], tag_id=None):
     """Returns Plant-objects of user by user id"""
     if not access: 
         access = [0,1,2]  # wbithot specifying acces type - returns all plants 
     plant_ids = Log.objects.filter(data__owner=user_id).values_list('plant', flat=True)
-    plants = Plant.objects.filter(id__in=plant_ids, access_type__in=access)
+    if tag_id:
+        tag = Tag.objects.get(id=tag_id)
+        plants = Plant.objects.filter(id__in=plant_ids, tags__in=[tag], access_type__in=access)
+    else:
+        plants = Plant.objects.filter(id__in=plant_ids, access_type__in=access)
     return plants
 
-def get_user_richplants(user_id, access=[], genus=None) -> list:
+def get_user_richplants(user_id, access=[], genus=None, tag_id=None) -> list:
     """Returns RichPlant-objects of user by user id"""
-    plants = get_user_plants(user_id, access)
+    plants = get_user_plants(user_id, access, tag_id)
     rich_plants = []
     for plant in plants:
         rich_plant = RichPlant(plant)
