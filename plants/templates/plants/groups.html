@@ -8,7 +8,7 @@
             {% for genus in genuses %}
             <button type="button" class="btn btn-outline-secondary position-relative mx-3 my-3">
                 <a style="color:inherit" href="{% url 'plants_by_genus' genus.name %}">{{ genus.name }}</a>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                 {{ genus.number }}
                 <span class="visually-hidden">{{ genus.number }} {% trans 'plants found' %}</span>
                 </span>
