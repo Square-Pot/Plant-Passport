@@ -9,7 +9,7 @@ from .forms import UserCreateForm
 
 def signup(request):
     """Sign up view"""
-    print(request.method)
+    #print(request.method)
     if request.method == "POST":
         form = UserCreateForm(request.POST)
         if form.is_valid():
@@ -29,7 +29,9 @@ def signup(request):
         form = UserCreateForm()
         return render(request, 'users/signup.html', {'title': _('SignUp'), 'form': form})
         
-        
+def signup_disabled(request):
+    return render(request, 'users/signup_disabled.html', {'title': _('SignUp')})
+
 
 def login_view(request):
     """Login view"""
