@@ -124,7 +124,7 @@ class RichPlant:
         # blank dic init
         extra_attrs = {}
         for key in all_attrs_keys:
-            extra_attrs[key] = None
+            extra_attrs[key] = ''
 
         # fill with values
         for log in self.__get_logs(order_by='action_time'): 
