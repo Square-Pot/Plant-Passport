@@ -18,6 +18,14 @@
             {% endif %}
           </div>
           <div class="col-sm-7">
+            <div class="row">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" {% if plant.is_seed %}checked{% endif %}>
+                    <label class="form-check-label" for="flexCheckDefault">
+                        {% trans 'Seeds (not planted yet)' %}
+                    </label>
+                </div>
+            </div>
             <div class="row row-cols-3 py-1 ">
                 <div class="col-4">
                     <b>UID</b>
