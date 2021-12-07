@@ -18,21 +18,21 @@ from taggit.models import Tag
 
 # Plants
 
-def get_user_plants(user_id, access=[], tag_id=None):
+def get_user_plants(user_id, access=[], tag_id=None, seeds=False):
     """Returns Plant-objects of user by user id"""
     if not access: 
         access = [0,1,2]  # wbithot specifying acces type - returns all plants 
     plant_ids = Log.objects.filter(data__owner=user_id).values_list('plant', flat=True)
     if tag_id:
         tag = Tag.objects.get(id=tag_id)
-        plants = Plant.objects.filter(id__in=plant_ids, tags__in=[tag], access_type__in=access)
+        plants = Plant.objects.filter(id__in=plant_ids, tags__in=[tag], access_type__in=access, is_seed=seeds)
     else:
-        plants = Plant.objects.filter(id__in=plant_ids, access_type__in=access)
+        plants = Plant.objects.filter(id__in=plant_ids, access_type__in=access, is_seed=seeds)
     return plants
 
-def get_user_richplants(user_id, access=[], genus=None, tag_id=None) -> list:
+def get_user_richplants(user_id, access=[], genus=None, tag_id=None, seeds=False) -> list:
     """Returns RichPlant-objects of user by user id"""
-    plants = get_user_plants(user_id, access, tag_id)
+    plants = get_user_plants(user_id, access, tag_id, seeds=seeds)
     rich_plants = []
     for plant in plants:
         rich_plant = RichPlant(plant)

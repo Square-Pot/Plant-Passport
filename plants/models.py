@@ -36,6 +36,14 @@ class Plant(models.Model):
         default=False,
     )
 
+    is_seed = models.BooleanField(
+        default=False,
+    )
+
+    is_archived = models.BooleanField(
+        default=False,
+    )
+
     access_type = models.IntegerField(
         choices=AccessTypeChoices.choices,
         default=0,

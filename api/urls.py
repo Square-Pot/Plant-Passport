@@ -12,6 +12,8 @@ urlpatterns = [
     path('get_plant_tags/<int:plant_id>', views.get_plant_tags, name="get plant tags"),
     path('get_plant_tags_and_rest/<int:plant_id>', views.get_plant_tags_and_rest, name="get plant tags and rest"),
     path('get_user_tags/', views.get_user_tags, name="get user tags"), 
+    path('set_as_seed/<int:plant_id>', views.set_as_seed, name="set as seed"), 
+    path('unset_as_seed/<int:plant_id>', views.unset_as_seed, name="unset as seed"), 
     
 ] 
 

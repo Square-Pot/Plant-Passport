@@ -53,7 +53,6 @@ def add_existing_tag_to_plant(request, plant_id: int, tag_id: int):
         target_plant.tags.add(tag.name)
         return Response({"message": "Tag %s was added successfully" % tag})
 
-
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated,))
 def create_new_tag(request):
@@ -80,7 +79,6 @@ def create_new_tag(request):
     else:
         return Response({"message": "Current user is not the owner" })
 
-
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated,))
 def remove_tag_from_plant(request, plant_id: int, tag_id: int):
@@ -93,7 +91,6 @@ def remove_tag_from_plant(request, plant_id: int, tag_id: int):
         return Response({"message": "Tag %s was removed successfully" % tag.name})
     else: 
         return Response({"message": "You are not the owner of the plant" })
-
 
 # not using method afair
 @api_view(['GET'])
@@ -157,8 +154,6 @@ def get_plant_tags_and_rest(request, plant_id: int):
             tags_with_belonging.append(tag_dic)
         return Response(tags_with_belonging)
 
-
-
 @api_view((['GET']))
 @permission_classes((permissions.IsAuthenticated,))
 #@permission_classes((permissions.AllowAny,))
@@ -166,3 +161,29 @@ def get_user_tags(request):
     current_user = request.user
     all_tags = Tag.objects.filter(plant__creator=current_user)
     return Response(all_tags.values_list())
+
+@api_view((['GET']))
+@permission_classes((permissions.IsAuthenticated,))
+def set_as_seed(request, plant_id: int):
+    current_user = request.user
+    target_plant = get_object_or_404(Plant, id=plant_id)
+    rich_plant = RichPlant(target_plant)
+    if check_is_user_owner_of_plant(current_user, rich_plant):
+        target_plant.is_seed = True
+        target_plant.save()
+        return Response({"message": "Plant with id %s was set as seed" % plant_id})
+    else: 
+        return Response({"message": "You are not the owner of the plant" })
+
+@api_view((['GET']))
+@permission_classes((permissions.IsAuthenticated,))
+def unset_as_seed(request, plant_id: int):
+    current_user = request.user
+    target_plant = get_object_or_404(Plant, id=plant_id)
+    rich_plant = RichPlant(target_plant)
+    if check_is_user_owner_of_plant(current_user, rich_plant):
+        target_plant.is_seed = False
+        target_plant.save()
+        return Response({"message": "Plant with id %s was set as plant" % plant_id})
+    else: 
+        return Response({"message": "You are not the owner of the plant" })
