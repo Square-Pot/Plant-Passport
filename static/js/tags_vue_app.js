@@ -2,7 +2,7 @@
 var current_plant = JSON.parse(document.getElementById('current_plant').textContent);
 var current_user = JSON.parse(document.getElementById('current_user').textContent);
 var api_url = 'https://galangal.ru/api';
-//var api_url = 'https://8000-magenta-pike-w7rmbicg.ws-eu17.gitpod.io/api';
+//var api_url = 'https://8000-magenta-pike-w7rmbicg.ws-eu21.gitpod.io/api';
 
 
 /* Get from cookies  */

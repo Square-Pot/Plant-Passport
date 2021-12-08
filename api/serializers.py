@@ -16,7 +16,7 @@ from rest_framework import serializers
 class PlantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Plant
-        fields = ('id', 'uid', 'access_type')
+        fields = ('id', 'uid', 'access_type', 'is_seed')
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

@@ -18,10 +18,10 @@
             {% endif %}
           </div>
           <div class="col-sm-7">
-            <div class="row">
+            <div id="is_seed" class="row">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" {% if plant.is_seed %}checked{% endif %}>
-                    <label class="form-check-label" for="flexCheckDefault">
+                    <input class="form-check-input" type="checkbox" value="" id="plant_is_seeds" v-model="is_seeds" @change="check($event)" :disabled="disabled">
+                    <label class="form-check-label" for="plant_is_seeds">
                         {% trans 'Seeds (not planted yet)' %}
                     </label>
                 </div>
@@ -201,6 +201,7 @@
     </div> 
 
     <script src="{% static 'js/tags_vue_app.js' %}"></script>
+    <script src="{% static 'js/is_seed_vue_app.js' %}"></script>
 
     {% endblock %}
 

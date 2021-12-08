@@ -264,15 +264,6 @@ def plant_view(request, plant_id):
             brcr.add_level(False, 'plants', f'{section_name} {owners_name}')
         brcr.add_level(True, '', rich_plant.fancy_name)
 
-        ## GET HISTORY
-        # TODO add plant history
-        # history = []
-        # for log in rich_plant.logs():
-
-        ## TODO:  add buttons: 
-        #                       - add photo
-        #                       - acton 
-
         plant_serialized = PlantSerializer(target_plant).data
         user_serialized = UserSerializer(current_user).data
 
