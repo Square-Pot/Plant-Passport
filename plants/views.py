@@ -148,25 +148,45 @@ def groups(request, user_id=None):
         # brcr.add_level(True, '', f'{section_name}: {user_name}')
 
     # make dic of available genuses and count plants
-    genuses = {}
-    tags = {}
+    genuses_plants = {}
+    genuses_seeds =  {}
+    tags_plants = {}
+    tags_seeds =  {}
+
     for rp in rich_plants:
         # genuses 
         genus = rp.attrs.genus
         genus = genus.lower() if genus else 'None'
-        print(genus)
-        if genus in genuses:  
-            genuses[genus] += 1
-        else: 
-            genuses[genus] = 1
+        
+        # for seed section 
+        if rp.is_seed:
+            # genuses
+            if genus in genuses_seeds:  
+                genuses_seeds[genus] += 1
+            else: 
+                genuses_seeds[genus] = 1
 
-        # tags
-        for tag in rp.Plant.tags.values():
-            if tag['id'] in tags:
-                tags[tag['id']] += 1
-            else:
-                tags[tag['id']] = 1
+            # tags
+            for tag in rp.Plant.tags.values():
+                if tag['id'] in tags_seeds:
+                    tags_seeds[tag['id']] += 1
+                else:
+                    tags_seeds[tag['id']] = 1
+        
+        # for plant section 
+        else:
+            # genuses
+            if genus in genuses_plants:  
+                genuses_plants[genus] += 1
+            else: 
+                genuses_plants[genus] = 1
 
+            # tags
+            for tag in rp.Plant.tags.values():
+                if tag['id'] in tags_plants:
+                    tags_plants[tag['id']] += 1
+                else:
+                    tags_plants[tag['id']] = 1
 
     # TODO why here empty genus? 
     try:
@@ -177,32 +197,52 @@ def groups(request, user_id=None):
     #print(genuses)
 
     # convert genuses dic to list of objects
-    genuses_objects = []
-    for genus in genuses: 
+    genuses_plant_objects = []
+    for genus in genuses_plants: 
         genus_obj = GenusForGroups()
         genus_obj.name = genus
-        genus_obj.number = genuses[genus]
-        genuses_objects.append(genus_obj)
+        genus_obj.number = genuses_plants[genus]
+        genuses_plant_objects.append(genus_obj)
+
+    genuses_seed_objects = []
+    for genus in genuses_seeds: 
+        genus_obj = GenusForGroups()
+        genus_obj.name = genus
+        genus_obj.number = genuses_seeds[genus]
+        genuses_seed_objects.append(genus_obj)
+
 
     # convert tags dic to list of objects
-    tag_objects = []
-    for tag_id in tags:
+    tag_plant_objects = []
+    for tag_id in tags_plants:
         tag = Tag.objects.get(id=tag_id)
         tag_obj = TagForGroups()
         tag_obj.name = tag.name
         tag_obj.id = tag.id
-        tag_obj.number = tags[tag_id]
-        tag_objects.append(tag_obj)
+        tag_obj.number = tags_plants[tag_id]
+        tag_plant_objects.append(tag_obj)
+
+    tag_seed_objects = []
+    for tag_id in tags_seeds:
+        tag = Tag.objects.get(id=tag_id)
+        tag_obj = TagForGroups()
+        tag_obj.name = tag.name
+        tag_obj.id = tag.id
+        tag_obj.number = tags_seeds[tag_id]
+        tag_seed_objects.append(tag_obj)
 
     # sorted by name
-    genuses_objects_sorted = sorted(genuses_objects, key=lambda x: x.name, reverse=False)
+    genuses_plant_objects_sorted = sorted(genuses_plant_objects, key=lambda x: x.name, reverse=False)
+    genuses_seed_objects_sorted = sorted(genuses_seed_objects, key=lambda x: x.name, reverse=False)
 
     # Template data
     context = {
-        'genuses': genuses_objects_sorted, 
-        'tags': tag_objects,
+        'genuses': genuses_plant_objects_sorted, 
+        'tags': tag_plant_objects,
+        'seeds_genuses': genuses_seed_objects_sorted,
+        'seeds_tags': tag_seed_objects,
         'user_name': user_name,
-        'title': _('Plants grouped:'),
+        #'title': _('Plants grouped:'),
         #'brcr_data': brcr.data,
     }
     template = loader.get_template('plants/groups.html')
