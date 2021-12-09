@@ -9,6 +9,13 @@ urlpatterns = [
     path('', views.groups, name="groups"),
     path('genus/<str:genus>', views.index, name='plants_by_genus'),
     path('tag/<int:tag_id>', views.index, name='plants_by_tag_id'),
+    
+    path('is_plant/genus/<str:genus>', views.index, {'is_seed': False}, name='plants_only_by_genus'),
+    path('is_plant/tag/<int:tag_id>', views.index, {'is_seed': False}, name='plants_only_by_tag_id'),
+    
+    path('is_seeds/genus/<str:genus>', views.index, {'is_seed': True}, name='seeds_only_by_genus'),
+    path('is_seeds/tag/<int:tag_id>', views.index, {'is_seed': True}, name='seeds_only_by_tag_id'),
+
     path('by_user/<int:user_id>', views.index, name="plants_by_user"),
     path('create/', views.plant_create, name='plant_create_edit'),
     path('<int:plant_id>/view', views.plant_view, name='plant_view'),

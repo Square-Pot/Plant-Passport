@@ -32,7 +32,7 @@ from taggit.models import Tag
 from django.contrib.auth.decorators import login_required
 
 
-def index(request, user_id=None, genus=None, tag_id=None):
+def index(request, user_id=None, genus=None, tag_id=None, is_seed=None):
     """List of User/Someones Plants"""
 
     # get filter data recieved from POST
@@ -49,7 +49,7 @@ def index(request, user_id=None, genus=None, tag_id=None):
         current_user = request.user
         if current_user.is_authenticated:
             user_id = current_user.id
-            rich_plants = get_user_richplants(user_id, genus=genus, tag_id=tag_id)
+            rich_plants = get_user_richplants(user_id, genus=genus, tag_id=tag_id, seeds=is_seed)
             # Translators: Section name
             section_name = _('MyPlants')
             user_name = current_user.username
@@ -66,11 +66,11 @@ def index(request, user_id=None, genus=None, tag_id=None):
         # for friend
         if current_user.is_authenticated and is_friend(current_user, target_user):
             access = [Plant.AccessTypeChoices.PUBLIC, Plant.AccessTypeChoices.FRIENDS]
-            rich_plants = get_user_richplants(user_id, access)
+            rich_plants = get_user_richplants(user_id, access=access, genus=genus, tag_id=tag_id, seeds=is_seed)
         # for anonymous
         else:
             access = [Plant.AccessTypeChoices.PUBLIC,]
-            rich_plants = get_user_richplants(user_id, access)
+            rich_plants = get_user_richplants(user_id, access=access, genus=genus, tag_id=tag_id, seeds=is_seed)
         section_name = _('PlantsOfUser') 
         user_name = target_user.username
         is_owner = False
@@ -158,6 +158,8 @@ def groups(request, user_id=None):
         genus = rp.attrs.genus
         genus = genus.lower() if genus else 'None'
         
+        #print(rp.is_seed)
+
         # for seed section 
         if rp.is_seed:
             # genuses
@@ -190,11 +192,12 @@ def groups(request, user_id=None):
 
     # TODO why here empty genus? 
     try:
-        genuses.pop('None')
+        genuses_plants.pop('None')
+        genuses_seeds.pop('None')
     except:
         pass
 
-    #print(genuses)
+    #print(genuses_seeds)
 
     # convert genuses dic to list of objects
     genuses_plant_objects = []
