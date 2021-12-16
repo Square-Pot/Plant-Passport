@@ -9,10 +9,10 @@ from plants.services    import  create_log, \
                                 create_new_plant
 
 # Set user owner ID for new plants
-USER_ID = 1
+USER_ID = 2
 
 # Set path to csv file
-CSV_FILE = 'shell_scripts/mesembs_utf.csv'
+CSV_FILE = 'shell_scripts/mesembs_december_2021.csv'
 
 
 class PlantCreator:
@@ -27,12 +27,11 @@ class PlantCreator:
         self.read_header()
 
     def read_data_from_file(self):
-        with open(self.csv_file_name, 'r') as f:
+        with open(self.csv_file_name, 'r', encoding='utf-8-sig') as f:
             self.data = f.readlines()
 
     def read_header(self):
         for attr in self.data[0].replace('\n', '').split(';'):
-            #if attr:
             self.attr_names.append(attr)
         self.data.pop(0)
 
@@ -44,6 +43,13 @@ class PlantCreator:
             # prepare data dict
             data_dic = self.str_to_dic(line)
             data_dic['owner'] = self.user.id
+
+            #print('is seed:', data_dic['is_seed'])
+            new_plant.is_seed = data_dic['is_seed']
+            new_plant.save()
+
+            del data_dic['is_seed']
+            print(data_dic)
 
             # create log
             create_log(
