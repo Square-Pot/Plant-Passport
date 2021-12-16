@@ -149,9 +149,6 @@ def get_date_from_exif(image):
         return None
 
 
-
-
-
 # Attributes
 
 def get_filtered_attr_values_from_post(post_data) -> dict:
@@ -287,10 +284,13 @@ def check_is_user_owner_of_plant(user, target_rich_plant):
 def create_log(action_type: Log.ActionChoices, user: User, plant: Plant, data: dict, action_time=None):
     """Create new log"""
 
-    # selialize date fields
     for key in data:
+        # selialize date fields
         if isinstance(data[key], datetime.date) or isinstance(data[key], datetime.datetime):
             data[key] = data[key].isoformat()
+        # remove extra spaces in string attrs
+        if type(data[key]) == str:
+                data[key] = data[key].strip().replace('  ', ' ')
 
     new_log = Log(
         action_type = action_type,
