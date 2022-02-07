@@ -94,7 +94,11 @@ def filter_plants(rich_plants: list, filter_data: dict) -> list:
     return filter_plants
 
 def detect_data_matrix(image) -> list:
-    """Detects PUIDs on image. Return list of PUIDs or empty list"""
+    """
+    | Detects PUIDs on image. 
+    | Return list of dics with PUID and position (top, left)
+    | or empty list
+    """
 
     start_time_decoding = time.time()
 
@@ -125,16 +129,48 @@ def detect_data_matrix(image) -> list:
 
     detected_puids = []
     for i in result:
-        puid = i.data.decode("utf-8") 
+        puid = {
+            'puid': i.data.decode("utf-8"),
+            'left': i.rect.left,
+            'top': i.rect.top,
+        }
         detected_puids.append(puid)
 
-    # remove duplicates
-    detected_puids = list(set(detected_puids))
 
     # TODO: add logger maybe?
     print(f'PUID decoding image ({w}x{h}) time: { time.time() - start_time_decoding } sec')
 
     return detected_puids
+
+def get_matrix_position_clarification(pid_dics: list, image_width, image_height) -> list:
+    """
+    | Input: list of dics with PUID and position (top, left)
+    | Output: same list of dics, but with clarification in word, 
+    |         where this PUID-matrix can be found on the photo.
+    | List shoud contain more than one item.
+    """
+
+    empty_position_matrix = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+    ]
+
+    vertical_positions = ['upper', 'middle', 'lower']
+    horizont_positions = ['left', 'middle', 'right']
+
+    for i in pid_dics: 
+        v = math.trunc( i['top'] / (image_height/3) )
+        h = math.trunc( i['left'] / (image_width/3) )
+        position_matrix = empty_position_matrix
+        position_matrix[v][h] = 1
+        v_position = vertical_positions[v]
+        h_position = horizont_positions[h]
+
+
+
+
+
 
 def get_date_from_exif(image):
     """Get date when a photo was taken from EXIF"""
