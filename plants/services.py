@@ -171,13 +171,12 @@ def get_matrix_position_clarification(pid_dics: list, image_width, image_height)
 
     for i in pid_dics: 
         clarifications = []
-
         # get position clarification relative to image
-        v = math.trunc( i['top'] / (image_height/3) )
+        v = math.trunc( (image_height - i['top']) / (image_height/3) )
         h = math.trunc( i['left'] / (image_width/3) )
-        position_matrix = EMPTY_POSITION_MATRIX
+        position_matrix =  copy.deepcopy(EMPTY_POSITION_MATRIX)
         position_matrix[v][h] = 1
-        
+      
         if position_matrix[1][1] == 1:
             clrf = 'In the center of the photo.'
             clarifications.append(clrf)
@@ -209,22 +208,13 @@ def get_matrix_position_clarification(pid_dics: list, image_width, image_height)
                     clrf = 'To the right of PUID: %s.' % j['puid']
                     clarifications.append(clrf)
                 else:
-                    clrf = 'To the right of PUID: %s.' % j['puid']
+                    clrf = 'To the left of PUID: %s.' % j['puid']
                     clarifications.append(clrf)
 
         if clarifications:
             i['position_clarifications'] = clarifications
 
     return pid_dics
-
-                
-        #409817 	717146 	
-
-        # 005892 343476637663
-
-
-
-
 
 
 def get_date_from_exif(image):
