@@ -4,6 +4,7 @@ import time
 import datetime
 import copy
 import decimal
+import math
 import numpy as np
 import cv2
 import io
@@ -122,6 +123,8 @@ def detect_data_matrix(image) -> list:
     else:
         image = image.file
         img = cv2.imdecode(np.frombuffer(image.read(), np.uint8), 1)
+
+    height, width, channels = img.shape
    
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ret,thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
@@ -140,7 +143,7 @@ def detect_data_matrix(image) -> list:
 
     # enrich dictionaries with information about position 
     if len(detected_puids) > 1:
-        detected_puids = get_matrix_position_clarification(detected_puids, w, h)
+        detected_puids = get_matrix_position_clarification(detected_puids, width, height)
 
 
     # TODO: add logger maybe?
@@ -172,16 +175,16 @@ def get_matrix_position_clarification(pid_dics: list, image_width, image_height)
         # get position clarification relative to image
         v = math.trunc( i['top'] / (image_height/3) )
         h = math.trunc( i['left'] / (image_width/3) )
-        position_matrix = empty_position_matrix
+        position_matrix = EMPTY_POSITION_MATRIX
         position_matrix[v][h] = 1
         
         if position_matrix[1][1] == 1:
             clrf = 'In the center of the photo.'
             clarifications.append(clrf)
         else:
-            v_position = vertical_positions[v]
-            h_position = horizont_positions[h]
-            crlf = 'In the %s %s area of the photo.' % (v_position, h_position)
+            v_position = VERTICAL_POSITIONS[v]
+            h_position = HORIZONT_POSITIONS[h]
+            clrf = 'In the %s %s area of the photo.' % (v_position, h_position)
             clarifications.append(clrf)
 
         # get position clarification relative to other matrices
@@ -195,18 +198,18 @@ def get_matrix_position_clarification(pid_dics: list, image_width, image_height)
             
             if abs_v_diff > image_height / 10:   # more than 10% from image height
                 if v_diff > 0:
-                    crlf = 'Is higher than PUID: %s.' % j['puid']
+                    clrf = 'Is higher than PUID: %s.' % j['puid']
                     clarifications.append(clrf)
                 else:
-                    crlf = 'Is lower than PUID: %s.' % j['puid']
+                    clrf = 'Is lower than PUID: %s.' % j['puid']
                     clarifications.append(clrf)
 
             if abs_h_diff > image_width / 10:   # more than 10% from image width
                 if h_diff > 0:
-                    crlf = 'To the right of PUID: %s.' % j['puid']
+                    clrf = 'To the right of PUID: %s.' % j['puid']
                     clarifications.append(clrf)
                 else:
-                    crlf = 'To the right of PUID: %s.' % j['puid']
+                    clrf = 'To the right of PUID: %s.' % j['puid']
                     clarifications.append(clrf)
 
         if clarifications:
@@ -215,9 +218,9 @@ def get_matrix_position_clarification(pid_dics: list, image_width, image_height)
     return pid_dics
 
                 
+        #409817 	717146 	
 
-
-        
+        # 005892 343476637663
 
 
 

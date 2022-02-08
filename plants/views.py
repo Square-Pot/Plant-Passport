@@ -647,7 +647,11 @@ def upload_photo_decode_matrix(request):
                     photo_id = None
 
                 # create log
-                photo_description = 'Autodetected photo'
+                photo_description = 'Autodetected photo.'
+                if 'position_clarifications' in puid:
+                    photo_description += '\n Data matrix position calrification:\n'
+                    for line in puid['position_clarifications']:
+                        photo_description += ' ' + line + '<br />'
                 create_log(
                     Log.ActionChoices.ADDITION,
                     current_user,
