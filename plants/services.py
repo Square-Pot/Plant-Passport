@@ -136,6 +136,12 @@ def detect_data_matrix(image) -> list:
         }
         detected_puids.append(puid)
 
+    # TODO: is it necessary to remove duplicates?
+
+    # enrich dictionaries with information about position 
+    if len(detected_puids) > 1:
+        detected_puids = get_matrix_position_clarification(detected_puids, w, h)
+
 
     # TODO: add logger maybe?
     print(f'PUID decoding image ({w}x{h}) time: { time.time() - start_time_decoding } sec')
@@ -145,27 +151,73 @@ def detect_data_matrix(image) -> list:
 def get_matrix_position_clarification(pid_dics: list, image_width, image_height) -> list:
     """
     | Input: list of dics with PUID and position (top, left)
-    | Output: same list of dics, but with clarification in word, 
-    |         where this PUID-matrix can be found on the photo.
+    | Output: same list of dics, but with list of position clarification, 
+    |         where this PUID-matrix can be found on the photo and
+    |         where this PUID-matrix is located relative to other matrices.
     | List shoud contain more than one item.
+    | New list key is: `position_clarifications` 
     """
 
-    empty_position_matrix = [
+    EMPTY_POSITION_MATRIX = [
         [0, 0, 0],
         [0, 0, 0],
         [0, 0, 0],
     ]
-
-    vertical_positions = ['upper', 'middle', 'lower']
-    horizont_positions = ['left', 'middle', 'right']
+    VERTICAL_POSITIONS = ['upper', 'middle', 'lower']
+    HORIZONT_POSITIONS = ['left', 'middle', 'right']
 
     for i in pid_dics: 
+        clarifications = []
+
+        # get position clarification relative to image
         v = math.trunc( i['top'] / (image_height/3) )
         h = math.trunc( i['left'] / (image_width/3) )
         position_matrix = empty_position_matrix
         position_matrix[v][h] = 1
-        v_position = vertical_positions[v]
-        h_position = horizont_positions[h]
+        
+        if position_matrix[1][1] == 1:
+            clrf = 'In the center of the photo.'
+            clarifications.append(clrf)
+        else:
+            v_position = vertical_positions[v]
+            h_position = horizont_positions[h]
+            crlf = 'In the %s %s area of the photo.' % (v_position, h_position)
+            clarifications.append(clrf)
+
+        # get position clarification relative to other matrices
+        position_relative_to_other = []
+        for j in pid_dics: 
+            v_diff = i['top'] - j['top']
+            h_diff = i['left'] - j['left']
+
+            abs_v_diff = abs(i['top'] - j['top'])
+            abs_h_diff = abs(i['left'] - j['left'])
+            
+            if abs_v_diff > image_height / 10:   # more than 10% from image height
+                if v_diff > 0:
+                    crlf = 'Is higher than PUID: %s.' % j['puid']
+                    clarifications.append(clrf)
+                else:
+                    crlf = 'Is lower than PUID: %s.' % j['puid']
+                    clarifications.append(clrf)
+
+            if abs_h_diff > image_width / 10:   # more than 10% from image width
+                if h_diff > 0:
+                    crlf = 'To the right of PUID: %s.' % j['puid']
+                    clarifications.append(clrf)
+                else:
+                    crlf = 'To the right of PUID: %s.' % j['puid']
+                    clarifications.append(clrf)
+
+        if clarifications:
+            i['position_clarifications'] = clarifications
+
+    return pid_dics
+
+                
+
+
+        
 
 
 

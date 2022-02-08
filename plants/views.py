@@ -615,9 +615,9 @@ def upload_photo_decode_matrix(request):
 
                 # try to get plant by puid
                 try:
-                    plant = Plant.objects.get(uid=puid)
+                    plant = Plant.objects.get(uid=puid['puid'])
                 except Plant.DoesNotExist:
-                    messages.append(f'No plant was found with PUID: {puid}')
+                    messages.append('No plant was found with PUID: %s' % puid['puid'])
                     break
                 
                 rich_plant = RichPlant(plant)
