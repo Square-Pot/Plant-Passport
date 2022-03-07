@@ -19,6 +19,7 @@ tasks:
       python -m pip install markdown
       python -m pip install django-filter
       python -m pip install django-cors-headers
+      python -m pip install django-dbbackup
       python manage.py migrate
       npm install axios
     command: |
