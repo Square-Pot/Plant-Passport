@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'taggit',
     'rest_framework',
     'corsheaders',
+    'dbbackup',  # django-dbbackup
 ]
 
 MIDDLEWARE = [
@@ -135,8 +136,8 @@ LANGUAGE_COOKIE_NAME = 'plant_passport_language'
 ## Media files
 
 #USE_S3 = os.getenv('USE_S3') == 'TRUE'
-USE_S3 = True
-#USE_S3 = False
+#USE_S3 = True
+USE_S3 = False
 
 if USE_S3:
     # aws settings
@@ -206,8 +207,7 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_ALL_ORIGINS = True # If this is used then `CORS_ALLOWED_ORIGINS` will not have any effect
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    'https://codepen.io/',
-]
 
 
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': '/var/backups/'}
