@@ -3,9 +3,9 @@
 
     {% block content %}
     <div class="container">
-        <h4>{% trans 'UploadPhoto' %}</h4>
+        <h4>{% trans 'UploadPhotoWithAutoPlantIdentification' %}</h4>
         <hr><br>
-        <form action="{% url "upload_photo" plant.id %}" method="post" enctype="multipart/form-data" class="form">
+        <form action="{% url "detect_photo" %}" method="post" enctype="multipart/form-data" class="form">
             {% csrf_token %}
             <div class="mb-3">
                 <label class="file-label">{% trans 'PhotoUploading: ' %}</label>
@@ -17,16 +17,16 @@
                 <input class="form-check-input" type="checkbox" value="True" name="PhotoDateFromExif" id="PhotoDateFromExifChecked" checked>
             </div>
             <div class="mb-3">
-                <label for="PhotoDatetime" class="form-label">{% trans 'PhotoDatetime: ' %}</label>
-                <input type="date" name="photo_datetime" id="PhotoDatetime">
-            </div>
-            <div class="mb-3">
-                <label for="PhotoDescription" class="form-label">{% trans 'PhotoDescription: ' %}</label>
-                <textarea class="form-control" id="PhotoDescription" name="photo_descr" rows="3"></textarea>
-            </div>
-            <div class="mb-3">
                 <input type="submit" value="Submit" class="button is-primary" />
             </div>
         </form>
+        {% for line in messages %}
+        <p>{{ line }}</p> 
+        {% endfor %}
+
+        {% for plant in rich_plants %}
+        <p>Photo was automatically added for plant: <a href="{% url "plant_view" plant.id %}">{{ plant.fancy_name|safe }}</a></p>
+        {% endfor %}
+        
     </div>
     {% endblock %}

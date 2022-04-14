@@ -8,6 +8,20 @@ class ExtraAttrs:
     """Class for storing extra attributes in RichPlant"""
     pass
 
+class GenusForGroups: 
+    """Object for transfering genus data to groups page"""
+    def __init__(self):
+        self.name = None        # genus name
+        self.number = None      # count of plants for this genus
+
+class TagForGroups:
+    """Object for transfering genus data to groups page"""
+    def __init__(self):
+        self.name = None
+        self.number = None
+        self.id = None
+
+
 
 class RichPlant:
     def __init__(self, plant_object):
@@ -15,6 +29,7 @@ class RichPlant:
         self.owner = None
         self.__include_plant_attrs()
         self.logs = self.__get_logs()
+        self.logs_for_cards = self.__prepare_logs_for_cards()
         self.attrs_as_dic = self.__get_atts_as_dic()
         self.attrs_as_list_w_types = self.__get_attrs_as_list_w_types()
         self.attrs = ExtraAttrs()
@@ -41,12 +56,15 @@ class RichPlant:
             if attr['value']:
                 # Field Number always uppercase
                 if attr['key'] == "number":
-                    fancy_name += f"{attr['value'].upper()} – "
+                    fancy_name += f"{attr['value'].upper()}: "
                 # Genus always capitlized and italic
                 elif attr['key'] == "genus":
                     fancy_name += f"<i>{attr['value'].capitalize()}</i> "
-                # Species, subspecies, variety always italic and lowercase
-                elif attr['key'] in ['species', 'subspecies', 'variety']:
+                # species  
+                elif attr['key'] == 'species':
+                    fancy_name += f"<i>{attr['value'].lower()}</i> " 
+                # subspecies, variety always italic and lowercase with short name
+                elif attr['key'] in ['subspecies', 'variety']:
                     fancy_name += f"{attr['short_name']} <i>{attr['value'].lower()}</i> " 
                 # Cultivated variety alway regular Uppercase
                 elif attr['key'] == 'cultivar':
@@ -67,6 +85,37 @@ class RichPlant:
         """Get logs of this plant"""
         return Log.objects.filter(plant=self.Plant.id).order_by(order_by)
 
+    def __prepare_logs_for_cards(self):
+        prepared_logs = []
+
+        for log in self.logs: 
+            l = LogForCard()
+
+            l.action_time = log.action_time
+
+            if log.action_type == 1:
+                l.title = _('Addition')
+            elif log.action_type == 2:
+                l.title = _('Editing')
+            elif log.action_type == 3: 
+                l.title = _('Deleting')
+
+            for key in log.data:
+                if key == 'action':
+                    l.subtitle = log.data[key]
+                elif key == 'photo_url':
+                    l.img_url = log.data[key]
+                elif key == 'comment' or key == 'photo_description':
+                    l.text = log.data[key]
+                else:
+                    if key not in ['photo_id', ]:
+                        l.attrs[key] = log.data[key]
+
+            prepared_logs.append(l)
+
+        return prepared_logs
+
+
     def __get_atts_as_dic(self):
         """Get extra attributes and values from logs as dic"""
         # get ordered list of attibute keys
@@ -75,7 +124,7 @@ class RichPlant:
         # blank dic init
         extra_attrs = {}
         for key in all_attrs_keys:
-            extra_attrs[key] = None
+            extra_attrs[key] = ''
 
         # fill with values
         for log in self.__get_logs(order_by='action_time'): 
@@ -146,3 +195,11 @@ class BrCr:
         self.add_level(True, 'user_home', _('Home'))
 
 
+class LogForCard:
+    def __init__(self):
+        self.title = None
+        self.subtitle = None
+        self.img_url = None
+        self.img_alt = None
+        self.text = None
+        self.attrs = {}

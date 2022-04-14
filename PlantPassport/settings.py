@@ -39,9 +39,15 @@ INSTALLED_APPS = [
     'plants.apps.PlantsConfig',
     'users.apps.UsersConfig',
     'storages',
+    'taggit',
+    'rest_framework',
+    'corsheaders',
+    'dbbackup',  # django-dbbackup
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -130,7 +136,8 @@ LANGUAGE_COOKIE_NAME = 'plant_passport_language'
 ## Media files
 
 #USE_S3 = os.getenv('USE_S3') == 'TRUE'
-USE_S3 = True
+#USE_S3 = True
+USE_S3 = False
 
 if USE_S3:
     # aws settings
@@ -180,3 +187,27 @@ AUTH_USER_MODEL = 'users.User'
 
 # https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-LOGIN_URL
 LOGIN_URL = '/login/'
+
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+    )
+}
+
+CORS_ALLOW_ALL_ORIGINS = True # If this is used then `CORS_ALLOWED_ORIGINS` will not have any effect
+CORS_ALLOW_CREDENTIALS = True
+
+
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': '/var/backups/'}

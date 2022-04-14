@@ -7,6 +7,7 @@ from django.utils import timezone
 from imagekit.models import ImageSpecField
 from pilkit.processors import Thumbnail
 from cdn.storage_backends import PublicMediaStorage
+from taggit.managers import TaggableManager
 
 
 class Plant(models.Model):
@@ -35,6 +36,14 @@ class Plant(models.Model):
         default=False,
     )
 
+    is_seed = models.BooleanField(
+        default=False,
+    )
+
+    is_archived = models.BooleanField(
+        default=False,
+    )
+
     access_type = models.IntegerField(
         choices=AccessTypeChoices.choices,
         default=0,
@@ -47,6 +56,8 @@ class Plant(models.Model):
         null=True,
         default=None,
     )
+
+    tags = TaggableManager()
 
     def __str__(self):
         return f"{self.uid}  by  {self.creator} "
@@ -182,7 +193,7 @@ class Log(models.Model):
     action_time = models.DateTimeField(
         _('action time'),
         default=timezone.now,
-        editable=False,
+        #ditable=False,
     )
 
     user = models.ForeignKey(
@@ -230,16 +241,16 @@ class Photo(models.Model):
 
     medium = ImageSpecField(
         source='original',
-        processors=[Thumbnail(200, 100)],
+        processors=[Thumbnail(1000, 1000)],
         format='JPEG',
-        options={'quality': 60}
+        options={'quality': 80}
     )
 
     small = ImageSpecField(
         source='original',
-        processors=[Thumbnail(100, 50)],
+        processors=[Thumbnail(400, 400)],
         format='JPEG',
-        options={'quality': 60},
+        options={'quality': 80},
     )
 
     slug = models.SlugField(

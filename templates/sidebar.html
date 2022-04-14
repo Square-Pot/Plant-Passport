@@ -12,8 +12,9 @@
         </button>
         <div class="collapse show" id="home-collapse">
           <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li><a href="{% url 'plants' %}" class="link-dark rounded">{% trans 'MyPlants' %}</a></li>
+            <li><a href="{% url 'groups' %}" class="link-dark rounded">{% trans 'MyPlants' %}</a></li>
             <li><a href="{% url 'plant_create_edit' %}" class="link-dark rounded">{% trans 'CreateNewPlant' %}</a></li>
+            <li><a href="{% url 'detect_photo' %}" class="link-dark rounded">{% trans 'UploadPhoto&Identify' %}</a></li>
           </ul>
         </div>
       </li>

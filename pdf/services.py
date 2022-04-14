@@ -36,20 +36,21 @@ class Label:
     def extract_data(self, rich_plant):
         """Fill current object with data from RichPlant"""
         self.puid =         rich_plant.uid
-        self.field_number = rich_plant.attrs.number.upper()                 if rich_plant.attrs.number else None
+        self.field_number = rich_plant.attrs.number.strip().upper()                 if rich_plant.attrs.number else None
         
         # Line 1 data
-        self.genus =        rich_plant.attrs.genus.capitalize()[0] + '.'    if rich_plant.attrs.genus else None
-        self.species =      rich_plant.attrs.species.lower()                if rich_plant.attrs.species else None
-        self.subspecies =   rich_plant.attrs.subspecies.lower()             if rich_plant.attrs.subspecies else None
+        self.genus =        rich_plant.attrs.genus.strip().capitalize()             if rich_plant.attrs.genus else None
+        self.species =      rich_plant.attrs.species.strip().lower()                if rich_plant.attrs.species else None
+        self.subspecies =   rich_plant.attrs.subspecies.strip().lower()             if rich_plant.attrs.subspecies else None
         
         # Line 2 data
-        self.variety =      rich_plant.attrs.variety.lower()                if rich_plant.attrs.variety else None
-        self.cultivar =     rich_plant.attrs.cultivar.title()               if rich_plant.attrs.cultivar else None
+        self.variety =      rich_plant.attrs.variety.strip().lower()                if rich_plant.attrs.variety else None
+        self.cultivar =     rich_plant.attrs.cultivar.strip().title()               if rich_plant.attrs.cultivar else None
 
         # Line 3 data
-        self.affinity =     rich_plant.attrs.affinity.title()               if rich_plant.attrs.affinity else None
-        self.ex =           rich_plant.attrs.ex.title()                     if rich_plant.attrs.ex else None
+        self.affinity =     rich_plant.attrs.affinity.strip().title()               if rich_plant.attrs.affinity else None
+        self.ex =           rich_plant.attrs.ex.strip().title()                     if rich_plant.attrs.ex else None
+        self.source =       rich_plant.attrs.source.strip()                         if rich_plant.attrs.source else None
 
         self._generate_text_lines()
         self._generate_datamatrix()
@@ -70,14 +71,15 @@ class Label:
             text_line_1 = ''
             text_line_1 += f'**__{self.genus}__** ' if self.genus else ''
             text_line_1 += f'__{self.species}__ ' if self.species else ''
-            text_line_1 += f'ssp. __{self.subspecies}__ ' if self.species else ''
+            text_line_1 += f'ssp. __{self.subspecies}__ ' if self.subspecies else ''
         if text_line_1: 
             self.text_lines.append(text_line_1)
 
         # Line 2 generating
         text_line_2 = ''
         text_line_2 += f'v. __{self.variety}__ ' if self.variety else ''
-        text_line_2 += f'cv. __{self.cultivar}__ ' if self.cultivar else ''
+        text_line_2 += f'cv. ‘{self.cultivar}’ ' if self.cultivar else ''
+        
         if text_line_2: 
             self.text_lines.append(text_line_2)
 
@@ -85,13 +87,14 @@ class Label:
         text_line_3 = ''
         text_line_3 += f'aff. {self.affinity} ' if self.affinity else ''
         text_line_3 += f'ex. {self.ex} ' if self.ex else ''
+        text_line_3 += f'[{self.source}]' if self.source else ''
         if text_line_3:
             self.text_lines.append(text_line_3)
 
         # Placeholder if no data
         if len(self.text_lines) == 0:
-            self.text_lines.append('_' * 15)
-            self.text_lines.append('_' * 15)
+            self.text_lines.append('_' * 20)
+            self.text_lines.append('_' * 20)
 
 
 
@@ -203,10 +206,15 @@ class LabelsBuilder:
         heigh = label.dmtx_side_mm / label.get_lines_number()
         width = label.full_length - label.dmtx_side_mm - self.field_num_cell_width
 
-        for text in label.text_lines:
+        for cnt, text in enumerate(label.text_lines, start=1) :
+            if cnt > 2:
+                self.pdf.set_font('dejavu', '', 8)
+            else:
+                self.pdf.set_font('dejavu', '', 10)
             self.pdf.cell(width, heigh, text, border=self.show_brd, markdown=True)
             self.cur_y += heigh
             self._xy_update()
+        self.pdf.set_font('dejavu', '', 10)
 
     def generate_labels(self):
         """Generate list of Labels objects"""

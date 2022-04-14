@@ -13,9 +13,19 @@
             {% else %}
             <img src="{{ plant.profile_photo.small.url }}" class="img-fluid" alt="{{ plant.fancy_name|safe }}">
             {% endif %}
+            {% if is_owner %}
             <a href="{% url 'set_profile_img_dialog' plant.id %}" class="btn btn-outline-primary btn-sm">{% trans 'SetPhoto' %}</a>
+            {% endif %}
           </div>
           <div class="col-sm-7">
+            <div id="is_seed" class="row">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="plant_is_seeds" v-model="is_seeds" @change="check($event)" :disabled="disabled">
+                    <label class="form-check-label" for="plant_is_seeds">
+                        {% trans 'Seeds (not planted yet)' %}
+                    </label>
+                </div>
+            </div>
             <div class="row row-cols-3 py-1 ">
                 <div class="col-4">
                     <b>UID</b>
@@ -69,7 +79,7 @@
       <hr />
 
     <!-- Action Buttons -->
-
+    {% if is_owner %}
     <!-- Watering and Feritlizing-->
     <div class="btn-group" role="group">
         <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -114,13 +124,57 @@
     <div class="btn-group">
         <a href="{% url 'upload_photo' plant.id %}" class="btn btn-primary" role="button">{% trans 'Add_Photo' %}</a>
     </div>
-    
+    {% endif %}
+    <hr>
+
+    <!-- Tags -->
+
+    {{ plant_serialized | json_script:"current_plant"}}
+    {{ user_serialized | json_script:"current_user"}}
+
+
+
+    <div>
+
+        <div id="tags">
+            <div class="container">
+              <tag-item-active
+                          v-for="tag in active_tags"
+                          v-bind:tag="tag"
+                          v-bind:key="'A' + tag.id"
+                          @remove_tag="removeTag(tag.id)"
+              ></tag-item-active>
+              <tag-item-passive
+                          v-for="tag in passive_tags"
+                          v-bind:tag="tag"
+                          v-bind:key= "'P' + tag.id"
+                          @add_tag="addTag(tag.id)"
+              ></tag-item-passive>
+              
+             
+              <hr />
+              {% if is_owner %}
+              <button class="btn btn-outline-success" type="button" id="button-addon2" v-on:click="create_new_shown = !create_new_shown">Create New</button>
+        
+              <hr />
+              
+              <div class="input-group mb-3 my-2" v-if="create_new_shown">
+                <span class="input-group-text">New tag name:</span>
+                <input  v-model="new_tag"  type="text" class="form-control" placeholder="Separate with comma, case independent" aria-label="Recipient's username" aria-describedby="button-addon2" >
+                <button class="btn btn-outline-secondary" type="button" id="button-addon2" @click="createTag">Add</button>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+    </div>
     
 
     <hr>
+    
     <h4>{% trans 'ChangeHistory' %}</h4>
     <div class="container">
-        {% for log in plant.logs  %}
+        {% for log in plant.logs_for_cards  %}
         <div class="row">
             <div class="col-3 d-flex align-items-center pe-0">
                 <div class="col-12 border-bottom border-primary border-2">{{ log.action_time }}</div>
@@ -130,50 +184,27 @@
             <div class="col-8">
                 <div class="card my-4" style="width: 25rem;">
                     <div class="card-body">
-
-                    {% if log.action_type == 1 %}
-                        {% for key, value in log.data.items %}
-                            {% if key == 'action' %} <h5 class="card-title">{{ value }}</h5> {% endif %}
-                            {% if key == 'photo_url' %}<img src="{{ value }}" class="card-img-top" alt="..."> {% endif %}
-                            {% if key == 'comment' %}<p class="card-text">{{ value }}</p> {% endif %}
-                            {% if key == 'photo_description' %}<p class="card-text">{{ value }}</p> {% endif %}
-                        {% endfor %}
-                    {% endif %}
-
-                    {% if log.action_type == 2 %}
-                        <h5 class="card-title">{% trans 'ParametersEditing' %}</h5>
-                        {% for key, value in log.data.items %}
-                            <p class="card-text">
-                                <b>{{ key }}:</b> {{ value }} <br />
-                            </p>
-                        {% endfor %}
-                    {% endif %}
-
-                    {% if log.action_type == 3 %}
-                        <h5 class="card-title">Deleting</h5>
-                        <p class="card-text">Something was deleted...</p>
-                    {% endif %}
-
+                        <h5 class="card-title">{{ log.title }}</h5>
+                        {% if log.subtitle %}<h6 class="card-subtitle mb-2 text-muted">{{ log.subtitle }}</h6>{% endif %}
+                        {% if log.img_url %}<img src="{{ log.img_url }}" class="card-img-top" alt="{{ log.img_alt }}">{% endif %}
+                        {% if log.text %}<p class="card-text">{{ log.text }}</p> {% endif %}
+                        <ul class="list-group list-group-flush">
+                            {% for key, value in log.attrs.items %}
+                            <li class="list-group-item"><b>{{ key }}</b>: {{ value }}</li>
+                            {% endfor %}
+                        </ul>
                     </div>
-
-
-                    <!--
-                    <img src="{% static 'lithops.jpg' %}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                      <h5 class="card-title">{{ log.action_type }}</h5>
-                      <p class="card-text">{{ log.data }}</p>
-                      <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                    -->
-                    
                 </div>
             </div>
         </div> 
         {% endfor %}
     </div> 
 
+    <script src="{% static 'js/tags_vue_app.js' %}"></script>
+    <script src="{% static 'js/is_seed_vue_app.js' %}"></script>
+
     {% endblock %}
 
 
-
+    
 
